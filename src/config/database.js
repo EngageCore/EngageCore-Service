@@ -40,15 +40,17 @@ pool.on('error', (err, client) => {
   process.exit(-1);
 });
 
-// Test database connection
-pool.connect((err, client, release) => {
-  if (err) {
-    logger.error('Error acquiring client', err.stack);
-    return;
-  }
-  logger.info('Database connected successfully');
-  release();
-});
+// Test database connection only in non-test environments
+if (process.env.NODE_ENV !== 'test') {
+  pool.connect((err, client, release) => {
+    if (err) {
+      logger.error('Error acquiring client', err.stack);
+      return;
+    }
+    logger.info('Database connected successfully');
+    release();
+  });
+}
 
 // Graceful shutdown
 process.on('SIGINT', () => {

@@ -442,6 +442,125 @@ class MemberController {
   });
 
   /**
+   * Get member tier progress
+   * GET /api/brands/:brandId/members/:id/tier-progress
+   */
+  getMemberTierProgress = asyncHandler(async (req, res) => {
+    const { brandId, id } = req.params;
+
+    const progress = await this.memberService.getMemberTierProgress(id, brandId);
+
+    return response.success(res, {
+      message: 'Member tier progress retrieved successfully',
+      data: { progress }
+    });
+  });
+
+  /**
+   * Manual tier upgrade for member
+   * POST /api/brands/:brandId/members/:id/tier-upgrade
+   */
+  manualTierUpgrade = asyncHandler(async (req, res) => {
+    const { brandId, id } = req.params;
+    const { tier_id, reason } = req.body;
+    const userId = req.user.id;
+    const context = {
+      ip: req.ip,
+      userAgent: req.get('User-Agent')
+    };
+
+    if (!tier_id) {
+      return response.error(res, 'Tier ID is required', 400);
+    }
+
+    const member = await this.memberService.manualTierUpgrade(id, tier_id, brandId, userId, reason, context);
+
+    logger.info('Manual tier upgrade completed', {
+      memberId: id,
+      newTierId: tier_id,
+      reason: reason || 'admin_adjustment',
+      brandId,
+      upgradedBy: userId
+    });
+
+    return response.success(res, {
+      message: 'Member tier upgraded successfully',
+      data: { member }
+    });
+  });
+
+  /**
+   * Get member tier history
+   * @route GET /api/brands/:brandId/members/:id/tier-history
+   */
+  getMemberTierHistory = asyncHandler(async (req, res) => {
+    const { brandId, id: memberId } = req.params;
+    const options = req.query;
+
+    const tierHistory = await this.memberService.getMemberTierHistory(memberId, options, brandId);
+
+    logger.info('Member tier history retrieved', {
+      brandId,
+      memberId,
+      historyCount: tierHistory.length
+    });
+
+    return response.success(res, {
+      message: 'Member tier history retrieved successfully',
+      data: { tierHistory }
+    });
+  });
+
+  /**
+   * Import members from CSV/Excel
+   * @route POST /api/brands/:brandId/members/import
+   */
+  importMembers = asyncHandler(async (req, res) => {
+    const { brandId } = req.params;
+    const { membersData, options = {} } = req.body;
+    const userId = req.user.id;
+    const context = {
+      ip: req.ip,
+      userAgent: req.get('User-Agent')
+    };
+
+    const results = await this.memberService.importMembers(membersData, options, brandId, userId, context);
+
+    logger.info('Members import completed', {
+      brandId,
+      results,
+      importedBy: userId
+    });
+
+    return response.success(res, {
+      message: 'Members import completed',
+      data: { results }
+    });
+  });
+
+  /**
+   * Get member leaderboard
+   * @route GET /api/brands/:brandId/members/leaderboard
+   */
+  getMemberLeaderboard = asyncHandler(async (req, res) => {
+    const { brandId } = req.params;
+    const options = req.query;
+
+    const leaderboard = await this.memberService.getMemberLeaderboard(brandId, options);
+
+    logger.info('Member leaderboard retrieved', {
+      brandId,
+      count: leaderboard.length,
+      period: options.period || 'all_time'
+    });
+
+    return response.success(res, {
+      message: 'Member leaderboard retrieved successfully',
+      data: { leaderboard }
+    });
+  });
+
+  /**
    * Bulk update members
    * PUT /api/brands/:brandId/members/bulk
    */

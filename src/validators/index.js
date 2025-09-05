@@ -6,15 +6,17 @@
 const authValidators = require('./authValidators');
 const brandValidators = require('./brandValidators');
 const memberValidators = require('./memberValidators');
-const wheelValidators = require('./wheelValidators');
 const missionValidators = require('./missionValidators');
+const tierValidators = require('./tierValidators');
 const transactionValidators = require('./transactionValidators');
+const wheelValidators = require('./wheelValidators');
 
 module.exports = {
-  auth: authValidators,
-  brand: brandValidators,
-  member: memberValidators,
-  wheel: wheelValidators,
-  mission: missionValidators,
-  transaction: transactionValidators
+  authValidators,
+  brandValidators,
+  memberValidators,
+  missionValidators,
+  tierValidators,
+  transactionValidators,
+  wheelValidators
 };

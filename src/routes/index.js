@@ -7,6 +7,7 @@ const express = require('express');
 const authRoutes = require('./auth');
 const brandRoutes = require('./brands');
 const memberRoutes = require('./members');
+const tierRoutes = require('./tiers');
 const wheelRoutes = require('./wheels');
 const missionRoutes = require('./missions');
 const transactionRoutes = require('./transactions');
@@ -50,7 +51,8 @@ router.get('/', (req, res) => {
       brands: '/api/brands',
       users: '/api/users',
       admin: '/api/admin',
-      health: '/api/health'
+      health: '/api/health',
+      tiers: '/api/brands/:brandId/tiers'
     },
     documentation: '/api/docs',
     timestamp: new Date().toISOString()
@@ -72,6 +74,7 @@ router.use('/brands', brandRoutes);
 // Brand-specific nested routes
 // These routes are mounted under /api/brands/:brandId
 router.use('/brands/:brandId/members', memberRoutes);
+router.use('/brands/:brandId/tiers', tierRoutes);
 router.use('/brands/:brandId/wheels', wheelRoutes);
 router.use('/brands/:brandId/missions', missionRoutes);
 router.use('/brands/:brandId/transactions', transactionRoutes);
@@ -86,4 +89,6 @@ router.use('*', (req, res) => {
 });
 
 // Error handling middleware (should be last)
-router.use(errorHandler.
+router.use(errorHandler.handle);
+
+module.exports = router;

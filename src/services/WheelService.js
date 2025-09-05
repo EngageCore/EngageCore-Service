@@ -3,7 +3,7 @@
  * Handles wheel and spin management business logic
  */
 
-const { WheelRepository, WheelItemRepository, SpinRepository, MemberRepository, TransactionRepository, AuditLogRepository } = require('../repositories');
+const { WheelRepository, MemberRepository, TransactionRepository, AuditLogRepository } = require('../repositories');
 const { logger, constants, probability } = require('../utils');
 const { errorHandler } = require('../middleware');
 const { NotFoundError, ConflictError, ValidationError, AuthorizationError } = errorHandler;
@@ -12,8 +12,6 @@ const { AUDIT_ACTIONS, TRANSACTION_TYPES, WHEEL_ITEM_TYPES, SPIN_STATUS } = cons
 class WheelService {
   constructor() {
     this.wheelRepository = new WheelRepository();
-    this.wheelItemRepository = new WheelItemRepository();
-    this.spinRepository = new SpinRepository();
     this.memberRepository = new MemberRepository();
     this.transactionRepository = new TransactionRepository();
     this.auditLogRepository = new AuditLogRepository();

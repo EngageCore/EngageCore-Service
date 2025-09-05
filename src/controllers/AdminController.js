@@ -29,6 +29,14 @@ class AdminController {
   });
 
   /**
+   * Get system dashboard (alias for route compatibility)
+   * GET /api/admin/dashboard
+   */
+  getSystemDashboard = asyncHandler(async (req, res) => {
+    return this.getDashboardOverview(req, res);
+  });
+
+  /**
    * Get system analytics
    * GET /api/admin/analytics
    */
@@ -97,6 +105,14 @@ class AdminController {
   });
 
   /**
+   * Get system reports (alias for route compatibility)
+   * GET /api/admin/reports
+   */
+  getSystemReports = asyncHandler(async (req, res) => {
+    return this.generateSystemReport(req, res);
+  });
+
+  /**
    * Manage system settings
    * PUT /api/admin/settings
    */
@@ -119,6 +135,22 @@ class AdminController {
       message: 'System settings updated successfully',
       data: result
     });
+  });
+
+  /**
+   * Get system settings (alias for route compatibility)
+   * GET /api/admin/settings
+   */
+  getSystemSettings = asyncHandler(async (req, res) => {
+    return this.getSystemConfiguration(req, res);
+  });
+
+  /**
+   * Update system settings (alias for route compatibility)
+   * PUT /api/admin/settings
+   */
+  updateSystemSettings = asyncHandler(async (req, res) => {
+    return this.manageSystemSettings(req, res);
   });
 
   /**
@@ -446,6 +478,14 @@ class AdminController {
   });
 
   /**
+   * Clear cache (alias for route compatibility)
+   * POST /api/admin/cache/clear
+   */
+  clearCache = asyncHandler(async (req, res) => {
+    return this.clearSystemCache(req, res);
+  });
+
+  /**
    * Run system maintenance
    * POST /api/admin/maintenance
    */
@@ -487,6 +527,14 @@ class AdminController {
       message: 'System maintenance completed successfully',
       data: { maintenance: results }
     });
+  });
+
+  /**
+   * Perform maintenance (alias for route compatibility)
+   * POST /api/admin/maintenance
+   */
+  performMaintenance = asyncHandler(async (req, res) => {
+    return this.runSystemMaintenance(req, res);
   });
 
   /**
@@ -543,6 +591,14 @@ class AdminController {
   });
 
   /**
+   * Get backup status (alias for route compatibility)
+   * GET /api/admin/backup/status
+   */
+  getBackupStatus = asyncHandler(async (req, res) => {
+    return this.getSystemBackups(req, res);
+  });
+
+  /**
    * Create system backup
    * POST /api/admin/backups
    */
@@ -575,6 +631,14 @@ class AdminController {
       message: 'System backup initiated successfully',
       data: { backup }
     }, 202); // Accepted
+  });
+
+  /**
+   * Create backup (alias for route compatibility)
+   * POST /api/admin/backup/create
+   */
+  createBackup = asyncHandler(async (req, res) => {
+    return this.createSystemBackup(req, res);
   });
 }
 

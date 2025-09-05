@@ -3,22 +3,24 @@
  * Exports all service modules
  */
 
+const AdminService = require('./AdminService');
 const AuthService = require('./AuthService');
 const BrandService = require('./BrandService');
 const MemberService = require('./MemberService');
-const WheelService = require('./WheelService');
 const MissionService = require('./MissionService');
+const TierService = require('./TierService');
 const TransactionService = require('./TransactionService');
 const UserService = require('./UserService');
-const AdminService = require('./AdminService');
+const WheelService = require('./WheelService');
 
 module.exports = {
+  AdminService,
   AuthService,
   BrandService,
   MemberService,
-  WheelService,
   MissionService,
+  TierService,
   TransactionService,
   UserService,
-  AdminService
+  WheelService
 };

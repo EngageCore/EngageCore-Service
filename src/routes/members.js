@@ -192,6 +192,48 @@ router.get('/:id/transactions',
 );
 
 /**
+ * @route   GET /api/brands/:brandId/members/:id/tier-progress
+ * @desc    Get member tier progress
+ * @access  Private (Brand Admin)
+ */
+router.get('/:id/tier-progress',
+  auth.authenticate,
+  brandContext.validateBrandAccess,
+  auth.authorize(['super_admin', 'brand_admin']),
+  rateLimit.generalRateLimit,
+  validation.validate(memberValidators.getMemberTierProgressSchema),
+  MemberController.getMemberTierProgress
+);
+
+/**
+ * @route   POST /api/brands/:brandId/members/:id/tier-upgrade
+ * @desc    Manual tier upgrade for member
+ * @access  Private (Brand Admin)
+ */
+router.post('/:id/tier-upgrade',
+  auth.authenticate,
+  brandContext.validateBrandAccess,
+  auth.authorize(['super_admin', 'brand_admin']),
+  rateLimit.generalRateLimit,
+  validation.validate(memberValidators.manualTierUpgradeSchema),
+  MemberController.manualTierUpgrade
+);
+
+/**
+ * @route   GET /api/brands/:brandId/members/:id/tier-history
+ * @desc    Get member tier history
+ * @access  Private (Brand Admin)
+ */
+router.get('/:id/tier-history',
+  auth.authenticate,
+  brandContext.validateBrandAccess,
+  auth.authorize(['super_admin', 'brand_admin']),
+  rateLimit.generalRateLimit,
+  validation.validate(memberValidators.getMemberTierHistorySchema),
+  MemberController.getMemberTierHistory
+);
+
+/**
  * @route   GET /api/brands/:brandId/members/:id/profile
  * @desc    Get member profile (public endpoint for members)
  * @access  Public (with brand context)

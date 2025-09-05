@@ -3,7 +3,7 @@
  * Handles member management business logic
  */
 
-const { MemberRepository, TransactionRepository, TierRepository, AuditLogRepository } = require('../repositories');
+const { MemberRepository, TransactionRepository, AuditLogRepository } = require('../repositories');
 const { logger, constants, encryption } = require('../utils');
 const { errorHandler } = require('../middleware');
 const { NotFoundError, ConflictError, ValidationError, AuthorizationError } = errorHandler;
@@ -13,7 +13,6 @@ class MemberService {
   constructor() {
     this.memberRepository = new MemberRepository();
     this.transactionRepository = new TransactionRepository();
-    this.tierRepository = new TierRepository();
     this.auditLogRepository = new AuditLogRepository();
   }
 
@@ -42,12 +41,10 @@ class MemberService {
         throw new ConflictError('Member ID is already taken');
       }
 
-      // Get default tier if not specified
-      let tierId = memberData.tier_id;
-      if (!tierId) {
-        const defaultTier = await this.tierRepository.getDefaultTier(brandId);
-        tierId = defaultTier?.id;
-      }
+      // Get default tier (Bronze) for the brand
+      const defaultTier = await this.memberRepository.getMembershipTiers(brandId, { includeInactive: false });
+      const bronzeTier = defaultTier.find(tier => tier.slug === 'bronze');
+      const tierId = memberData.tier_id || (bronzeTier ? bronzeTier.id : null);
 
       // Prepare member data
       const memberToCreate = {
@@ -100,7 +97,7 @@ class MemberService {
         createdBy: userId
       });
 
-      return await this.memberRepository.findWithTier(member.id);
+      return await this.memberRepository.findById(member.id);
     } catch (error) {
       logger.error('Member creation failed', {
         error: error.message,
@@ -121,7 +118,7 @@ class MemberService {
    */
   async getMemberById(memberId, brandId) {
     try {
-      const member = await this.memberRepository.findWithTier(memberId);
+      const member = await this.memberRepository.findById(memberId);
       if (!member || member.brand_id !== brandId) {
         throw new NotFoundError('Member not found');
       }
@@ -194,7 +191,7 @@ class MemberService {
         updatedBy: userId
       });
 
-      return await this.memberRepository.findWithTier(memberId);
+      return await this.memberRepository.findById(memberId);
     } catch (error) {
       logger.error('Member update failed', {
         error: error.message,
@@ -365,8 +362,9 @@ class MemberService {
           : existingMember.total_points_earned
       });
 
-      // Check for tier upgrade
-      await this.checkTierUpgrade(memberId, brandId);
+      // Check for tier upgrade based on new points total
+      const memberWithNewPoints = await this.memberRepository.findById(memberId);
+      await this.memberRepository.checkTierUpgrade(memberId, memberWithNewPoints.total_points_earned);
 
       // Log points update
       await this.auditLogRepository.logUserAction({
@@ -709,37 +707,257 @@ class MemberService {
   }
 
   /**
-   * Check and update member tier based on points
+   * Get membership tiers for a brand
+   * @param {string} brandId - Brand ID
+   * @param {object} options - Query options
+   * @returns {array} - Membership tiers
+   */
+  async getMembershipTiers(brandId, options = {}) {
+    try {
+      return await this.memberRepository.getMembershipTiers(brandId, options);
+    } catch (error) {
+      logger.error('Get membership tiers failed', {
+        error: error.message,
+        brandId,
+        options
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Get member tier history
    * @param {string} memberId - Member ID
    * @param {string} brandId - Brand ID
+   * @param {object} options - Query options
+   * @returns {array} - Tier history
    */
-  async checkTierUpgrade(memberId, brandId) {
+  async getMemberTierHistory(memberId, brandId, options = {}) {
     try {
+      // Verify member belongs to brand
       const member = await this.memberRepository.findById(memberId);
-      if (!member) return;
-
-      const eligibleTier = await this.tierRepository.getEligibleTier(brandId, member.total_points_earned);
-      
-      if (eligibleTier && eligibleTier.id !== member.tier_id) {
-        await this.memberRepository.update(memberId, {
-          tier_id: eligibleTier.id
-        });
-
-        logger.logBusiness('Member tier upgraded', {
-          memberId,
-          memberIdString: member.member_id,
-          oldTierId: member.tier_id,
-          newTierId: eligibleTier.id,
-          totalPoints: member.total_points_earned
-        });
+      if (!member || member.brand_id !== brandId) {
+        throw new NotFoundError('Member not found');
       }
+
+      return await this.memberRepository.getTierHistory(memberId, options);
     } catch (error) {
-      logger.error('Tier upgrade check failed', {
+      logger.error('Get member tier history failed', {
+        error: error.message,
+        memberId,
+        brandId,
+        options
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Get tier benefits
+   * @param {string} tierId - Tier ID
+   * @param {string} brandId - Brand ID
+   * @returns {array} - Tier benefits
+   */
+  async getTierBenefits(tierId, brandId) {
+    try {
+      // Verify tier belongs to brand
+      const tiers = await this.memberRepository.getMembershipTiers(brandId);
+      const tier = tiers.find(t => t.id === tierId);
+      if (!tier) {
+        throw new NotFoundError('Tier not found');
+      }
+
+      return await this.memberRepository.getTierBenefits(tierId);
+    } catch (error) {
+      logger.error('Get tier benefits failed', {
+        error: error.message,
+        tierId,
+        brandId
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Get next tier for member
+   * @param {string} memberId - Member ID
+   * @param {string} brandId - Brand ID
+   * @returns {object|null} - Next tier information
+   */
+  async getMemberNextTier(memberId, brandId) {
+    try {
+      // Verify member belongs to brand
+      const member = await this.memberRepository.findById(memberId);
+      if (!member || member.brand_id !== brandId) {
+        throw new NotFoundError('Member not found');
+      }
+
+      return await this.memberRepository.getNextTier(memberId);
+    } catch (error) {
+      logger.error('Get member next tier failed', {
         error: error.message,
         memberId,
         brandId
       });
-      // Don't throw error as this is a background process
+      throw error;
+    }
+  }
+
+  /**
+   * Manually upgrade member tier (admin action)
+   * @param {string} memberId - Member ID
+   * @param {string} newTierId - New tier ID
+   * @param {string} brandId - Brand ID
+   * @param {string} adminUserId - Admin user ID
+   * @param {string} reason - Reason for upgrade
+   * @param {object} context - Request context
+   * @returns {object} - Updated member
+   */
+  async manualTierUpgrade(memberId, newTierId, brandId, adminUserId, reason = 'admin_adjustment', context = {}) {
+    try {
+      // Verify member belongs to brand
+      const member = await this.memberRepository.findById(memberId);
+      if (!member || member.brand_id !== brandId) {
+        throw new NotFoundError('Member not found');
+      }
+
+      // Verify new tier belongs to brand
+      const tiers = await this.memberRepository.getMembershipTiers(brandId);
+      const newTier = tiers.find(t => t.id === newTierId);
+      if (!newTier) {
+        throw new NotFoundError('Tier not found');
+      }
+
+      // Perform manual tier upgrade
+      const updatedMember = await this.memberRepository.manualTierUpgrade(
+        memberId, 
+        newTierId, 
+        adminUserId, 
+        reason
+      );
+
+      // Log admin action
+      await this.auditLogRepository.logUserAction({
+        user_id: adminUserId,
+        brand_id: brandId,
+        action: AUDIT_ACTIONS.MEMBER_UPDATE,
+        description: `Manual tier upgrade to ${newTier.name}`,
+        ip_address: context.ip,
+        user_agent: context.userAgent,
+        metadata: {
+          memberId: member.member_id,
+          oldTierId: member.tier_id,
+          newTierId: newTierId,
+          reason: reason
+        }
+      });
+
+      logger.info('Manual tier upgrade completed', {
+        memberId,
+        memberIdString: member.member_id,
+        oldTierId: member.tier_id,
+        newTierId,
+        newTierName: newTier.name,
+        adminUserId,
+        reason
+      });
+
+      return await this.memberRepository.findWithTier(memberId);
+    } catch (error) {
+      logger.error('Manual tier upgrade failed', {
+        error: error.message,
+        memberId,
+        newTierId,
+        brandId,
+        adminUserId,
+        reason,
+        context
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Get member tier progress
+   * @param {string} memberId - Member ID
+   * @param {string} brandId - Brand ID
+   * @returns {object} - Tier progress information
+   */
+  async getMemberTierProgress(memberId, brandId) {
+    try {
+      // Verify member belongs to brand
+      const member = await this.memberRepository.findWithTier(memberId);
+      if (!member || member.brand_id !== brandId) {
+        throw new NotFoundError('Member not found');
+      }
+
+      const nextTier = await this.memberRepository.getNextTier(memberId);
+      const currentTierBenefits = member.tier_id ? 
+        await this.memberRepository.getTierBenefits(member.tier_id) : [];
+
+      const progress = {
+        current_tier: {
+          id: member.tier_id,
+          name: member.tier_name,
+          slug: member.tier_slug,
+          color: member.tier_color,
+          min_points: member.tier_min_points,
+          max_points: member.tier_max_points,
+          benefits: currentTierBenefits,
+          multiplier: member.tier_multiplier,
+          discount: member.tier_discount
+        },
+        current_points: member.total_points_earned,
+        points_balance: member.points_balance,
+        next_tier: nextTier ? {
+          id: nextTier.id,
+          name: nextTier.name,
+          slug: nextTier.slug,
+          color: nextTier.color,
+          min_points: nextTier.min_points_required,
+          points_needed: Math.max(0, nextTier.min_points_required - member.total_points_earned),
+          progress_percentage: Math.min(100, 
+            (member.total_points_earned / nextTier.min_points_required) * 100
+          )
+        } : null
+      };
+
+      return progress;
+    } catch (error) {
+      logger.error('Get member tier progress failed', {
+        error: error.message,
+        memberId,
+        brandId
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Get members by tier
+   * @param {string} tierId - Tier ID
+   * @param {string} brandId - Brand ID
+   * @param {object} options - Query options
+   * @returns {object} - Paginated members
+   */
+  async getMembersByTier(tierId, brandId, options = {}) {
+    try {
+      // Verify tier belongs to brand
+      const tiers = await this.memberRepository.getMembershipTiers(brandId);
+      const tier = tiers.find(t => t.id === tierId);
+      if (!tier) {
+        throw new NotFoundError('Tier not found');
+      }
+
+      return await this.memberRepository.findByTier(tierId, options);
+    } catch (error) {
+      logger.error('Get members by tier failed', {
+        error: error.message,
+        tierId,
+        brandId,
+        options
+      });
+      throw error;
     }
   }
 }

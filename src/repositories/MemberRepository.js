@@ -40,12 +40,21 @@ class MemberRepository extends BaseRepository {
         SELECT 
           m.*,
           mt.name as tier_name,
-          mt.min_points as tier_min_points,
-          mt.max_points as tier_max_points,
+          mt.slug as tier_slug,
+          mt.description as tier_description,
+          mt.min_points_required as tier_min_points,
+          mt.max_points_required as tier_max_points,
           mt.benefits as tier_benefits,
-          mt.color as tier_color
+          mt.perks as tier_perks,
+          mt.color as tier_color,
+          mt.icon as tier_icon,
+          mt.points_multiplier as tier_multiplier,
+          mt.discount_percentage as tier_discount,
+          mt.priority_support,
+          mt.exclusive_offers,
+          mt.early_access
         FROM members m
-        LEFT JOIN member_tiers mt ON m.tier_id = mt.id
+        LEFT JOIN membership_tiers mt ON m.tier_id = mt.id
         WHERE m.id = $1
       `;
       
@@ -116,9 +125,9 @@ class MemberRepository extends BaseRepository {
         SELECT 
           m.id, m.first_name, m.last_name, m.email, m.phone, m.points_balance,
           m.total_points_earned, m.status, m.last_activity_at, m.created_at,
-          mt.name as tier_name, mt.color as tier_color
+          mt.name as tier_name, mt.color as tier_color, mt.slug as tier_slug
         FROM members m 
-        LEFT JOIN member_tiers mt ON m.tier_id = mt.id
+        LEFT JOIN membership_tiers mt ON m.tier_id = mt.id
         ${whereClause}
         ORDER BY m.${orderBy} ${order}
         LIMIT $${paramIndex} OFFSET $${paramIndex + 1}
@@ -227,13 +236,13 @@ class MemberRepository extends BaseRepository {
         return null;
       }
 
-      // Find appropriate tier
+      // Find appropriate tier based on points
       const tierQuery = `
-        SELECT * FROM member_tiers 
+        SELECT * FROM membership_tiers 
         WHERE brand_id = $1 AND status = 'active' 
-        AND min_points <= $2 
-        AND (max_points IS NULL OR max_points >= $2)
-        ORDER BY min_points DESC 
+        AND min_points_required <= $2 
+        AND (max_points_required IS NULL OR max_points_required >= $2)
+        ORDER BY sort_order DESC 
         LIMIT 1
       `;
 
@@ -247,12 +256,32 @@ class MemberRepository extends BaseRepository {
       
       // Check if tier upgrade is needed
       if (member.tier_id !== newTier.id) {
-        await this.update(memberId, { tier_id: newTier.id }, client);
+        const oldTierId = member.tier_id;
         
-        logger.logBusiness('Member tier upgraded', {
+        // Update member tier and timestamp
+        await this.update(memberId, { 
+          tier_id: newTier.id,
+          tier_upgraded_at: new Date()
+        }, client);
+        
+        // Create tier history record
+        await this.createTierHistory({
+          member_id: memberId,
+          brand_id: member.brand_id,
+          from_tier_id: oldTierId,
+          to_tier_id: newTier.id,
+          reason: 'points_earned',
+          points_at_change: member.points_balance,
+          total_points_earned: totalPoints,
+          triggered_by: 'system',
+          notes: `Automatic tier upgrade to ${newTier.name} based on ${totalPoints} points earned`
+        }, client);
+        
+        logger.info('Member tier upgraded', {
           memberId,
-          oldTierId: member.tier_id,
+          oldTierId,
           newTierId: newTier.id,
+          tierName: newTier.name,
           totalPoints
         });
 
@@ -392,9 +421,10 @@ class MemberRepository extends BaseRepository {
           m.total_points_earned,
           mt.name as tier_name,
           mt.color as tier_color,
+          mt.slug as tier_slug,
           ROW_NUMBER() OVER (ORDER BY m.${orderBy} DESC) as rank
         FROM members m
-        LEFT JOIN member_tiers mt ON m.tier_id = mt.id
+        LEFT JOIN membership_tiers mt ON m.tier_id = mt.id
         WHERE m.brand_id = $1 
         AND m.status = 'active'
         ${dateFilter}
@@ -469,6 +499,234 @@ class MemberRepository extends BaseRepository {
       return result !== null;
     } catch (error) {
       logger.error('Error soft deleting member', { id, error: error.message });
+      throw error;
+    }
+  }
+
+  /**
+   * Create tier history record
+   * @param {object} historyData - Tier history data
+   * @param {object} client - Database client (for transaction)
+   * @returns {object} - Created history record
+   */
+  async createTierHistory(historyData, client = null) {
+    try {
+      const query = `
+        INSERT INTO member_tier_history (
+          member_id, brand_id, from_tier_id, to_tier_id, reason,
+          points_at_change, total_points_earned, effective_date,
+          triggered_by, notes, metadata
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+        RETURNING *
+      `;
+
+      const params = [
+        historyData.member_id,
+        historyData.brand_id,
+        historyData.from_tier_id,
+        historyData.to_tier_id,
+        historyData.reason || 'points_earned',
+        historyData.points_at_change || 0,
+        historyData.total_points_earned || 0,
+        historyData.effective_date || new Date(),
+        historyData.triggered_by || 'system',
+        historyData.notes || null,
+        JSON.stringify(historyData.metadata || {})
+      ];
+
+      const result = await this.query(query, params, client);
+      return result.rows[0];
+    } catch (error) {
+      logger.error('Error creating tier history', { historyData, error: error.message });
+      throw error;
+    }
+  }
+
+  /**
+   * Get member tier history
+   * @param {string} memberId - Member ID
+   * @param {object} options - Query options
+   * @returns {array} - Tier history records
+   */
+  async getTierHistory(memberId, options = {}) {
+    try {
+      const { limit = 10, offset = 0 } = options;
+
+      const query = `
+        SELECT 
+          mth.*,
+          mt_from.name as from_tier_name,
+          mt_from.color as from_tier_color,
+          mt_to.name as to_tier_name,
+          mt_to.color as to_tier_color
+        FROM member_tier_history mth
+        LEFT JOIN membership_tiers mt_from ON mth.from_tier_id = mt_from.id
+        LEFT JOIN membership_tiers mt_to ON mth.to_tier_id = mt_to.id
+        WHERE mth.member_id = $1
+        ORDER BY mth.effective_date DESC
+        LIMIT $2 OFFSET $3
+      `;
+
+      const result = await this.query(query, [memberId, limit, offset]);
+      return result.rows;
+    } catch (error) {
+      logger.error('Error getting tier history', { memberId, options, error: error.message });
+      throw error;
+    }
+  }
+
+  /**
+   * Get membership tiers for a brand
+   * @param {string} brandId - Brand ID
+   * @param {object} options - Query options
+   * @returns {array} - Membership tiers
+   */
+  async getMembershipTiers(brandId, options = {}) {
+    try {
+      const { includeInactive = false } = options;
+
+      let whereClause = 'WHERE brand_id = $1';
+      const params = [brandId];
+
+      if (!includeInactive) {
+        whereClause += ' AND status = \'active\'';
+      }
+
+      const query = `
+        SELECT 
+          mt.*,
+          COUNT(m.id) as member_count
+        FROM membership_tiers mt
+        LEFT JOIN members m ON mt.id = m.tier_id AND m.status = 'active'
+        ${whereClause}
+        GROUP BY mt.id
+        ORDER BY mt.sort_order ASC
+      `;
+
+      const result = await this.query(query, params);
+      return result.rows;
+    } catch (error) {
+      logger.error('Error getting membership tiers', { brandId, options, error: error.message });
+      throw error;
+    }
+  }
+
+  /**
+   * Get membership tier benefits
+   * @param {string} tierId - Tier ID
+   * @returns {array} - Tier benefits
+   */
+  async getTierBenefits(tierId) {
+    try {
+      const query = `
+        SELECT *
+        FROM membership_benefits
+        WHERE tier_id = $1 AND is_active = true
+        ORDER BY sort_order ASC
+      `;
+
+      const result = await this.query(query, [tierId]);
+      return result.rows;
+    } catch (error) {
+      logger.error('Error getting tier benefits', { tierId, error: error.message });
+      throw error;
+    }
+  }
+
+  /**
+   * Get next tier for member
+   * @param {string} memberId - Member ID
+   * @returns {object|null} - Next tier or null
+   */
+  async getNextTier(memberId) {
+    try {
+      const member = await this.findById(memberId);
+      if (!member) {
+        return null;
+      }
+
+      const query = `
+        SELECT mt.*,
+               (mt.min_points_required - $2) as points_needed
+        FROM membership_tiers mt
+        LEFT JOIN membership_tiers current_tier ON current_tier.id = $3
+        WHERE mt.brand_id = $1 
+        AND mt.status = 'active'
+        AND mt.sort_order > COALESCE(current_tier.sort_order, 0)
+        ORDER BY mt.sort_order ASC
+        LIMIT 1
+      `;
+
+      const result = await this.query(query, [
+        member.brand_id,
+        member.total_points_earned,
+        member.tier_id
+      ]);
+
+      return result.rows.length > 0 ? result.rows[0] : null;
+    } catch (error) {
+      logger.error('Error getting next tier', { memberId, error: error.message });
+      throw error;
+    }
+  }
+
+  /**
+   * Manually upgrade member tier (admin action)
+   * @param {string} memberId - Member ID
+   * @param {string} newTierId - New tier ID
+   * @param {string} adminUserId - Admin user ID
+   * @param {string} reason - Reason for upgrade
+   * @param {object} client - Database client (for transaction)
+   * @returns {object} - Updated member
+   */
+  async manualTierUpgrade(memberId, newTierId, adminUserId, reason = 'admin_adjustment', client = null) {
+    try {
+      const executeQuery = async (dbClient) => {
+        const member = await this.findById(memberId);
+        if (!member) {
+          throw new Error('Member not found');
+        }
+
+        const oldTierId = member.tier_id;
+        
+        // Update member tier
+        const updatedMember = await this.update(memberId, {
+          tier_id: newTierId,
+          tier_upgraded_at: new Date()
+        }, dbClient);
+
+        // Create tier history record
+        await this.createTierHistory({
+          member_id: memberId,
+          brand_id: member.brand_id,
+          from_tier_id: oldTierId,
+          to_tier_id: newTierId,
+          reason: reason,
+          points_at_change: member.points_balance,
+          total_points_earned: member.total_points_earned,
+          triggered_by: 'admin',
+          notes: `Manual tier upgrade by admin user ${adminUserId}`,
+          metadata: { admin_user_id: adminUserId }
+        }, dbClient);
+
+        logger.info('Manual tier upgrade completed', {
+          memberId,
+          oldTierId,
+          newTierId,
+          adminUserId,
+          reason
+        });
+
+        return updatedMember;
+      };
+
+      if (client) {
+        return await executeQuery(client);
+      } else {
+        return await this.withTransaction(executeQuery);
+      }
+    } catch (error) {
+      logger.error('Error in manual tier upgrade', { memberId, newTierId, adminUserId, reason, error: error.message });
       throw error;
     }
   }

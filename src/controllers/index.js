@@ -3,22 +3,24 @@
  * Exports all controller modules
  */
 
+const AdminController = require('./AdminController');
 const AuthController = require('./AuthController');
-const BrandController = require('./BrandController');
 const MemberController = require('./MemberController');
-const WheelController = require('./WheelController');
 const MissionController = require('./MissionController');
+const TierController = require('./TierController');
 const TransactionController = require('./TransactionController');
 const UserController = require('./UserController');
-const AdminController = require('./AdminController');
+const WheelController = require('./WheelController');
+const BrandController = require('./brandController');
 
 module.exports = {
+  AdminController,
   AuthController,
-  BrandController,
   MemberController,
-  WheelController,
   MissionController,
+  TierController,
   TransactionController,
   UserController,
-  AdminController
+  WheelController,
+  BrandController
 };

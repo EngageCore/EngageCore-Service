@@ -11,6 +11,10 @@ const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 const { createProxyMiddleware } = require('http-proxy-middleware');
+const swaggerUi = require('swagger-ui-express');
+const YAML = require('js-yaml');
+const fs = require('fs');
+const path = require('path');
 
 // Import configurations and utilities
 const config = require('./config');
@@ -202,9 +206,78 @@ class Server {
   }
 
   /**
+   * Setup Swagger UI Documentation
+   */
+  setupSwaggerUI() {
+    try {
+      // Load swagger.yaml file
+      const swaggerPath = path.join(__dirname, 'docs', 'api', 'swagger.yaml');
+      
+      if (fs.existsSync(swaggerPath)) {
+        const swaggerDocument = YAML.load(fs.readFileSync(swaggerPath, 'utf8'));
+        
+        // Swagger UI options
+        const options = {
+          explorer: true,
+          swaggerOptions: {
+            persistAuthorization: true,
+            displayRequestDuration: true,
+            filter: true,
+            showExtensions: true,
+            showCommonExtensions: true
+          },
+          customCss: `
+            .swagger-ui .topbar { display: none }
+            .swagger-ui .info .title { color: #3b82f6 }
+          `,
+          customSiteTitle: 'Engage Service API Documentation'
+        };
+        
+        // Setup Swagger UI routes
+        this.app.use('/api-docs', swaggerUi.serve);
+        this.app.get('/api-docs', swaggerUi.setup(swaggerDocument, options));
+        this.app.use('/swagger', swaggerUi.serve);
+        this.app.get('/swagger', swaggerUi.setup(swaggerDocument, options));
+        
+        logger.info('Swagger UI documentation loaded successfully');
+      } else {
+        logger.warn('Swagger documentation file not found at:', swaggerPath);
+        logger.info('Run "npm run generate-docs" to generate API documentation');
+        
+        // Serve a simple message if swagger.yaml doesn't exist
+        this.app.get('/api-docs', (req, res) => {
+          res.status(404).json({
+            error: 'API Documentation Not Found',
+            message: 'Swagger documentation has not been generated yet.',
+            instructions: 'Run "npm run generate-docs" to generate the API documentation'
+          });
+        });
+        
+        this.app.get('/swagger', (req, res) => {
+          res.redirect('/api-docs');
+        });
+      }
+    } catch (error) {
+      logger.error('Failed to setup Swagger UI:', error);
+      
+      // Fallback error handler
+      this.app.get('/api-docs', (req, res) => {
+        res.status(500).json({
+          error: 'Swagger UI Setup Failed',
+          message: 'There was an error setting up the API documentation',
+          details: error.message
+        });
+      });
+    }
+  }
+
+  /**
    * Setup routes
    */
   setupRoutes() {
+    // Swagger UI Documentation
+    this.setupSwaggerUI();
+    
     // API routes
     this.app.use('/api', routes);
 
@@ -236,7 +309,8 @@ class Server {
         endpoints: {
           api: '/api',
           health: '/api/health',
-          docs: '/api/docs'
+          docs: '/api-docs',
+          swagger: '/swagger'
         }
       });
     });

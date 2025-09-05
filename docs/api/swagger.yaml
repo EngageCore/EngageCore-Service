@@ -1,0 +1,5358 @@
+openapi: 3.0.3
+info:
+  title: Engage Service API
+  description: Lucky Wheel Engagement Platform API Documentation
+  version: 1.0.0
+  contact:
+    name: API Support
+    email: support@engage-service.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+servers:
+  - url: http://localhost:3000
+    description: Development server
+  - url: https://api.engage-service.com
+    description: Production server
+paths:
+  /api/admin/dashboard:
+    get:
+      tags:
+        - Admin
+      summary: Get dashboard
+      description: null
+      operationId: getAdminDashboard
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+  /api/admin/analytics:
+    get:
+      tags:
+        - Admin
+      summary: Get system dashboard overview
+      description: Get system dashboard overview
+      operationId: getAdminAnalytics
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+  /api/admin/audit-logs:
+    get:
+      tags:
+        - Admin
+      summary: Get system analytics
+      description: Get system analytics
+      operationId: getAdminAudit-logs
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+  /api/admin/health:
+    get:
+      tags:
+        - Admin
+      summary: Get system audit logs
+      description: Get system audit logs
+      operationId: getAdminHealth
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+  /api/admin/reports:
+    get:
+      tags:
+        - Admin
+      summary: Get system health status
+      description: Get system health status
+      operationId: getAdminReports
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+  /api/admin/settings:
+    get:
+      tags:
+        - Admin
+      summary: Get system reports
+      description: Get system reports
+      operationId: getAdminSettings
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+    put:
+      tags:
+        - Admin
+      summary: Get system settings
+      description: Get system settings
+      operationId: putAdminSettings
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminupdateSystemSettingsSchema'
+  /api/admin/statistics:
+    get:
+      tags:
+        - Admin
+      summary: Update system settings
+      description: Update system settings
+      operationId: getAdminStatistics
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+  /api/admin/users/analytics:
+    get:
+      tags:
+        - Admin
+      summary: Get system statistics
+      description: Get system statistics
+      operationId: getAdminAnalytics
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+  /api/admin/brands/analytics:
+    get:
+      tags:
+        - Admin
+      summary: Get user analytics
+      description: Get user analytics
+      operationId: getAdminAnalytics
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+  /api/admin/members/analytics:
+    get:
+      tags:
+        - Admin
+      summary: Get brand analytics
+      description: Get brand analytics
+      operationId: getAdminAnalytics
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+  /api/admin/transactions/analytics:
+    get:
+      tags:
+        - Admin
+      summary: Get transaction analytics
+      description: Get transaction analytics
+      operationId: getAdminAnalytics
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+  /api/admin/engagement/analytics:
+    get:
+      tags:
+        - Admin
+      summary: Get engagement analytics
+      description: Get engagement analytics
+      operationId: getAdminAnalytics
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+  /api/admin/performance:
+    get:
+      tags:
+        - Admin
+      summary: Get system performance metrics
+      description: Get system performance metrics
+      operationId: getAdminPerformance
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+  /api/admin/configuration:
+    get:
+      tags:
+        - Admin
+      summary: Get system performance metrics
+      description: Get system performance metrics
+      operationId: getAdminConfiguration
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+    put:
+      tags:
+        - Admin
+      summary: Get system configuration
+      description: Get system configuration
+      operationId: putAdminConfiguration
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminupdateSystemConfigurationSchema'
+  /api/admin/logs:
+    get:
+      tags:
+        - Admin
+      summary: Update system configuration
+      description: Update system configuration
+      operationId: getAdminLogs
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+  /api/admin/cache/clear:
+    post:
+      tags:
+        - Admin
+      summary: Get system logs
+      description: Get system logs
+      operationId: postAdminClear
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminclearCacheSchema'
+  /api/admin/maintenance:
+    post:
+      tags:
+        - Admin
+      summary: Clear system cache
+      description: Clear system cache
+      operationId: postAdminMaintenance
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminperformMaintenanceSchema'
+  /api/admin/backup/status:
+    get:
+      tags:
+        - Admin
+      summary: Perform system maintenance
+      description: Perform system maintenance
+      operationId: getAdminStatus
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+  /api/admin/backup/create:
+    post:
+      tags:
+        - Admin
+      summary: Get backup status
+      description: Get backup status
+      operationId: postAdminCreate
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdmincreateBackupSchema'
+  /api/auth/register:
+    post:
+      tags:
+        - Authentication
+      summary: Create register
+      description: null
+      operationId: postAuthRegister
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthregisterSchema'
+  /api/auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: Register a new user
+      description: Register a new user
+      operationId: postAuthLogin
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthloginSchema'
+  /api/auth/refresh:
+    post:
+      tags:
+        - Authentication
+      summary: User login
+      description: User login
+      operationId: postAuthRefresh
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthrefreshTokenSchema'
+  /api/auth/logout:
+    post:
+      tags:
+        - Authentication
+      summary: Refresh access token
+      description: Refresh access token
+      operationId: postAuthLogout
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthlogoutSchema'
+  /api/auth/forgot-password:
+    post:
+      tags:
+        - Authentication
+      summary: User logout
+      description: User logout
+      operationId: postAuthForgot-password
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthforgotPasswordSchema'
+  /api/auth/reset-password:
+    post:
+      tags:
+        - Authentication
+      summary: Request password reset
+      description: Request password reset
+      operationId: postAuthReset-password
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthresetPasswordSchema'
+  /api/auth/change-password:
+    post:
+      tags:
+        - Authentication
+      summary: Reset password with token
+      description: Reset password with token
+      operationId: postAuthChange-password
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthchangePasswordSchema'
+  /api/auth/verify-email:
+    post:
+      tags:
+        - Authentication
+      summary: Change user password
+      description: Change user password
+      operationId: postAuthVerify-email
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthverifyEmailSchema'
+  /api/auth/resend-verification:
+    post:
+      tags:
+        - Authentication
+      summary: Verify email address
+      description: Verify email address
+      operationId: postAuthResend-verification
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthresendVerificationSchema'
+  /api/auth/profile:
+    get:
+      tags:
+        - Authentication
+      summary: Resend email verification
+      description: Resend email verification
+      operationId: getAuthProfile
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+    put:
+      tags:
+        - Authentication
+      summary: Get current user profile
+      description: Get current user profile
+      operationId: putAuthProfile
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthupdateProfileSchema'
+  /api/auth/setup-2fa:
+    post:
+      tags:
+        - Authentication
+      summary: Update user profile
+      description: Update user profile
+      operationId: postAuthSetup-2fa
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Authsetup2FASchema'
+  /api/auth/verify-2fa:
+    post:
+      tags:
+        - Authentication
+      summary: Setup 2FA
+      description: Setup 2FA
+      operationId: postAuthVerify-2fa
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Authverify2FASchema'
+  /api/auth/status:
+    get:
+      tags:
+        - Authentication
+      summary: Verify 2FA
+      description: Verify 2FA
+      operationId: getAuthStatus
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+  /api/auth/validate-token:
+    post:
+      tags:
+        - Authentication
+      summary: Get authentication status
+      description: Get authentication status
+      operationId: postAuthValidate-token
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+  /api/brands/:
+    post:
+      tags:
+        - Brands
+      summary: Create a new brand
+      description: Create a new brand
+      operationId: postBrandsResource
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BrandcreateBrandSchema'
+    get:
+      tags:
+        - Brands
+      summary: Create a new brand
+      description: Create a new brand
+      operationId: getBrandsResource
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+  /api/brands/slug/{slug}:
+    get:
+      tags:
+        - Brands
+      summary: List brands with pagination and filtering
+      description: List brands with pagination and filtering
+      operationId: getBrandsSlug
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Slug identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+  /api/brands/check-slug/{slug}:
+    get:
+      tags:
+        - Brands
+      summary: Get brand by slug (public endpoint)
+      description: Get brand by slug (public endpoint)
+      operationId: getBrandsCheck-slug
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Slug identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+  /api/brands/{id}:
+    get:
+      tags:
+        - Brands
+      summary: Check slug availability
+      description: Check slug availability
+      operationId: getBrandsResource
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+    put:
+      tags:
+        - Brands
+      summary: Get brand by ID
+      description: Get brand by ID
+      operationId: putBrandsResource
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BrandupdateBrandSchema'
+    delete:
+      tags:
+        - Brands
+      summary: Delete brand
+      description: Delete brand
+      operationId: deleteBrandsResource
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /api/brands/{id}/settings:
+    put:
+      tags:
+        - Brands
+      summary: Update brand
+      description: Update brand
+      operationId: putBrandsSettings
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BrandupdateBrandSettingsSchema'
+  /api/brands/{id}/logo:
+    post:
+      tags:
+        - Brands
+      summary: Delete brand
+      description: Delete brand
+      operationId: postBrandsLogo
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BranduploadLogoSchema'
+  /api/brands/{id}/statistics:
+    get:
+      tags:
+        - Brands
+      summary: Get brand statistics
+      description: Get brand statistics
+      operationId: getBrandsStatistics
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /api/brands/{id}/regenerate-api-key:
+    post:
+      tags:
+        - Brands
+      summary: Regenerate API key
+      description: Regenerate API key
+      operationId: postBrandsRegenerate-api-key
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+  /api/brands/{id}/dashboard:
+    get:
+      tags:
+        - Brands
+      summary: Regenerate API key
+      description: Regenerate API key
+      operationId: getBrandsDashboard
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /api/brands/{id}/members/summary:
+    get:
+      tags:
+        - Brands
+      summary: Get brand dashboard data
+      description: Get brand dashboard data
+      operationId: getBrandsSummary
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /api/brands/{id}/activity:
+    get:
+      tags:
+        - Brands
+      summary: Get brand members summary
+      description: Get brand members summary
+      operationId: getBrandsActivity
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /api/brands/{id}/export:
+    get:
+      tags:
+        - Brands
+      summary: Get brand activity feed
+      description: Get brand activity feed
+      operationId: getBrandsExport
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /api/brands/{id}/clone:
+    post:
+      tags:
+        - Brands
+      summary: Export brand data
+      description: Export brand data
+      operationId: postBrandsClone
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+  /api/brands/{brandId}/members/:
+    post:
+      tags:
+        - Members
+      summary: Create a new member
+      description: Create a new member
+      operationId: postMembersResource
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MembercreateMemberSchema'
+    get:
+      tags:
+        - Members
+      summary: List members with pagination and filtering
+      description: List members with pagination and filtering
+      operationId: getMembersResource
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /api/brands/{brandId}/members/statistics:
+    get:
+      tags:
+        - Members
+      summary: Get member statistics
+      description: Get member statistics
+      operationId: getMembersStatistics
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /api/brands/{brandId}/members/check-email/{email}:
+    get:
+      tags:
+        - Members
+      summary: Check email availability
+      description: Check email availability
+      operationId: getMembersCheck-email
+      parameters:
+        - name: email
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Email identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /api/brands/{brandId}/members/import:
+    post:
+      tags:
+        - Members
+      summary: Import members from CSV/Excel
+      description: Import members from CSV/Excel
+      operationId: postMembersImport
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MemberimportMembersSchema'
+  /api/brands/{brandId}/members/export:
+    get:
+      tags:
+        - Members
+      summary: Export members data
+      description: Export members data
+      operationId: getMembersExport
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /api/brands/{brandId}/members/leaderboard:
+    get:
+      tags:
+        - Members
+      summary: Get member leaderboard
+      description: Get member leaderboard
+      operationId: getMembersLeaderboard
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /api/brands/{brandId}/members/bulk:
+    put:
+      tags:
+        - Members
+      summary: Bulk update members
+      description: Bulk update members
+      operationId: putMembersBulk
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+  /api/brands/{brandId}/members/{id}:
+    get:
+      tags:
+        - Members
+      summary: Bulk update members
+      description: Bulk update members
+      operationId: getMembersResource
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+    put:
+      tags:
+        - Members
+      summary: Update member
+      description: Update member
+      operationId: putMembersResource
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MemberupdateMemberSchema'
+    delete:
+      tags:
+        - Members
+      summary: Delete member
+      description: Delete member
+      operationId: deleteMembersResource
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /api/brands/{brandId}/members/{id}/points:
+    post:
+      tags:
+        - Members
+      summary: Update member points
+      description: Update member points
+      operationId: postMembersPoints
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MemberupdateMemberPointsSchema'
+  /api/brands/{brandId}/members/{id}/transactions:
+    get:
+      tags:
+        - Members
+      summary: Get member transactions
+      description: Get member transactions
+      operationId: getMembersTransactions
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /api/brands/{brandId}/members/{id}/profile:
+    get:
+      tags:
+        - Members
+      summary: Get member profile (public endpoint for members)
+      description: Get member profile (public endpoint for members)
+      operationId: getMembersProfile
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+  /api/brands/{brandId}/members/{id}/dashboard:
+    get:
+      tags:
+        - Members
+      summary: Get member profile (public endpoint for members)
+      description: Get member profile (public endpoint for members)
+      operationId: getMembersDashboard
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /api/brands/{brandId}/members/{id}/activate:
+    post:
+      tags:
+        - Members
+      summary: Get member dashboard data
+      description: Get member dashboard data
+      operationId: postMembersActivate
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+  /api/brands/{brandId}/members/{id}/deactivate:
+    post:
+      tags:
+        - Members
+      summary: Activate member
+      description: Activate member
+      operationId: postMembersDeactivate
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+  /api/brands/{brandId}/members/{id}/activity:
+    get:
+      tags:
+        - Members
+      summary: Deactivate member
+      description: Deactivate member
+      operationId: getMembersActivity
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /api/brands/{brandId}/missions/:
+    post:
+      tags:
+        - Missions
+      summary: Create a new mission
+      description: Create a new mission
+      operationId: postMissionsResource
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MissioncreateMissionSchema'
+    get:
+      tags:
+        - Missions
+      summary: List missions with pagination and filtering
+      description: List missions with pagination and filtering
+      operationId: getMissionsResource
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /api/brands/{brandId}/missions/bulk:
+    post:
+      tags:
+        - Missions
+      summary: Bulk create missions
+      description: Bulk create missions
+      operationId: postMissionsBulk
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MissionbulkCreateMissionsSchema'
+  /api/brands/{brandId}/missions/statistics:
+    get:
+      tags:
+        - Missions
+      summary: Get mission statistics
+      description: Get mission statistics
+      operationId: getMissionsStatistics
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /api/brands/{brandId}/missions/brand-statistics:
+    get:
+      tags:
+        - Missions
+      summary: Get brand mission statistics
+      description: Get brand mission statistics
+      operationId: getMissionsBrand-statistics
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /api/brands/{brandId}/missions/top-performing:
+    get:
+      tags:
+        - Missions
+      summary: Get top performing missions
+      description: Get top performing missions
+      operationId: getMissionsTop-performing
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /api/brands/{brandId}/missions/dashboard:
+    get:
+      tags:
+        - Missions
+      summary: Get mission dashboard data
+      description: Get mission dashboard data
+      operationId: getMissionsDashboard
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /api/brands/{brandId}/missions/{id}:
+    get:
+      tags:
+        - Missions
+      summary: Get mission dashboard data
+      description: Get mission dashboard data
+      operationId: getMissionsResource
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+    put:
+      tags:
+        - Missions
+      summary: Update mission
+      description: Update mission
+      operationId: putMissionsResource
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MissionupdateMissionSchema'
+    delete:
+      tags:
+        - Missions
+      summary: Delete mission
+      description: Delete mission
+      operationId: deleteMissionsResource
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /api/brands/{brandId}/missions/{id}/complete:
+    post:
+      tags:
+        - Missions
+      summary: Complete mission for member
+      description: Complete mission for member
+      operationId: postMissionsComplete
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MissioncompleteMissionSchema'
+  /api/brands/{brandId}/missions/{id}/eligibility/{memberId}:
+    get:
+      tags:
+        - Missions
+      summary: Check mission eligibility for member
+      description: Check mission eligibility for member
+      operationId: getMissionsEligibility
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+        - name: memberId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: MemberId identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+  /api/brands/{brandId}/missions/{id}/completions:
+    get:
+      tags:
+        - Missions
+      summary: Get mission completions
+      description: Get mission completions
+      operationId: getMissionsCompletions
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /api/brands/{brandId}/missions/{id}/assign/{memberId}:
+    post:
+      tags:
+        - Missions
+      summary: Assign mission to member
+      description: Assign mission to member
+      operationId: postMissionsAssign
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+        - name: memberId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: MemberId identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MissionassignMissionToMemberSchema'
+  /api/brands/{brandId}/missions/{id}/clone:
+    post:
+      tags:
+        - Missions
+      summary: Clone mission
+      description: Clone mission
+      operationId: postMissionsClone
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+  /api/brands/{brandId}/missions/{id}/activate:
+    post:
+      tags:
+        - Missions
+      summary: Clone mission
+      description: Clone mission
+      operationId: postMissionsActivate
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+  /api/brands/{brandId}/missions/{id}/deactivate:
+    post:
+      tags:
+        - Missions
+      summary: Activate mission
+      description: Activate mission
+      operationId: postMissionsDeactivate
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+  /api/brands/{brandId}/missions/{id}/export:
+    get:
+      tags:
+        - Missions
+      summary: Deactivate mission
+      description: Deactivate mission
+      operationId: getMissionsExport
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /api/brands/{brandId}/missions/members/{memberId}/missions:
+    get:
+      tags:
+        - Missions
+      summary: Export mission data
+      description: Export mission data
+      operationId: getMissionsMissions
+      parameters:
+        - name: memberId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: MemberId identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+  /api/brands/{brandId}/missions/members/{memberId}/mission-completions:
+    get:
+      tags:
+        - Missions
+      summary: Get member mission completions
+      description: Get member mission completions
+      operationId: getMissionsMission-completions
+      parameters:
+        - name: memberId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: MemberId identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+  /api/brands/{brandId}/missions/{id}/claim-reward:
+    post:
+      tags:
+        - Missions
+      summary: Claim mission reward
+      description: Claim mission reward
+      operationId: postMissionsClaim-reward
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MissionclaimMissionRewardSchema'
+  /api/brands/{brandId}/transactions/:
+    post:
+      tags:
+        - Transactions
+      summary: Create a new transaction
+      description: Create a new transaction
+      operationId: postTransactionsResource
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransactioncreateTransactionSchema'
+    get:
+      tags:
+        - Transactions
+      summary: List transactions with pagination and filtering
+      description: List transactions with pagination and filtering
+      operationId: getTransactionsResource
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /api/brands/{brandId}/transactions/bulk:
+    post:
+      tags:
+        - Transactions
+      summary: Bulk create transactions
+      description: Bulk create transactions
+      operationId: postTransactionsBulk
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransactionbulkCreateTransactionsSchema'
+  /api/brands/{brandId}/transactions/statistics:
+    get:
+      tags:
+        - Transactions
+      summary: Get transaction statistics
+      description: Get transaction statistics
+      operationId: getTransactionsStatistics
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /api/brands/{brandId}/transactions/trends:
+    get:
+      tags:
+        - Transactions
+      summary: Get transaction trends
+      description: Get transaction trends
+      operationId: getTransactionsTrends
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /api/brands/{brandId}/transactions/top-spenders:
+    get:
+      tags:
+        - Transactions
+      summary: Get top spending members
+      description: Get top spending members
+      operationId: getTransactionsTop-spenders
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /api/brands/{brandId}/transactions/type-breakdown:
+    get:
+      tags:
+        - Transactions
+      summary: Get transaction type breakdown
+      description: Get transaction type breakdown
+      operationId: getTransactionsType-breakdown
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /api/brands/{brandId}/transactions/pending:
+    get:
+      tags:
+        - Transactions
+      summary: Get pending transactions
+      description: Get pending transactions
+      operationId: getTransactionsPending
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /api/brands/{brandId}/transactions/summary:
+    get:
+      tags:
+        - Transactions
+      summary: Get transaction summary
+      description: Get transaction summary
+      operationId: getTransactionsSummary
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /api/brands/{brandId}/transactions/dashboard:
+    get:
+      tags:
+        - Transactions
+      summary: Get transaction dashboard data
+      description: Get transaction dashboard data
+      operationId: getTransactionsDashboard
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /api/brands/{brandId}/transactions/analytics:
+    get:
+      tags:
+        - Transactions
+      summary: Get transaction analytics
+      description: Get transaction analytics
+      operationId: getTransactionsAnalytics
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /api/brands/{brandId}/transactions/export:
+    get:
+      tags:
+        - Transactions
+      summary: Export transactions
+      description: Export transactions
+      operationId: getTransactionsExport
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /api/brands/{brandId}/transactions/{id}:
+    get:
+      tags:
+        - Transactions
+      summary: Get transaction by ID
+      description: Get transaction by ID
+      operationId: getTransactionsResource
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+    put:
+      tags:
+        - Transactions
+      summary: Update transaction
+      description: Update transaction
+      operationId: putTransactionsResource
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransactionupdateTransactionSchema'
+  /api/brands/{brandId}/transactions/{id}/reverse:
+    post:
+      tags:
+        - Transactions
+      summary: Reverse transaction
+      description: Reverse transaction
+      operationId: postTransactionsReverse
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransactionreverseTransactionSchema'
+  /api/brands/{brandId}/transactions/{id}/process:
+    post:
+      tags:
+        - Transactions
+      summary: Process pending transaction
+      description: Process pending transaction
+      operationId: postTransactionsProcess
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransactionprocessPendingTransactionSchema'
+  /api/brands/{brandId}/transactions/{id}/audit-trail:
+    get:
+      tags:
+        - Transactions
+      summary: Get transaction audit trail
+      description: Get transaction audit trail
+      operationId: getTransactionsAudit-trail
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /api/brands/{brandId}/transactions/validate-amount:
+    post:
+      tags:
+        - Transactions
+      summary: Validate transaction amount
+      description: Validate transaction amount
+      operationId: postTransactionsValidate-amount
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransactionvalidateTransactionAmountSchema'
+  /api/brands/{brandId}/transactions/adjustment:
+    post:
+      tags:
+        - Transactions
+      summary: Create adjustment transaction
+      description: Create adjustment transaction
+      operationId: postTransactionsAdjustment
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransactioncreateAdjustmentTransactionSchema'
+  /api/brands/{brandId}/transactions/members/{memberId}/transactions:
+    get:
+      tags:
+        - Transactions
+      summary: Get member transactions
+      description: Get member transactions
+      operationId: getTransactionsTransactions
+      parameters:
+        - name: memberId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: MemberId identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+  /api/brands/{brandId}/transactions/members/{memberId}/points-balance:
+    get:
+      tags:
+        - Transactions
+      summary: Get member points balance
+      description: Get member points balance
+      operationId: getTransactionsPoints-balance
+      parameters:
+        - name: memberId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: MemberId identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+  /api/brands/{brandId}/transactions/members/{memberId}/transaction-analytics:
+    get:
+      tags:
+        - Transactions
+      summary: Get member transaction analytics
+      description: Get member transaction analytics
+      operationId: getTransactionsTransaction-analytics
+      parameters:
+        - name: memberId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: MemberId identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+  /api/users/:
+    post:
+      tags:
+        - Users
+      summary: 'Create '
+      description: null
+      operationId: postUsersResource
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UsercreateUserSchema'
+    get:
+      tags:
+        - Users
+      summary: Create a new user
+      description: Create a new user
+      operationId: getUsersResource
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+  /api/users/statistics:
+    get:
+      tags:
+        - Users
+      summary: List users with pagination and filtering
+      description: List users with pagination and filtering
+      operationId: getUsersStatistics
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+  /api/users/current:
+    get:
+      tags:
+        - Users
+      summary: Get user statistics
+      description: Get user statistics
+      operationId: getUsersCurrent
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+    put:
+      tags:
+        - Users
+      summary: Get current user profile
+      description: Get current user profile
+      operationId: putUsersCurrent
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserupdateCurrentUserSchema'
+  /api/users/current/dashboard:
+    get:
+      tags:
+        - Users
+      summary: Update current user profile
+      description: Update current user profile
+      operationId: getUsersDashboard
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+  /api/users/current/sessions:
+    get:
+      tags:
+        - Users
+      summary: Get current user dashboard
+      description: Get current user dashboard
+      operationId: getUsersSessions
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+  /api/users/bulk-update:
+    post:
+      tags:
+        - Users
+      summary: Get current user sessions
+      description: Get current user sessions
+      operationId: postUsersBulk-update
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserbulkUpdateUsersSchema'
+  /api/users/export:
+    get:
+      tags:
+        - Users
+      summary: Bulk update users
+      description: Bulk update users
+      operationId: getUsersExport
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+  /api/users/{id}:
+    get:
+      tags:
+        - Users
+      summary: Export users
+      description: Export users
+      operationId: getUsersResource
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+    put:
+      tags:
+        - Users
+      summary: Get user by ID
+      description: Get user by ID
+      operationId: putUsersResource
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserupdateUserSchema'
+    delete:
+      tags:
+        - Users
+      summary: Update user
+      description: Update user
+      operationId: deleteUsersResource
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+  /api/users/{id}/change-password:
+    post:
+      tags:
+        - Users
+      summary: Delete user
+      description: Delete user
+      operationId: postUsersChange-password
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserchangeUserPasswordSchema'
+  /api/users/{id}/activity-log:
+    get:
+      tags:
+        - Users
+      summary: Change user password
+      description: Change user password
+      operationId: getUsersActivity-log
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+  /api/users/{id}/update-status:
+    post:
+      tags:
+        - Users
+      summary: Get user activity log
+      description: Get user activity log
+      operationId: postUsersUpdate-status
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserupdateUserStatusSchema'
+  /api/users/{id}/activate:
+    post:
+      tags:
+        - Users
+      summary: Update user status
+      description: Update user status
+      operationId: postUsersActivate
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UseractivateUserSchema'
+  /api/users/{id}/deactivate:
+    post:
+      tags:
+        - Users
+      summary: Activate user
+      description: Activate user
+      operationId: postUsersDeactivate
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserdeactivateUserSchema'
+  /api/users/{id}/permissions:
+    get:
+      tags:
+        - Users
+      summary: Deactivate user
+      description: Deactivate user
+      operationId: getUsersPermissions
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+  /api/users/{id}/roles:
+    get:
+      tags:
+        - Users
+      summary: Get user permissions
+      description: Get user permissions
+      operationId: getUsersRoles
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+  /api/brands/{brandId}/wheels/:
+    post:
+      tags:
+        - Wheels
+      summary: Create a new wheel
+      description: Create a new wheel
+      operationId: postWheelsResource
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WheelcreateWheelSchema'
+    get:
+      tags:
+        - Wheels
+      summary: List wheels with pagination and filtering
+      description: List wheels with pagination and filtering
+      operationId: getWheelsResource
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /api/brands/{brandId}/wheels/validate-probabilities:
+    post:
+      tags:
+        - Wheels
+      summary: Validate wheel probabilities
+      description: Validate wheel probabilities
+      operationId: postWheelsValidate-probabilities
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WheelvalidateWheelProbabilitiesSchema'
+  /api/brands/{brandId}/wheels/{id}:
+    get:
+      tags:
+        - Wheels
+      summary: Get wheel by ID
+      description: Get wheel by ID
+      operationId: getWheelsResource
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+    put:
+      tags:
+        - Wheels
+      summary: Get wheel by ID
+      description: Get wheel by ID
+      operationId: putWheelsResource
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WheelupdateWheelSchema'
+    delete:
+      tags:
+        - Wheels
+      summary: Delete wheel
+      description: Delete wheel
+      operationId: deleteWheelsResource
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /api/brands/{brandId}/wheels/{id}/items:
+    put:
+      tags:
+        - Wheels
+      summary: Update wheel items
+      description: Update wheel items
+      operationId: putWheelsItems
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WheelupdateWheelItemsSchema'
+  /api/brands/{brandId}/wheels/{id}/spin:
+    post:
+      tags:
+        - Wheels
+      summary: Spin wheel for member
+      description: Spin wheel for member
+      operationId: postWheelsSpin
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WheelspinWheelSchema'
+  /api/brands/{brandId}/wheels/{id}/eligibility/{memberId}:
+    get:
+      tags:
+        - Wheels
+      summary: Check spin eligibility for member
+      description: Check spin eligibility for member
+      operationId: getWheelsEligibility
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+        - name: memberId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: MemberId identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+  /api/brands/{brandId}/wheels/{id}/spins:
+    get:
+      tags:
+        - Wheels
+      summary: Get spin history for wheel
+      description: Get spin history for wheel
+      operationId: getWheelsSpins
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /api/brands/{brandId}/wheels/{id}/statistics:
+    get:
+      tags:
+        - Wheels
+      summary: Get wheel statistics
+      description: Get wheel statistics
+      operationId: getWheelsStatistics
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /api/brands/{brandId}/wheels/{id}/items/performance:
+    get:
+      tags:
+        - Wheels
+      summary: Get item performance statistics
+      description: Get item performance statistics
+      operationId: getWheelsPerformance
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /api/brands/{brandId}/wheels/{id}/members/{memberId}/daily-count:
+    get:
+      tags:
+        - Wheels
+      summary: Get member daily spin count
+      description: Get member daily spin count
+      operationId: getWheelsDaily-count
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+        - name: memberId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: MemberId identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+  /api/brands/{brandId}/wheels/{id}/dashboard:
+    get:
+      tags:
+        - Wheels
+      summary: Get wheel dashboard data
+      description: Get wheel dashboard data
+      operationId: getWheelsDashboard
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /api/brands/{brandId}/wheels/{id}/clone:
+    post:
+      tags:
+        - Wheels
+      summary: Get wheel dashboard data
+      description: Get wheel dashboard data
+      operationId: postWheelsClone
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+  /api/brands/{brandId}/wheels/{id}/activate:
+    post:
+      tags:
+        - Wheels
+      summary: Clone wheel
+      description: Clone wheel
+      operationId: postWheelsActivate
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+  /api/brands/{brandId}/wheels/{id}/deactivate:
+    post:
+      tags:
+        - Wheels
+      summary: Activate wheel
+      description: Activate wheel
+      operationId: postWheelsDeactivate
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+  /api/brands/{brandId}/wheels/{id}/leaderboard:
+    get:
+      tags:
+        - Wheels
+      summary: Deactivate wheel
+      description: Deactivate wheel
+      operationId: getWheelsLeaderboard
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /api/brands/{brandId}/wheels/{id}/export:
+    get:
+      tags:
+        - Wheels
+      summary: Get wheel leaderboard
+      description: Get wheel leaderboard
+      operationId: getWheelsExport
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /api/brands/{brandId}/wheels/members/{memberId}/spins:
+    get:
+      tags:
+        - Wheels
+      summary: Get member spin history
+      description: Get member spin history
+      operationId: getWheelsSpins
+      parameters:
+        - name: memberId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: MemberId identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        first_name:
+          type: string
+        last_name:
+          type: string
+        role:
+          type: string
+          enum:
+            - super_admin
+            - brand_admin
+            - brand_manager
+            - brand_user
+        status:
+          type: string
+          enum:
+            - active
+            - inactive
+            - suspended
+        email_verified:
+          type: boolean
+        last_login:
+          type: string
+          format: date-time
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    Brand:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        slug:
+          type: string
+        description:
+          type: string
+        logo_url:
+          type: string
+          format: uri
+        website_url:
+          type: string
+          format: uri
+        contact_email:
+          type: string
+          format: email
+        contact_phone:
+          type: string
+        status:
+          type: string
+          enum:
+            - active
+            - inactive
+            - suspended
+        settings:
+          type: object
+        points_currency_name:
+          type: string
+        points_currency_symbol:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    Member:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        brand_id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+        date_of_birth:
+          type: string
+          format: date
+        gender:
+          type: string
+        status:
+          type: string
+          enum:
+            - active
+            - inactive
+            - suspended
+        points_balance:
+          type: integer
+        total_points_earned:
+          type: integer
+        total_points_redeemed:
+          type: integer
+        tier_level:
+          type: string
+        join_date:
+          type: string
+          format: date-time
+        last_activity:
+          type: string
+          format: date-time
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    Wheel:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        brand_id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+          enum:
+            - active
+            - inactive
+            - draft
+        max_spins_per_day:
+          type: integer
+        max_spins_per_member:
+          type: integer
+        cost_per_spin:
+          type: integer
+        start_date:
+          type: string
+          format: date-time
+        end_date:
+          type: string
+          format: date-time
+        settings:
+          type: object
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    Mission:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        brand_id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+        type:
+          type: string
+          enum:
+            - daily
+            - weekly
+            - monthly
+            - one_time
+            - recurring
+        status:
+          type: string
+          enum:
+            - active
+            - inactive
+            - draft
+            - completed
+            - expired
+        target_value:
+          type: integer
+        target_unit:
+          type: string
+        reward_points:
+          type: integer
+        reward_description:
+          type: string
+        start_date:
+          type: string
+          format: date-time
+        end_date:
+          type: string
+          format: date-time
+        max_completions:
+          type: integer
+        max_completions_per_member:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    Transaction:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        brand_id:
+          type: string
+          format: uuid
+        member_id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum:
+            - earn
+            - redeem
+            - adjustment
+            - bonus
+            - penalty
+        status:
+          type: string
+          enum:
+            - pending
+            - completed
+            - failed
+            - cancelled
+            - reversed
+        amount:
+          type: integer
+        balance_after:
+          type: integer
+        description:
+          type: string
+        reference_id:
+          type: string
+        reference_type:
+          type: string
+        processed_at:
+          type: string
+          format: date-time
+        expires_at:
+          type: string
+          format: date-time
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    RegisterRequest:
+      type: object
+      required:
+        - first_name
+        - last_name
+        - email
+        - password
+        - confirm_password
+      properties:
+        first_name:
+          type: string
+          minLength: 2
+          maxLength: 50
+        last_name:
+          type: string
+          minLength: 2
+          maxLength: 50
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 8
+          maxLength: 128
+        confirm_password:
+          type: string
+        role:
+          type: string
+          enum:
+            - brand_admin
+            - brand_manager
+            - brand_user
+        brand_id:
+          type: string
+          format: uuid
+        phone:
+          type: string
+        timezone:
+          type: string
+          default: UTC
+        language:
+          type: string
+          default: en
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+        remember_me:
+          type: boolean
+          default: false
+    CreateBrandRequest:
+      type: object
+      required:
+        - name
+        - slug
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 255
+        slug:
+          type: string
+          minLength: 2
+          maxLength: 255
+        description:
+          type: string
+        website_url:
+          type: string
+          format: uri
+        contact_email:
+          type: string
+          format: email
+        contact_phone:
+          type: string
+        points_currency_name:
+          type: string
+          default: Points
+        points_currency_symbol:
+          type: string
+          default: pts
+        timezone:
+          type: string
+          default: UTC
+        language:
+          type: string
+          default: en
+    AuthResponse:
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/User'
+        tokens:
+          type: object
+          properties:
+            access_token:
+              type: string
+            refresh_token:
+              type: string
+            expires_in:
+              type: integer
+    PaginatedResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items: {}
+        pagination:
+          type: object
+          properties:
+            page:
+              type: integer
+            limit:
+              type: integer
+            total:
+              type: integer
+            pages:
+              type: integer
+            hasNext:
+              type: boolean
+            hasPrev:
+              type: boolean
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token for authentication
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key for brand-specific operations
+  responses:
+    Success:
+      description: Successful operation
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+              message:
+                type: string
+              data:
+                type: object
+              timestamp:
+                type: string
+                format: date-time
+    Error:
+      description: Error response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              message:
+                type: string
+              error:
+                type: string
+              code:
+                type: string
+              timestamp:
+                type: string
+                format: date-time
+    ValidationError:
+      description: Validation error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              message:
+                type: string
+                example: Validation failed
+              errors:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    field:
+                      type: string
+                    message:
+                      type: string
+              timestamp:
+                type: string
+                format: date-time
+    Unauthorized:
+      description: Authentication required
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              message:
+                type: string
+                example: Authentication required
+              code:
+                type: string
+                example: UNAUTHORIZED
+              timestamp:
+                type: string
+                format: date-time
+    Forbidden:
+      description: Insufficient permissions
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              message:
+                type: string
+                example: Insufficient permissions
+              code:
+                type: string
+                example: FORBIDDEN
+              timestamp:
+                type: string
+                format: date-time
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              message:
+                type: string
+                example: Resource not found
+              code:
+                type: string
+                example: NOT_FOUND
+              timestamp:
+                type: string
+                format: date-time
+    RateLimit:
+      description: Rate limit exceeded
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              message:
+                type: string
+                example: Rate limit exceeded
+              code:
+                type: string
+                example: RATE_LIMIT_EXCEEDED
+              retryAfter:
+                type: integer
+                example: 60
+              timestamp:
+                type: string
+                format: date-time
+tags:
+  - name: Authentication
+    description: User authentication and authorization
+  - name: Brands
+    description: Brand management operations
+  - name: Users
+    description: User management operations
+  - name: Members
+    description: Member management and loyalty operations
+  - name: Wheels
+    description: Wheel configuration and spinning operations
+  - name: Missions
+    description: Mission and reward management
+  - name: Transactions
+    description: Points and transaction management
+  - name: Admin
+    description: Administrative operations
