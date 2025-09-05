@@ -78,15 +78,14 @@ class DatabaseSeeder {
       
       const result = await this.client.query(`
         INSERT INTO users (
-          email, password_hash, first_name, last_name, is_admin, 
-          email_verified, is_active, points, total_spins, daily_spin_count,
-          created_at, updated_at
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+          email, password_hash, first_name, last_name, role, status,
+          email_verified, created_at, updated_at
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
         ON CONFLICT (email) DO NOTHING
         RETURNING id
       `, [
         user.email, passwordHash, user.first_name, user.last_name,
-        user.is_admin, user.email_verified, true, 0, 0, 0,
+        user.is_admin ? 'super_admin' : 'brand_admin', 'active', user.email_verified,
         new Date(), new Date()
       ]);
 
@@ -106,28 +105,30 @@ class DatabaseSeeder {
     }
   }
 
-  async seedMembershipLevels() {
-    logger.info('Seeding membership levels...');
+  async checkDatabaseStatus() {
+    logger.info('Checking database status...');
     
-    const levels = [
-      { name: 'Bronze', min_points: 0, benefits: 'Basic rewards and discounts' },
-      { name: 'Silver', min_points: 1000, benefits: 'Enhanced rewards and priority support' },
-      { name: 'Gold', min_points: 5000, benefits: 'Premium rewards and exclusive offers' },
-      { name: 'Platinum', min_points: 10000, benefits: 'VIP treatment and maximum rewards' }
-    ];
-
-    for (const level of levels) {
-      const result = await this.client.query(`
-        INSERT INTO membership_levels (name, min_points, benefits, created_at, updated_at)
-        VALUES ($1, $2, $3, $4, $5)
-        ON CONFLICT (name) DO NOTHING
-        RETURNING id
-      `, [level.name, level.min_points, level.benefits, new Date(), new Date()]);
-
-      if (result.rows.length > 0) {
-        logger.info(`Created membership level: ${level.name}`);
-      }
-    }
+    // Check if data already exists from migrations
+    const userCount = await this.client.query('SELECT COUNT(*) FROM users');
+    const brandCount = await this.client.query('SELECT COUNT(*) FROM brands');
+    const memberCount = await this.client.query('SELECT COUNT(*) FROM members');
+    const wheelCount = await this.client.query('SELECT COUNT(*) FROM wheels');
+    const missionCount = await this.client.query('SELECT COUNT(*) FROM missions');
+    
+    logger.info(`Database already contains:`);
+    logger.info(`- Users: ${userCount.rows[0].count}`);
+    logger.info(`- Brands: ${brandCount.rows[0].count}`);
+    logger.info(`- Members: ${memberCount.rows[0].count}`);
+    logger.info(`- Wheels: ${wheelCount.rows[0].count}`);
+    logger.info(`- Missions: ${missionCount.rows[0].count}`);
+    
+    return {
+      users: parseInt(userCount.rows[0].count),
+      brands: parseInt(brandCount.rows[0].count),
+      members: parseInt(memberCount.rows[0].count),
+      wheels: parseInt(wheelCount.rows[0].count),
+      missions: parseInt(missionCount.rows[0].count)
+    };
   }
 
   async seedMembers() {
@@ -679,24 +680,26 @@ class DatabaseSeeder {
       
       logger.info('Starting database seeding...');
       
-      await this.seedUsers();
-      await this.seedBrands();
-      await this.seedMembers();
-      await this.seedWheels();
-      await this.seedMissions();
-      await this.seedTransactions();
+      // Check if database is already populated from migrations
+      const dbStatus = await this.checkDatabaseStatus();
+      
+      if (dbStatus.users > 0 && dbStatus.brands > 0) {
+        logger.info('Database already contains seed data from migrations. Skipping additional seeding.');
+      } else {
+        await this.seedUsers();
+        logger.info('Additional seed data created.');
+      }
       
       logger.info('Database seeding completed successfully!');
       
       // Print summary
-      console.log('\n=== Seed Data Summary ===');
-      console.log(`Users created: ${this.seedData.users.length}`);
-      console.log(`Brands created: ${this.seedData.brands.length}`);
-      console.log(`Members created: ${this.seedData.members.length}`);
-      console.log(`Wheels created: ${this.seedData.wheels.length}`);
-      console.log(`Wheel items created: ${this.seedData.wheelItems.length}`);
-      console.log(`Missions created: ${this.seedData.missions.length}`);
-      console.log('========================\n');
+      console.log('\n=== Database Status Summary ===');
+      console.log(`Users: ${dbStatus.users}`);
+      console.log(`Brands: ${dbStatus.brands}`);
+      console.log(`Members: ${dbStatus.members}`);
+      console.log(`Wheels: ${dbStatus.wheels}`);
+      console.log(`Missions: ${dbStatus.missions}`);
+      console.log('===============================\n');
       
       console.log('Test Accounts:');
       console.log('Super Admin: admin@engage-service.com / Admin123!');
