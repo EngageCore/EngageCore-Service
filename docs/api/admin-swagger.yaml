@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
-  title: Engage Service API
-  description: Complete Lucky Wheel Engagement Platform API Documentation
+  title: Engage Service Admin API
+  description: Administrative API for managing brands, users, and system operations
   version: 1.0.0
   contact:
     name: API Support
@@ -11,10 +11,344 @@ info:
     url: https://opensource.org/licenses/MIT
 servers:
   - url: http://localhost:3000
-    description: Development server
-  - url: https://api.engage-service.com
-    description: Production server
+    description: Development server - Admin Portal
+  - url: https://admin.engage-service.com
+    description: Production server - Admin Portal
 paths:
+  /api/auth/register:
+    post:
+      tags:
+        - Authentication
+      summary: Create register
+      description: null
+      operationId: postAuthRegister
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthregisterSchema'
+  /api/auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: Register a new user
+      description: Register a new user
+      operationId: postAuthLogin
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthloginSchema'
+  /api/auth/refresh:
+    post:
+      tags:
+        - Authentication
+      summary: User login
+      description: User login
+      operationId: postAuthRefresh
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthrefreshTokenSchema'
+  /api/auth/logout:
+    post:
+      tags:
+        - Authentication
+      summary: Refresh access token
+      description: Refresh access token
+      operationId: postAuthLogout
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthlogoutSchema'
+  /api/auth/forgot-password:
+    post:
+      tags:
+        - Authentication
+      summary: User logout
+      description: User logout
+      operationId: postAuthForgot-password
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthforgotPasswordSchema'
+  /api/auth/reset-password:
+    post:
+      tags:
+        - Authentication
+      summary: Request password reset
+      description: Request password reset
+      operationId: postAuthReset-password
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthresetPasswordSchema'
+  /api/auth/change-password:
+    post:
+      tags:
+        - Authentication
+      summary: Reset password with token
+      description: Reset password with token
+      operationId: postAuthChange-password
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthchangePasswordSchema'
+  /api/auth/profile:
+    get:
+      tags:
+        - Authentication
+      summary: Change user password
+      description: Change user password
+      operationId: getAuthProfile
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+    put:
+      tags:
+        - Authentication
+      summary: Get current user profile
+      description: Get current user profile
+      operationId: putAuthProfile
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthupdateProfileSchema'
+  /api/auth/status:
+    get:
+      tags:
+        - Authentication
+      summary: Update user profile
+      description: Update user profile
+      operationId: getAuthStatus
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+  /api/auth/validate-token:
+    post:
+      tags:
+        - Authentication
+      summary: Get authentication status
+      description: Get authentication status
+      operationId: postAuthValidate-token
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
   /api/admin/dashboard:
     get:
       tags:
@@ -790,805 +1124,6 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/TiercreateTierSchema'
-  /api/auth/register:
-    post:
-      tags:
-        - Authentication
-      summary: Create register
-      description: null
-      operationId: postAuthRegister
-      parameters: []
-      responses:
-        '200':
-          $ref: '#/components/responses/Success'
-        '201':
-          $ref: '#/components/responses/Success'
-        '400':
-          $ref: '#/components/responses/ValidationError'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '429':
-          $ref: '#/components/responses/RateLimit'
-        '500':
-          $ref: '#/components/responses/Error'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AuthregisterSchema'
-  /api/auth/login:
-    post:
-      tags:
-        - Authentication
-      summary: Register a new user
-      description: Register a new user
-      operationId: postAuthLogin
-      parameters: []
-      responses:
-        '200':
-          $ref: '#/components/responses/Success'
-        '201':
-          $ref: '#/components/responses/Success'
-        '400':
-          $ref: '#/components/responses/ValidationError'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '429':
-          $ref: '#/components/responses/RateLimit'
-        '500':
-          $ref: '#/components/responses/Error'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AuthloginSchema'
-  /api/auth/refresh:
-    post:
-      tags:
-        - Authentication
-      summary: User login
-      description: User login
-      operationId: postAuthRefresh
-      parameters: []
-      responses:
-        '200':
-          $ref: '#/components/responses/Success'
-        '201':
-          $ref: '#/components/responses/Success'
-        '400':
-          $ref: '#/components/responses/ValidationError'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '429':
-          $ref: '#/components/responses/RateLimit'
-        '500':
-          $ref: '#/components/responses/Error'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AuthrefreshTokenSchema'
-  /api/auth/logout:
-    post:
-      tags:
-        - Authentication
-      summary: Refresh access token
-      description: Refresh access token
-      operationId: postAuthLogout
-      parameters: []
-      responses:
-        '200':
-          $ref: '#/components/responses/Success'
-        '201':
-          $ref: '#/components/responses/Success'
-        '400':
-          $ref: '#/components/responses/ValidationError'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '429':
-          $ref: '#/components/responses/RateLimit'
-        '500':
-          $ref: '#/components/responses/Error'
-      security:
-        - BearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AuthlogoutSchema'
-  /api/auth/forgot-password:
-    post:
-      tags:
-        - Authentication
-      summary: User logout
-      description: User logout
-      operationId: postAuthForgot-password
-      parameters: []
-      responses:
-        '200':
-          $ref: '#/components/responses/Success'
-        '201':
-          $ref: '#/components/responses/Success'
-        '400':
-          $ref: '#/components/responses/ValidationError'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '429':
-          $ref: '#/components/responses/RateLimit'
-        '500':
-          $ref: '#/components/responses/Error'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AuthforgotPasswordSchema'
-  /api/auth/reset-password:
-    post:
-      tags:
-        - Authentication
-      summary: Request password reset
-      description: Request password reset
-      operationId: postAuthReset-password
-      parameters: []
-      responses:
-        '200':
-          $ref: '#/components/responses/Success'
-        '201':
-          $ref: '#/components/responses/Success'
-        '400':
-          $ref: '#/components/responses/ValidationError'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '429':
-          $ref: '#/components/responses/RateLimit'
-        '500':
-          $ref: '#/components/responses/Error'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AuthresetPasswordSchema'
-  /api/auth/change-password:
-    post:
-      tags:
-        - Authentication
-      summary: Reset password with token
-      description: Reset password with token
-      operationId: postAuthChange-password
-      parameters: []
-      responses:
-        '200':
-          $ref: '#/components/responses/Success'
-        '201':
-          $ref: '#/components/responses/Success'
-        '400':
-          $ref: '#/components/responses/ValidationError'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '429':
-          $ref: '#/components/responses/RateLimit'
-        '500':
-          $ref: '#/components/responses/Error'
-      security:
-        - BearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AuthchangePasswordSchema'
-  /api/auth/profile:
-    get:
-      tags:
-        - Authentication
-      summary: Change user password
-      description: Change user password
-      operationId: getAuthProfile
-      parameters: []
-      responses:
-        '200':
-          $ref: '#/components/responses/Success'
-        '400':
-          $ref: '#/components/responses/ValidationError'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '429':
-          $ref: '#/components/responses/RateLimit'
-        '500':
-          $ref: '#/components/responses/Error'
-      security:
-        - BearerAuth: []
-    put:
-      tags:
-        - Authentication
-      summary: Get current user profile
-      description: Get current user profile
-      operationId: putAuthProfile
-      parameters: []
-      responses:
-        '200':
-          $ref: '#/components/responses/Success'
-        '400':
-          $ref: '#/components/responses/ValidationError'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '429':
-          $ref: '#/components/responses/RateLimit'
-        '500':
-          $ref: '#/components/responses/Error'
-      security:
-        - BearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AuthupdateProfileSchema'
-  /api/auth/status:
-    get:
-      tags:
-        - Authentication
-      summary: Update user profile
-      description: Update user profile
-      operationId: getAuthStatus
-      parameters: []
-      responses:
-        '200':
-          $ref: '#/components/responses/Success'
-        '400':
-          $ref: '#/components/responses/ValidationError'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '429':
-          $ref: '#/components/responses/RateLimit'
-        '500':
-          $ref: '#/components/responses/Error'
-      security:
-        - BearerAuth: []
-  /api/auth/validate-token:
-    post:
-      tags:
-        - Authentication
-      summary: Get authentication status
-      description: Get authentication status
-      operationId: postAuthValidate-token
-      parameters: []
-      responses:
-        '200':
-          $ref: '#/components/responses/Success'
-        '201':
-          $ref: '#/components/responses/Success'
-        '400':
-          $ref: '#/components/responses/ValidationError'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '429':
-          $ref: '#/components/responses/RateLimit'
-        '500':
-          $ref: '#/components/responses/Error'
-      security:
-        - BearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-  /api/member/profile:
-    get:
-      tags:
-        - Member Portal
-      summary: Get member profile and points
-      description: Get member profile and points
-      operationId: getMemberPortalProfile
-      parameters: []
-      responses:
-        '200':
-          $ref: '#/components/responses/Success'
-        '400':
-          $ref: '#/components/responses/ValidationError'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '429':
-          $ref: '#/components/responses/RateLimit'
-        '500':
-          $ref: '#/components/responses/Error'
-      security:
-        - BearerAuth: []
-    put:
-      tags:
-        - Member Portal
-      summary: Get member profile and points
-      description: Get member profile and points
-      operationId: putMemberPortalProfile
-      parameters: []
-      responses:
-        '200':
-          $ref: '#/components/responses/Success'
-        '400':
-          $ref: '#/components/responses/ValidationError'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '429':
-          $ref: '#/components/responses/RateLimit'
-        '500':
-          $ref: '#/components/responses/Error'
-      security:
-        - BearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/MemberupdateMemberProfileSchema'
-  /api/member/points:
-    get:
-      tags:
-        - Member Portal
-      summary: Update member profile
-      description: Update member profile
-      operationId: getMemberPortalPoints
-      parameters: []
-      responses:
-        '200':
-          $ref: '#/components/responses/Success'
-        '400':
-          $ref: '#/components/responses/ValidationError'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '429':
-          $ref: '#/components/responses/RateLimit'
-        '500':
-          $ref: '#/components/responses/Error'
-      security:
-        - BearerAuth: []
-  /api/member/tier:
-    get:
-      tags:
-        - Member Portal
-      summary: Get member points balance and history
-      description: Get member points balance and history
-      operationId: getMemberPortalTier
-      parameters: []
-      responses:
-        '200':
-          $ref: '#/components/responses/Success'
-        '400':
-          $ref: '#/components/responses/ValidationError'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '429':
-          $ref: '#/components/responses/RateLimit'
-        '500':
-          $ref: '#/components/responses/Error'
-      security:
-        - BearerAuth: []
-  /api/member/missions:
-    get:
-      tags:
-        - Member Portal
-      summary: Get member tier status and progress
-      description: Get member tier status and progress
-      operationId: getMemberPortalMissions
-      parameters: []
-      responses:
-        '200':
-          $ref: '#/components/responses/Success'
-        '400':
-          $ref: '#/components/responses/ValidationError'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '429':
-          $ref: '#/components/responses/RateLimit'
-        '500':
-          $ref: '#/components/responses/Error'
-      security:
-        - BearerAuth: []
-  /api/member/missions/{id}/complete:
-    post:
-      tags:
-        - Member Portal
-      summary: Get available missions for member
-      description: Get available missions for member
-      operationId: postMemberPortalComplete
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-          description: Id identifier
-      responses:
-        '200':
-          $ref: '#/components/responses/Success'
-        '201':
-          $ref: '#/components/responses/Success'
-        '400':
-          $ref: '#/components/responses/ValidationError'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '429':
-          $ref: '#/components/responses/RateLimit'
-        '500':
-          $ref: '#/components/responses/Error'
-      security:
-        - BearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/MissioncompleteMissionSchema'
-  /api/member/missions/completed:
-    get:
-      tags:
-        - Member Portal
-      summary: Complete a mission
-      description: Complete a mission
-      operationId: getMemberPortalCompleted
-      parameters: []
-      responses:
-        '200':
-          $ref: '#/components/responses/Success'
-        '400':
-          $ref: '#/components/responses/ValidationError'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '429':
-          $ref: '#/components/responses/RateLimit'
-        '500':
-          $ref: '#/components/responses/Error'
-      security:
-        - BearerAuth: []
-  /api/member/transactions:
-    get:
-      tags:
-        - Member Portal
-      summary: Get member's completed missions
-      description: Get member's completed missions
-      operationId: getMemberPortalTransactions
-      parameters: []
-      responses:
-        '200':
-          $ref: '#/components/responses/Success'
-        '400':
-          $ref: '#/components/responses/ValidationError'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '429':
-          $ref: '#/components/responses/RateLimit'
-        '500':
-          $ref: '#/components/responses/Error'
-      security:
-        - BearerAuth: []
-  /api/member/wheels:
-    get:
-      tags:
-        - Member Portal
-      summary: Get member transaction history
-      description: Get member transaction history
-      operationId: getMemberPortalWheels
-      parameters: []
-      responses:
-        '200':
-          $ref: '#/components/responses/Success'
-        '400':
-          $ref: '#/components/responses/ValidationError'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '429':
-          $ref: '#/components/responses/RateLimit'
-        '500':
-          $ref: '#/components/responses/Error'
-      security:
-        - BearerAuth: []
-  /api/member/wheels/{id}/spin:
-    post:
-      tags:
-        - Member Portal
-      summary: Get available wheels for member
-      description: Get available wheels for member
-      operationId: postMemberPortalSpin
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-          description: Id identifier
-      responses:
-        '200':
-          $ref: '#/components/responses/Success'
-        '201':
-          $ref: '#/components/responses/Success'
-        '400':
-          $ref: '#/components/responses/ValidationError'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '429':
-          $ref: '#/components/responses/RateLimit'
-        '500':
-          $ref: '#/components/responses/Error'
-      security:
-        - BearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/WheelspinWheelSchema'
-  /api/member/wheels/{id}/history:
-    get:
-      tags:
-        - Member Portal
-      summary: Spin a wheel
-      description: Spin a wheel
-      operationId: getMemberPortalHistory
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-          description: Id identifier
-      responses:
-        '200':
-          $ref: '#/components/responses/Success'
-        '400':
-          $ref: '#/components/responses/ValidationError'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '429':
-          $ref: '#/components/responses/RateLimit'
-        '500':
-          $ref: '#/components/responses/Error'
-      security:
-        - BearerAuth: []
-  /api/member/leaderboard:
-    get:
-      tags:
-        - Member Portal
-      summary: Get member's wheel spin history
-      description: Get member's wheel spin history
-      operationId: getMemberPortalLeaderboard
-      parameters: []
-      responses:
-        '200':
-          $ref: '#/components/responses/Success'
-        '400':
-          $ref: '#/components/responses/ValidationError'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '429':
-          $ref: '#/components/responses/RateLimit'
-        '500':
-          $ref: '#/components/responses/Error'
-      security:
-        - BearerAuth: []
-  /api/member/rewards:
-    get:
-      tags:
-        - Member Portal
-      summary: Get member leaderboard position
-      description: Get member leaderboard position
-      operationId: getMemberPortalRewards
-      parameters: []
-      responses:
-        '200':
-          $ref: '#/components/responses/Success'
-        '400':
-          $ref: '#/components/responses/ValidationError'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '429':
-          $ref: '#/components/responses/RateLimit'
-        '500':
-          $ref: '#/components/responses/Error'
-      security:
-        - BearerAuth: []
-  /api/member/rewards/{id}/redeem:
-    post:
-      tags:
-        - Member Portal
-      summary: Get available rewards for member
-      description: Get available rewards for member
-      operationId: postMemberPortalRedeem
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-          description: Id identifier
-      responses:
-        '200':
-          $ref: '#/components/responses/Success'
-        '201':
-          $ref: '#/components/responses/Success'
-        '400':
-          $ref: '#/components/responses/ValidationError'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '429':
-          $ref: '#/components/responses/RateLimit'
-        '500':
-          $ref: '#/components/responses/Error'
-      security:
-        - BearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/MemberredeemRewardSchema'
-  /api/member/notifications:
-    get:
-      tags:
-        - Member Portal
-      summary: Redeem a reward
-      description: Redeem a reward
-      operationId: getMemberPortalNotifications
-      parameters: []
-      responses:
-        '200':
-          $ref: '#/components/responses/Success'
-        '400':
-          $ref: '#/components/responses/ValidationError'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '429':
-          $ref: '#/components/responses/RateLimit'
-        '500':
-          $ref: '#/components/responses/Error'
-      security:
-        - BearerAuth: []
-  /api/member/notifications/{id}/read:
-    put:
-      tags:
-        - Member Portal
-      summary: Get member notifications
-      description: Get member notifications
-      operationId: putMemberPortalRead
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-          description: Id identifier
-      responses:
-        '200':
-          $ref: '#/components/responses/Success'
-        '400':
-          $ref: '#/components/responses/ValidationError'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '429':
-          $ref: '#/components/responses/RateLimit'
-        '500':
-          $ref: '#/components/responses/Error'
-      security:
-        - BearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
 components:
   schemas:
     User:

@@ -543,6 +543,97 @@ class WheelController {
       data: exportData
     });
   });
+
+  // =============================================================================
+  // MEMBER PORTAL SPECIFIC METHODS
+  // =============================================================================
+
+  /**
+   * Get available wheels for member (member portal)
+   * GET /api/member/wheels
+   */
+  getMemberWheels = asyncHandler(async (req, res) => {
+    const memberId = req.user.member_id;
+    const brandId = req.user.brand_id;
+    const options = req.query;
+
+    const result = await this.wheelService.listWheels({ ...options, active: true }, brandId);
+    
+    // Add eligibility information for each wheel
+    const wheelsWithEligibility = await Promise.all(
+      result.wheels.map(async (wheel) => {
+        const eligibility = await this.wheelService.checkSpinEligibility(wheel.id, memberId, brandId);
+        return {
+          ...wheel,
+          eligibility
+        };
+      })
+    );
+
+    return response.success(res, {
+      message: 'Available wheels retrieved successfully',
+      data: {
+        wheels: wheelsWithEligibility,
+        pagination: result.pagination
+      }
+    });
+  });
+
+  /**
+   * Spin a wheel (member portal)
+   * POST /api/member/wheels/:id/spin
+   */
+  spinMemberWheel = asyncHandler(async (req, res) => {
+    const memberId = req.user.member_id;
+    const brandId = req.user.brand_id;
+    const { id } = req.params;
+    const context = {
+      ip: req.ip,
+      userAgent: req.get('User-Agent')
+    };
+
+    const result = await this.wheelService.spinWheel(id, memberId, brandId, context);
+
+    logger.info('Wheel spin by member', {
+      wheelId: id,
+      memberId,
+      winningItem: result.spin.winning_item.name,
+      reward: result.spin.winning_item.value,
+      brandId
+    });
+
+    return response.success(res, {
+      message: 'Wheel spin successful',
+      data: {
+        spin_result: result.spin,
+        winning_item: result.spin.winning_item,
+        rewards_earned: result.spin.winning_item.value,
+        spun_at: new Date()
+      }
+    });
+  });
+
+  /**
+   * Get member's wheel spin history (member portal)
+   * GET /api/member/wheels/:id/history
+   */
+  getMemberWheelHistory = asyncHandler(async (req, res) => {
+    const memberId = req.user.member_id;
+    const brandId = req.user.brand_id;
+    const { id } = req.params;
+    const options = req.query;
+
+    // If wheel ID is provided, get history for that specific wheel
+    // Otherwise, get all wheel spin history for the member
+    const result = id === 'all' 
+      ? await this.wheelService.getMemberSpinHistory(memberId, options, brandId)
+      : await this.wheelService.getSpinHistory(id, { ...options, member_id: memberId }, brandId);
+
+    return response.success(res, {
+      message: 'Wheel spin history retrieved successfully',
+      data: result
+    });
+  });
 }
 
 module.exports = new WheelController();

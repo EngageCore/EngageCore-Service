@@ -387,8 +387,112 @@ const validateApiKey = async (req, res, next) => {
   }
 };
 
+/**
+ * Authenticate member token (for member portal)
+ * @param {object} req - Express request object
+ * @param {object} res - Express response object
+ * @param {function} next - Express next function
+ */
+const authenticateMember = async (req, res, next) => {
+  try {
+    const token = jwt.extractTokenFromHeader(req.headers.authorization);
+    
+    if (!token) {
+      logger.security('Member authentication failed - No token provided', {
+        ip: req.ip,
+        userAgent: req.get('User-Agent'),
+        path: req.path
+      });
+      
+      return response.unauthorized(res, 'Access token is required', ERROR_CODES.TOKEN_INVALID);
+    }
+
+    // Verify token
+    let decoded;
+    try {
+      decoded = jwt.verifyAccessToken(token);
+    } catch (error) {
+      logger.security('Member authentication failed - Invalid token', {
+        ip: req.ip,
+        userAgent: req.get('User-Agent'),
+        path: req.path,
+        error: error.message
+      });
+      
+      return response.unauthorized(res, 'Invalid or expired token', ERROR_CODES.TOKEN_INVALID);
+    }
+
+    // For member authentication, we expect the token to contain member information
+    // This could be either a user token with member role or a direct member token
+    if (decoded.userId) {
+      // User-based authentication
+      const user = await userRepository.findById(decoded.userId);
+      if (!user || user.status !== 'active') {
+        logger.security('Member authentication failed - User not found or inactive', {
+          userId: decoded.userId,
+          ip: req.ip,
+          userAgent: req.get('User-Agent'),
+          path: req.path
+        });
+        
+        return response.unauthorized(res, 'User not found or inactive', ERROR_CODES.UNAUTHORIZED_ACCESS);
+      }
+
+      // Check if user has member role or is associated with a member
+      if (user.role !== USER_ROLES.MEMBER && !user.member_id) {
+        logger.security('Member authentication failed - User is not a member', {
+          userId: user.id,
+          userRole: user.role,
+          ip: req.ip,
+          userAgent: req.get('User-Agent'),
+          path: req.path
+        });
+        
+        return response.forbidden(res, 'Access denied - Member access required', ERROR_CODES.UNAUTHORIZED_ACCESS);
+      }
+
+      // Attach user and member info to request
+      req.user = {
+        ...user,
+        member_id: user.member_id || user.id, // Use member_id if available, otherwise use user id
+        brand_id: user.brand_id
+      };
+    } else if (decoded.memberId) {
+      // Direct member token authentication
+      // This would be used if members have their own authentication system
+      req.user = {
+        member_id: decoded.memberId,
+        brand_id: decoded.brandId,
+        role: USER_ROLES.MEMBER
+      };
+    } else {
+      logger.security('Member authentication failed - Invalid token structure', {
+        ip: req.ip,
+        userAgent: req.get('User-Agent'),
+        path: req.path
+      });
+      
+      return response.unauthorized(res, 'Invalid token structure', ERROR_CODES.TOKEN_INVALID);
+    }
+
+    req.token = token;
+    next();
+  } catch (error) {
+    logger.error('Member authentication middleware error', {
+      error: error.message,
+      stack: error.stack,
+      ip: req.ip,
+      userAgent: req.get('User-Agent'),
+      path: req.path
+    });
+    
+    return response.unauthorized(res, 'Member authentication failed', ERROR_CODES.TOKEN_INVALID);
+  }
+};
+
 module.exports = {
   authenticate,
+  authenticateMember,
   optionalAuth,
   requireRole,
   requireMinimumRole,

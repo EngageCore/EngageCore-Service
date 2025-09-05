@@ -569,6 +569,27 @@ class TransactionController {
       }
     });
   });
+
+  // =============================================================================
+  // MEMBER PORTAL SPECIFIC METHODS
+  // =============================================================================
+
+  /**
+   * Get member transactions (member portal)
+   * GET /api/member/transactions
+   */
+  getMemberTransactions = asyncHandler(async (req, res) => {
+    const memberId = req.user.member_id;
+    const brandId = req.user.brand_id;
+    const options = req.query;
+
+    const result = await this.transactionService.getMemberTransactions(memberId, options, brandId);
+
+    return response.success(res, {
+      message: 'Transaction history retrieved successfully',
+      data: result
+    });
+  });
 }
 
 module.exports = new TransactionController();

@@ -16,17 +16,55 @@ try {
 }
 
 class SwaggerGenerator {
-  constructor() {
+  constructor(portalType = 'combined') {
     this.controllersDir = path.join(__dirname, 'src', 'controllers');
     this.routesDir = path.join(__dirname, 'src', 'routes');
     this.validatorsDir = path.join(__dirname, 'src', 'validators');
-    this.outputFile = path.join(__dirname, 'docs', 'api', 'swagger.yaml');
+    this.portalType = portalType; // 'admin', 'member', or 'combined'
+    
+    // Set output file based on portal type
+    const outputFiles = {
+      admin: path.join(__dirname, 'docs', 'api', 'admin-swagger.yaml'),
+      member: path.join(__dirname, 'docs', 'api', 'member-swagger.yaml'),
+      combined: path.join(__dirname, 'docs', 'api', 'swagger.yaml')
+    };
+    this.outputFile = outputFiles[portalType];
+    
+    // Configure swagger spec based on portal type
+    const portalConfigs = {
+      admin: {
+        title: 'Engage Service Admin API',
+        description: 'Administrative API for managing brands, users, and system operations',
+        servers: [
+          { url: 'http://localhost:3000', description: 'Development server - Admin Portal' },
+          { url: 'https://admin.engage-service.com', description: 'Production server - Admin Portal' }
+        ]
+      },
+      member: {
+        title: 'Engage Service Member API',
+        description: 'Member-facing API for loyalty program interactions, points, missions, and rewards',
+        servers: [
+          { url: 'http://localhost:3000', description: 'Development server - Member Portal' },
+          { url: 'https://member.engage-service.com', description: 'Production server - Member Portal' }
+        ]
+      },
+      combined: {
+        title: 'Engage Service API',
+        description: 'Complete Lucky Wheel Engagement Platform API Documentation',
+        servers: [
+          { url: 'http://localhost:3000', description: 'Development server' },
+          { url: 'https://api.engage-service.com', description: 'Production server' }
+        ]
+      }
+    };
+    
+    const config = portalConfigs[portalType];
     
     this.swaggerSpec = {
       openapi: '3.0.3',
       info: {
-        title: 'Engage Service API',
-        description: 'Lucky Wheel Engagement Platform API Documentation',
+        title: config.title,
+        description: config.description,
         version: '1.0.0',
         contact: {
           name: 'API Support',
@@ -37,16 +75,7 @@ class SwaggerGenerator {
           url: 'https://opensource.org/licenses/MIT'
         }
       },
-      servers: [
-        {
-          url: 'http://localhost:3000',
-          description: 'Development server'
-        },
-        {
-          url: 'https://api.engage-service.com',
-          description: 'Production server'
-        }
-      ],
+      servers: config.servers,
       paths: {},
       components: {
         schemas: {},
@@ -222,11 +251,38 @@ class SwaggerGenerator {
       // Write YAML file
       await this.writeSwaggerFile();
       
-      console.log('✅ Swagger documentation generated successfully!');
+      console.log(`✅ ${this.portalType} Swagger documentation generated successfully!`);
       console.log(`📄 Output file: ${this.outputFile}`);
       
     } catch (error) {
-      console.error('❌ Error generating Swagger documentation:', error);
+      console.error(`❌ Error generating ${this.portalType} Swagger documentation:`, error);
+      throw error;
+    }
+  }
+
+  /**
+   * Generate all swagger documentation files (admin, member, and combined)
+   */
+  static async generateAll() {
+    try {
+      console.log('🚀 Starting generation of all Swagger documentation files...');
+      
+      // Generate admin swagger
+      const adminGenerator = new SwaggerGenerator('admin');
+      await adminGenerator.generate();
+      
+      // Generate member swagger
+      const memberGenerator = new SwaggerGenerator('member');
+      await memberGenerator.generate();
+      
+      // Generate combined swagger
+      const combinedGenerator = new SwaggerGenerator('combined');
+      await combinedGenerator.generate();
+      
+      console.log('✅ All Swagger documentation files generated successfully!');
+      
+    } catch (error) {
+      console.error('❌ Error generating Swagger documentation files:', error);
       throw error;
     }
   }
@@ -250,11 +306,27 @@ class SwaggerGenerator {
   async parseRoutes() {
     const routeFiles = await fs.readdir(this.routesDir);
     
-    for (const file of routeFiles) {
+    // Filter route files based on portal type
+    const relevantFiles = this.getRelevantRouteFiles(routeFiles);
+    
+    for (const file of relevantFiles) {
       if (file.endsWith('.js') && file !== 'index.js') {
         await this.parseRouteFile(file);
       }
     }
+  }
+  
+  /**
+   * Get relevant route files based on portal type
+   */
+  getRelevantRouteFiles(routeFiles) {
+    const portalFileMap = {
+      admin: ['auth.js', 'adminPortal.js'],
+      member: ['auth.js', 'memberPortal.js'],
+      combined: routeFiles.filter(file => file.endsWith('.js') && file !== 'index.js')
+    };
+    
+    return portalFileMap[this.portalType] || [];
   }
 
   /**
@@ -382,13 +454,8 @@ class SwaggerGenerator {
   getBasePathFromFilename(filename) {
     const basePathMap = {
       'auth.js': '/api/auth',
-      'brands.js': '/api/brands',
-      'users.js': '/api/users',
-      'members.js': '/api/brands/{brandId}/members',
-      'wheels.js': '/api/brands/{brandId}/wheels',
-      'missions.js': '/api/brands/{brandId}/missions',
-      'transactions.js': '/api/brands/{brandId}/transactions',
-      'admin.js': '/api/admin'
+      'adminPortal.js': '/api/admin',
+      'memberPortal.js': '/api/member'
     };
     
     return basePathMap[filename] || '/api';
@@ -400,13 +467,8 @@ class SwaggerGenerator {
   getTagFromFilename(filename) {
     const tagMap = {
       'auth.js': 'Authentication',
-      'brands.js': 'Brands',
-      'users.js': 'Users',
-      'members.js': 'Members',
-      'wheels.js': 'Wheels',
-      'missions.js': 'Missions',
-      'transactions.js': 'Transactions',
-      'admin.js': 'Admin'
+      'adminPortal.js': 'Admin Portal',
+      'memberPortal.js': 'Member Portal'
     };
     
     return tagMap[filename] || 'API';
@@ -802,9 +864,7 @@ class SwaggerGenerator {
 
 // CLI interface
 if (require.main === module) {
-  const generator = new SwaggerGenerator();
-  
-  generator.generate()
+  SwaggerGenerator.generateAll()
     .then(() => {
       console.log('\n🎉 Swagger documentation generation completed!');
       console.log('\n📖 Usage:');

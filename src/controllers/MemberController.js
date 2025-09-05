@@ -563,6 +563,271 @@ class MemberController {
       data: { results }
     });
   });
+
+  // =============================================================================
+  // MEMBER PORTAL SPECIFIC METHODS
+  // =============================================================================
+
+  /**
+   * Update member profile (member portal)
+   * PUT /api/member/profile
+   */
+  updateMemberProfile = asyncHandler(async (req, res) => {
+    const memberId = req.user.member_id; // Assuming member is authenticated
+    const brandId = req.user.brand_id;
+    const updateData = req.body;
+    const context = {
+      ip: req.ip,
+      userAgent: req.get('User-Agent')
+    };
+
+    // Only allow certain fields to be updated by members themselves
+    const allowedFields = ['first_name', 'last_name', 'phone', 'date_of_birth', 'preferences'];
+    const filteredUpdateData = {};
+    
+    Object.keys(updateData).forEach(key => {
+      if (allowedFields.includes(key)) {
+        filteredUpdateData[key] = updateData[key];
+      }
+    });
+
+    const member = await this.memberService.updateMember(memberId, filteredUpdateData, brandId, memberId, context);
+
+    logger.info('Member profile updated by member', {
+      memberId,
+      brandId,
+      updatedFields: Object.keys(filteredUpdateData)
+    });
+
+    return response.success(res, {
+      message: 'Profile updated successfully',
+      data: { member }
+    });
+  });
+
+  /**
+   * Get member points (member portal)
+   * GET /api/member/points
+   */
+  getMemberPoints = asyncHandler(async (req, res) => {
+    const memberId = req.user.member_id;
+    const brandId = req.user.brand_id;
+
+    const member = await this.memberService.getMemberById(memberId, brandId);
+    const transactions = await this.memberService.getMemberTransactions(memberId, { limit: 20, type: 'points' }, brandId);
+
+    const pointsData = {
+      current_balance: member.points_balance,
+      total_earned: member.total_points_earned,
+      total_redeemed: member.total_points_redeemed || 0,
+      recent_transactions: transactions.transactions,
+      last_updated: new Date()
+    };
+
+    return response.success(res, {
+      message: 'Points data retrieved successfully',
+      data: { points: pointsData }
+    });
+  });
+
+  /**
+   * Get member tier status (member portal)
+   * GET /api/member/tier
+   */
+  getMemberTierStatus = asyncHandler(async (req, res) => {
+    const memberId = req.user.member_id;
+    const brandId = req.user.brand_id;
+
+    const progress = await this.memberService.getMemberTierProgress(memberId, brandId);
+
+    return response.success(res, {
+      message: 'Tier status retrieved successfully',
+      data: { tier_status: progress }
+    });
+  });
+
+  /**
+   * Get member leaderboard position (member portal)
+   * GET /api/member/leaderboard
+   */
+  getMemberLeaderboardPosition = asyncHandler(async (req, res) => {
+    const memberId = req.user.member_id;
+    const brandId = req.user.brand_id;
+
+    const leaderboard = await this.memberService.getMemberLeaderboard(brandId, { include_member: memberId });
+    const memberPosition = leaderboard.findIndex(member => member.id === memberId) + 1;
+
+    return response.success(res, {
+      message: 'Leaderboard position retrieved successfully',
+      data: { 
+        position: memberPosition || null,
+        total_members: leaderboard.length,
+        top_10: leaderboard.slice(0, 10)
+      }
+    });
+  });
+
+  /**
+   * Get available rewards for member (member portal)
+   * GET /api/member/rewards
+   */
+  getMemberRewards = asyncHandler(async (req, res) => {
+    const memberId = req.user.member_id;
+    const brandId = req.user.brand_id;
+
+    const member = await this.memberService.getMemberById(memberId, brandId);
+    
+    // Mock rewards data - this would typically come from a rewards service
+    const rewards = [
+      {
+        id: '1',
+        name: '10% Discount Coupon',
+        description: 'Get 10% off your next purchase',
+        points_required: 500,
+        available: member.points_balance >= 500,
+        category: 'discount',
+        expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // 30 days
+      },
+      {
+        id: '2',
+        name: 'Free Shipping',
+        description: 'Free shipping on your next order',
+        points_required: 200,
+        available: member.points_balance >= 200,
+        category: 'shipping',
+        expires_at: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000) // 60 days
+      }
+    ];
+
+    return response.success(res, {
+      message: 'Available rewards retrieved successfully',
+      data: { 
+        rewards,
+        member_points: member.points_balance
+      }
+    });
+  });
+
+  /**
+   * Redeem a reward (member portal)
+   * POST /api/member/rewards/:id/redeem
+   */
+  redeemMemberReward = asyncHandler(async (req, res) => {
+    const memberId = req.user.member_id;
+    const brandId = req.user.brand_id;
+    const { id: rewardId } = req.params;
+    const context = {
+      ip: req.ip,
+      userAgent: req.get('User-Agent')
+    };
+
+    // This would typically involve a rewards service
+    // For now, we'll simulate the redemption
+    const member = await this.memberService.getMemberById(memberId, brandId);
+    
+    // Mock reward validation
+    const reward = { id: rewardId, points_required: 500, name: '10% Discount Coupon' };
+    
+    if (member.points_balance < reward.points_required) {
+      return response.error(res, 'Insufficient points for this reward', 400);
+    }
+
+    // Deduct points
+    await this.memberService.updateMemberPoints(memberId, {
+      type: 'deduct',
+      amount: reward.points_required,
+      description: `Redeemed: ${reward.name}`,
+      reference_type: 'reward_redemption',
+      reference_id: rewardId
+    }, brandId, memberId, context);
+
+    logger.info('Reward redeemed by member', {
+      memberId,
+      brandId,
+      rewardId,
+      pointsDeducted: reward.points_required
+    });
+
+    return response.success(res, {
+      message: 'Reward redeemed successfully',
+      data: { 
+        reward,
+        redemption_code: `RDM-${Date.now()}`,
+        redeemed_at: new Date()
+      }
+    });
+  });
+
+  /**
+   * Get member notifications (member portal)
+   * GET /api/member/notifications
+   */
+  getMemberNotifications = asyncHandler(async (req, res) => {
+    const memberId = req.user.member_id;
+    const brandId = req.user.brand_id;
+    const { limit = 20, offset = 0, unread_only = false } = req.query;
+
+    // Mock notifications - this would typically come from a notifications service
+    const notifications = [
+      {
+        id: '1',
+        type: 'points_earned',
+        title: 'Points Earned!',
+        message: 'You earned 100 points from completing a mission',
+        read: false,
+        created_at: new Date(),
+        data: { points: 100, source: 'mission_completion' }
+      },
+      {
+        id: '2',
+        type: 'tier_upgrade',
+        title: 'Tier Upgrade!',
+        message: 'Congratulations! You have been upgraded to Silver tier',
+        read: true,
+        created_at: new Date(Date.now() - 86400000), // 1 day ago
+        data: { new_tier: 'Silver', previous_tier: 'Bronze' }
+      }
+    ];
+
+    const filteredNotifications = unread_only === 'true' 
+      ? notifications.filter(n => !n.read)
+      : notifications;
+
+    return response.success(res, {
+      message: 'Notifications retrieved successfully',
+      data: { 
+        notifications: filteredNotifications.slice(offset, offset + limit),
+        pagination: {
+          total: filteredNotifications.length,
+          limit: parseInt(limit),
+          offset: parseInt(offset)
+        }
+      }
+    });
+  });
+
+  /**
+   * Mark notification as read (member portal)
+   * PUT /api/member/notifications/:id/read
+   */
+  markNotificationAsRead = asyncHandler(async (req, res) => {
+    const memberId = req.user.member_id;
+    const { id: notificationId } = req.params;
+
+    // Mock notification update - this would typically update in a notifications service
+    logger.info('Notification marked as read', {
+      memberId,
+      notificationId
+    });
+
+    return response.success(res, {
+      message: 'Notification marked as read',
+      data: { 
+        notification_id: notificationId,
+        marked_read_at: new Date()
+      }
+    });
+  });
 }
 
 module.exports = new MemberController();

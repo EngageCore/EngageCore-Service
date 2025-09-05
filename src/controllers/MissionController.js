@@ -578,6 +578,77 @@ class MissionController {
       data: exportData
     });
   });
+
+  // =============================================================================
+  // MEMBER PORTAL SPECIFIC METHODS
+  // =============================================================================
+
+  /**
+   * Get available missions for member (member portal)
+   * GET /api/member/missions
+   */
+  getMemberMissions = asyncHandler(async (req, res) => {
+    const memberId = req.user.member_id;
+    const brandId = req.user.brand_id;
+    const options = req.query;
+
+    const result = await this.missionService.getMemberMissions(memberId, options, brandId);
+
+    return response.success(res, {
+      message: 'Available missions retrieved successfully',
+      data: result
+    });
+  });
+
+  /**
+   * Complete a mission (member portal)
+   * POST /api/member/missions/:id/complete
+   */
+  completeMemberMission = asyncHandler(async (req, res) => {
+    const memberId = req.user.member_id;
+    const brandId = req.user.brand_id;
+    const { id } = req.params;
+    const completionData = req.body;
+    const context = {
+      ip: req.ip,
+      userAgent: req.get('User-Agent')
+    };
+
+    const result = await this.missionService.completeMission(id, memberId, completionData, brandId, context);
+
+    logger.info('Mission completed by member', {
+      missionId: id,
+      memberId,
+      reward: result.completion.mission?.reward_points || 0,
+      brandId
+    });
+
+    return response.success(res, {
+      message: 'Mission completed successfully',
+      data: {
+        completion: result.completion,
+        rewards_earned: result.completion.mission?.reward_points || 0,
+        completed_at: new Date()
+      }
+    });
+  });
+
+  /**
+   * Get member's completed missions (member portal)
+   * GET /api/member/missions/completed
+   */
+  getMemberCompletedMissions = asyncHandler(async (req, res) => {
+    const memberId = req.user.member_id;
+    const brandId = req.user.brand_id;
+    const options = req.query;
+
+    const result = await this.missionService.getMemberMissionCompletions(memberId, options, brandId);
+
+    return response.success(res, {
+      message: 'Completed missions retrieved successfully',
+      data: result
+    });
+  });
 }
 
 module.exports = new MissionController();

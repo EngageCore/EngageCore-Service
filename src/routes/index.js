@@ -5,14 +5,9 @@
 
 const express = require('express');
 const authRoutes = require('./auth');
-const brandRoutes = require('./brands');
-const memberRoutes = require('./members');
-const tierRoutes = require('./tiers');
-const wheelRoutes = require('./wheels');
-const missionRoutes = require('./missions');
-const transactionRoutes = require('./transactions');
-const userRoutes = require('./users');
-const adminRoutes = require('./admin');
+// Portal routes
+const adminPortalRoutes = require('./adminPortal');
+const memberPortalRoutes = require('./memberPortal');
 const { errorHandler } = require('../middleware');
 const { response } = require('../utils');
 
@@ -48,11 +43,9 @@ router.get('/', (req, res) => {
     environment: process.env.NODE_ENV || 'development',
     endpoints: {
       auth: '/api/auth',
-      brands: '/api/brands',
-      users: '/api/users',
       admin: '/api/admin',
-      health: '/api/health',
-      tiers: '/api/brands/:brandId/tiers'
+      member: '/api/member',
+      health: '/api/health'
     },
     documentation: '/api/docs',
     timestamp: new Date().toISOString()
@@ -62,22 +55,17 @@ router.get('/', (req, res) => {
 // Authentication routes
 router.use('/auth', authRoutes);
 
-// User management routes (Super Admin only)
-router.use('/users', userRoutes);
+// =============================================================================
+// NEW PORTAL ROUTES - Primary access points
+// =============================================================================
 
-// Admin routes (Super Admin only)
-router.use('/admin', adminRoutes);
+// Admin Portal routes - Back office access
+router.use('/admin', adminPortalRoutes);
 
-// Brand routes with nested resources
-router.use('/brands', brandRoutes);
+// Member Portal routes - Member-facing access
+router.use('/member', memberPortalRoutes);
 
-// Brand-specific nested routes
-// These routes are mounted under /api/brands/:brandId
-router.use('/brands/:brandId/members', memberRoutes);
-router.use('/brands/:brandId/tiers', tierRoutes);
-router.use('/brands/:brandId/wheels', wheelRoutes);
-router.use('/brands/:brandId/missions', missionRoutes);
-router.use('/brands/:brandId/transactions', transactionRoutes);
+// Legacy routes have been removed - use /api/admin/* and /api/member/* instead
 
 // 404 handler for undefined routes
 router.use('*', (req, res) => {
