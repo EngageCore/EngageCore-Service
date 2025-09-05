@@ -437,6 +437,142 @@ class TierService {
   }
 
   /**
+   * Get tier analytics
+   * @param {string} brandId - Brand ID
+   * @param {object} options - Query options
+   * @returns {object} - Tier analytics
+   */
+  async getTierAnalytics(brandId, options = {}) {
+    try {
+      // Verify brand exists
+      const brand = await this.brandRepository.findById(brandId);
+      if (!brand) {
+        throw new NotFoundError('Brand not found');
+      }
+
+      const tiers = await this.memberRepository.getMembershipTiers(brandId);
+      
+      const analytics = await Promise.all(tiers.map(async (tier) => {
+        const [memberCount, recentUpgrades, averagePoints] = await Promise.all([
+          this.memberRepository.countMembersByTier(tier.id),
+          this.memberRepository.getRecentTierUpgrades(tier.id, 30),
+          this.memberRepository.getAveragePointsByTier(tier.id)
+        ]);
+
+        return {
+          tier_id: tier.id,
+          tier_name: tier.name,
+          member_count: memberCount,
+          recent_upgrades: recentUpgrades,
+          average_points: averagePoints,
+          upgrade_rate: recentUpgrades > 0 ? (recentUpgrades / memberCount * 100) : 0
+        };
+      }));
+
+      const totalMembers = analytics.reduce((sum, tier) => sum + tier.member_count, 0);
+      const totalUpgrades = analytics.reduce((sum, tier) => sum + tier.recent_upgrades, 0);
+
+      return {
+        tier_breakdown: analytics,
+        summary: {
+          total_tiers: tiers.length,
+          total_members: totalMembers,
+          total_recent_upgrades: totalUpgrades,
+          overall_upgrade_rate: totalMembers > 0 ? (totalUpgrades / totalMembers * 100) : 0
+        }
+      };
+    } catch (error) {
+      logger.error('Error getting tier analytics:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Bulk tier assignment
+   * @param {array} assignments - Array of { member_id, tier_id }
+   * @param {string} brandId - Brand ID
+   * @param {string} userId - User ID performing the assignment
+   * @param {object} context - Request context
+   * @returns {object} - Assignment results
+   */
+  async bulkTierAssignment(assignments, brandId, userId, context = {}) {
+    try {
+      // Verify brand exists
+      const brand = await this.brandRepository.findById(brandId);
+      if (!brand) {
+        throw new NotFoundError('Brand not found');
+      }
+
+      const results = {
+        successful: [],
+        failed: []
+      };
+
+      for (const assignment of assignments) {
+        try {
+          const { member_id, tier_id } = assignment;
+
+          // Verify tier exists and belongs to brand
+          const tier = await this.getTierById(tier_id, brandId);
+          
+          // Verify member exists and belongs to brand
+          const member = await this.memberRepository.findById(member_id);
+          if (!member || member.brand_id !== brandId) {
+            throw new NotFoundError(`Member ${member_id} not found`);
+          }
+
+          // Update member's tier
+          await this.memberRepository.updateMember(member_id, {
+            tier_id: tier_id,
+            updated_by: userId
+          });
+
+          // Log audit trail
+          await this.auditLogRepository.create({
+            action: AUDIT_ACTIONS.MEMBER_TIER_UPDATED,
+            resource_type: 'member',
+            resource_id: member_id,
+            user_id: userId,
+            brand_id: brandId,
+            ip_address: context.ip,
+            user_agent: context.userAgent,
+            details: {
+              old_tier_id: member.tier_id,
+              new_tier_id: tier_id,
+              tier_name: tier.name
+            }
+          });
+
+          results.successful.push({
+            member_id,
+            tier_id,
+            tier_name: tier.name
+          });
+        } catch (error) {
+          results.failed.push({
+            member_id: assignment.member_id,
+            tier_id: assignment.tier_id,
+            error: error.message
+          });
+        }
+      }
+
+      logger.info('Bulk tier assignment completed', {
+        brandId,
+        totalAssignments: assignments.length,
+        successful: results.successful.length,
+        failed: results.failed.length,
+        assignedBy: userId
+      });
+
+      return results;
+    } catch (error) {
+      logger.error('Error in bulk tier assignment:', error);
+      throw error;
+    }
+  }
+
+  /**
    * Get next sort order for a brand
    * @private
    */

@@ -511,54 +511,7 @@ class MemberController {
     });
   });
 
-  /**
-   * Import members from CSV/Excel
-   * @route POST /api/brands/:brandId/members/import
-   */
-  importMembers = asyncHandler(async (req, res) => {
-    const { brandId } = req.params;
-    const { membersData, options = {} } = req.body;
-    const userId = req.user.id;
-    const context = {
-      ip: req.ip,
-      userAgent: req.get('User-Agent')
-    };
 
-    const results = await this.memberService.importMembers(membersData, options, brandId, userId, context);
-
-    logger.info('Members import completed', {
-      brandId,
-      results,
-      importedBy: userId
-    });
-
-    return response.success(res, {
-      message: 'Members import completed',
-      data: { results }
-    });
-  });
-
-  /**
-   * Get member leaderboard
-   * @route GET /api/brands/:brandId/members/leaderboard
-   */
-  getMemberLeaderboard = asyncHandler(async (req, res) => {
-    const { brandId } = req.params;
-    const options = req.query;
-
-    const leaderboard = await this.memberService.getMemberLeaderboard(brandId, options);
-
-    logger.info('Member leaderboard retrieved', {
-      brandId,
-      count: leaderboard.length,
-      period: options.period || 'all_time'
-    });
-
-    return response.success(res, {
-      message: 'Member leaderboard retrieved successfully',
-      data: { leaderboard }
-    });
-  });
 
   /**
    * Bulk update members

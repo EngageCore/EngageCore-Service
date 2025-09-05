@@ -309,3 +309,5 @@ router.get('/members/:memberId/transaction-analytics',
   validation.validate(transactionValidators.getMemberTransactionAnalyticsSchema, 'query'),
   TransactionController.getMemberTransactionAnalytics
 );
+
+module.exports = router;

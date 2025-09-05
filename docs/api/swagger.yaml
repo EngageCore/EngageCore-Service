@@ -1978,6 +1978,110 @@ paths:
       security:
         - BearerAuth: []
         - ApiKeyAuth: []
+  /api/brands/{brandId}/members/{id}/tier-progress:
+    get:
+      tags:
+        - Members
+      summary: Get member tier progress
+      description: Get member tier progress
+      operationId: getMembersTier-progress
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /api/brands/{brandId}/members/{id}/tier-upgrade:
+    post:
+      tags:
+        - Members
+      summary: Manual tier upgrade for member
+      description: Manual tier upgrade for member
+      operationId: postMembersTier-upgrade
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MembermanualTierUpgradeSchema'
+  /api/brands/{brandId}/members/{id}/tier-history:
+    get:
+      tags:
+        - Members
+      summary: Get member tier history
+      description: Get member tier history
+      operationId: getMembersTier-history
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
   /api/brands/{brandId}/members/{id}/profile:
     get:
       tags:
@@ -2849,6 +2953,542 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/MissionclaimMissionRewardSchema'
+  /api/:
+    post:
+      tags:
+        - API
+      summary: Create a new membership tier
+      description: Create a new membership tier
+      operationId: postTiersResource
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TiercreateTierSchema'
+    get:
+      tags:
+        - API
+      summary: List membership tiers for a brand
+      description: List membership tiers for a brand
+      operationId: getTiersResource
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /api/default:
+    post:
+      tags:
+        - API
+      summary: Create default tiers for a brand (Bronze, Silver, Gold, Platinum)
+      description: Create default tiers for a brand (Bronze, Silver, Gold, Platinum)
+      operationId: postTiersDefault
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TiercreateDefaultTiersSchema'
+  /api/reorder:
+    put:
+      tags:
+        - API
+      summary: Reorder tiers (update sort_order)
+      description: Reorder tiers (update sort_order)
+      operationId: putTiersReorder
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TierreorderTiersSchema'
+  /api/progression:
+    get:
+      tags:
+        - API
+      summary: Get tier progression information
+      description: Get tier progression information
+      operationId: getTiersProgression
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /api/analytics:
+    get:
+      tags:
+        - API
+      summary: Get tier analytics and insights
+      description: Get tier analytics and insights
+      operationId: getTiersAnalytics
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /api/{id}:
+    get:
+      tags:
+        - API
+      summary: Get tier by ID
+      description: Get tier by ID
+      operationId: getTiersResource
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+    put:
+      tags:
+        - API
+      summary: Get tier by ID
+      description: Get tier by ID
+      operationId: putTiersResource
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TierupdateTierSchema'
+    delete:
+      tags:
+        - API
+      summary: Delete tier (soft delete - archive)
+      description: Delete tier (soft delete - archive)
+      operationId: deleteTiersResource
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /api/{id}/statistics:
+    get:
+      tags:
+        - API
+      summary: Get tier statistics (member count, upgrades, etc.)
+      description: Get tier statistics (member count, upgrades, etc.)
+      operationId: getTiersStatistics
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /api/{id}/members:
+    get:
+      tags:
+        - API
+      summary: Get members in a specific tier
+      description: Get members in a specific tier
+      operationId: getTiersMembers
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /api/{id}/benefits:
+    get:
+      tags:
+        - API
+      summary: Get tier benefits
+      description: Get tier benefits
+      operationId: getTiersBenefits
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+    put:
+      tags:
+        - API
+      summary: Update tier benefits
+      description: Update tier benefits
+      operationId: putTiersBenefits
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TierupdateTierBenefitsSchema'
+  /api/{id}/duplicate:
+    post:
+      tags:
+        - API
+      summary: Duplicate an existing tier
+      description: Duplicate an existing tier
+      operationId: postTiersDuplicate
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Id identifier
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TierduplicateTierSchema'
+  /api/bulk-assign:
+    post:
+      tags:
+        - API
+      summary: Bulk assign tiers to members
+      description: Bulk assign tiers to members
+      operationId: postTiersBulk-assign
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '201':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TierbulkTierAssignmentSchema'
+  /api/public/list:
+    get:
+      tags:
+        - API
+      summary: Get public tier information (for member-facing apps)
+      description: Get public tier information (for member-facing apps)
+      operationId: getTiersList
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /api/public/progression:
+    get:
+      tags:
+        - API
+      summary: Get public tier progression (for member-facing apps)
+      description: Get public tier progression (for member-facing apps)
+      operationId: getTiersProgression
+      parameters: []
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimit'
+        '500':
+          $ref: '#/components/responses/Error'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
   /api/brands/{brandId}/transactions/:
     post:
       tags:

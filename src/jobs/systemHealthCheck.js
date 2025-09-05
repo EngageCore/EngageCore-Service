@@ -251,4 +251,4 @@ class SystemHealthCheckJob {
   }
 }
 
-module.
+module.exports = SystemHealthCheck;

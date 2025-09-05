@@ -12,6 +12,7 @@ const dbMonitor = require('./dbMonitor');
 const maintenance = require('./maintenance');
 const constants = require('./constants');
 const validation = require('./validation');
+const errors = require('./errors');
 
 module.exports = {
   logger,
@@ -22,5 +23,6 @@ module.exports = {
   dbMonitor,
   maintenance,
   constants,
-  validation
+  validation,
+  errors
 };

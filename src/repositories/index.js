@@ -9,6 +9,7 @@ const UserRepository = require('./UserRepository');
 const MemberRepository = require('./MemberRepository');
 const WheelRepository = require('./WheelRepository');
 const MissionRepository = require('./MissionRepository');
+const MissionCompletionRepository = require('./MissionCompletionRepository');
 const TransactionRepository = require('./TransactionRepository');
 const AuditLogRepository = require('./AuditLogRepository');
 
@@ -19,6 +20,7 @@ module.exports = {
   MemberRepository,
   WheelRepository,
   MissionRepository,
+  MissionCompletionRepository,
   TransactionRepository,
   AuditLogRepository
 };

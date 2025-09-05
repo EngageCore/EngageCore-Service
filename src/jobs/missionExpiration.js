@@ -43,3 +43,6 @@ class MissionExpirationJob {
       client.release();
     }
   }
+}
+
+module.exports = MissionExpirationJob;

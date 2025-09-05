@@ -354,6 +354,82 @@ class TierController {
       data: { tier: duplicatedTier }
     }, 201);
   });
+
+  /**
+   * Get tier analytics
+   * GET /api/brands/:brandId/tiers/analytics
+   */
+  getTierAnalytics = asyncHandler(async (req, res) => {
+    const { brandId } = req.params;
+    const options = req.query;
+
+    const analytics = await this.tierService.getTierAnalytics(brandId, options);
+
+    return response.success(res, {
+      message: 'Tier analytics retrieved successfully',
+      data: { analytics }
+    });
+  });
+
+  /**
+   * Bulk tier assignment
+   * POST /api/brands/:brandId/tiers/bulk-assign
+   */
+  bulkTierAssignment = asyncHandler(async (req, res) => {
+    const { brandId } = req.params;
+    const { assignments } = req.body; // Array of { member_id, tier_id }
+    const userId = req.user.id;
+    const context = {
+      ip: req.ip,
+      userAgent: req.get('User-Agent')
+    };
+
+    const result = await this.tierService.bulkTierAssignment(assignments, brandId, userId, context);
+
+    logger.info('Bulk tier assignment completed', {
+      brandId,
+      assignmentCount: assignments.length,
+      successCount: result.successful.length,
+      failureCount: result.failed.length,
+      assignedBy: userId
+    });
+
+    return response.success(res, {
+      message: 'Bulk tier assignment completed',
+      data: result
+    });
+  });
+
+  /**
+   * Get public tiers (for member-facing apps)
+   * GET /api/brands/:brandId/tiers/public/list
+   */
+  getPublicTiers = asyncHandler(async (req, res) => {
+    const { brandId } = req.params;
+    const options = { ...req.query, status: 'active' }; // Only show active tiers publicly
+
+    const tiers = await this.tierService.listTiers(brandId, options);
+
+    // Filter out sensitive information for public consumption
+    const publicTiers = tiers.map(tier => ({
+      id: tier.id,
+      name: tier.name,
+      description: tier.description,
+      min_points_required: tier.min_points_required,
+      max_points_required: tier.max_points_required,
+      color: tier.color,
+      benefits: tier.benefits || [],
+      sort_order: tier.sort_order
+    }));
+
+    return response.success(res, {
+      message: 'Public tiers retrieved successfully',
+      data: { 
+        tiers: publicTiers,
+        count: publicTiers.length
+      }
+    });
+  });
 }
 
 module.exports = new TierController();
