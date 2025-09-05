@@ -19,7 +19,7 @@ const path = require('path');
 // Import configurations and utilities
 const config = require('./config');
 const { logger, dbMonitor, maintenance } = require('./src/utils');
-const { errorHandler } = require('./src/middleware');
+const { errorHandler, queryOptimization } = require('./src/middleware');
 const routes = require('./src/routes');
 
 // Import database connection
@@ -171,6 +171,14 @@ class Server {
       };
       next();
     });
+
+    // Performance optimization middleware
+    this.app.use(queryOptimization.connectionPoolOptimizer());
+    this.app.use(queryOptimization.queryPerformanceMonitor(2000)); // Log queries > 2 seconds
+    this.app.use(queryOptimization.paginationOptimizer());
+    this.app.use(queryOptimization.indexOptimizer());
+    this.app.use(queryOptimization.transactionOptimizer());
+    this.app.use(queryOptimization.bulkOperationOptimizer());
 
     // Maintenance mode middleware (simplified - can be enhanced later)
     this.app.use((req, res, next) => {

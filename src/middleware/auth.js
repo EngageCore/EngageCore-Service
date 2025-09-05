@@ -20,7 +20,7 @@ const authenticate = async (req, res, next) => {
     const token = jwt.extractTokenFromHeader(req.headers.authorization);
     
     if (!token) {
-      logger.logSecurity('Authentication failed - No token provided', {
+      logger.security('Authentication failed - No token provided', {
         ip: req.ip,
         userAgent: req.get('User-Agent'),
         path: req.path
@@ -30,12 +30,15 @@ const authenticate = async (req, res, next) => {
     }
 
     // Verify token
-    const decoded = jwt.verifyAccessToken(token);
-    if (!decoded) {
-      logger.logSecurity('Authentication failed - Invalid token', {
+    let decoded;
+    try {
+      decoded = jwt.verifyAccessToken(token);
+    } catch (error) {
+      logger.security('Authentication failed - Invalid token', {
         ip: req.ip,
         userAgent: req.get('User-Agent'),
-        path: req.path
+        path: req.path,
+        error: error.message
       });
       
       return response.unauthorized(res, 'Invalid or expired token', ERROR_CODES.TOKEN_INVALID);
@@ -44,7 +47,7 @@ const authenticate = async (req, res, next) => {
     // Get user from database
     const user = await userRepository.findById(decoded.userId);
     if (!user) {
-      logger.logSecurity('Authentication failed - User not found', {
+      logger.security('Authentication failed - User not found', {
         userId: decoded.userId,
         ip: req.ip,
         userAgent: req.get('User-Agent'),
@@ -56,7 +59,7 @@ const authenticate = async (req, res, next) => {
 
     // Check if user is active
     if (user.status !== 'active') {
-      logger.logSecurity('Authentication failed - User inactive', {
+      logger.security('Authentication failed - User inactive', {
         userId: user.id,
         status: user.status,
         ip: req.ip,
@@ -100,8 +103,10 @@ const optionalAuth = async (req, res, next) => {
     }
 
     // Verify token
-    const decoded = jwt.verifyAccessToken(token);
-    if (!decoded) {
+    let decoded;
+    try {
+      decoded = jwt.verifyAccessToken(token);
+    } catch (error) {
       return next();
     }
 
@@ -148,7 +153,7 @@ const requireRole = (roles) => {
     }
 
     if (!requiredRoles.includes(req.user.role)) {
-      logger.logSecurity('Role check failed - Insufficient permissions', {
+      logger.security('Role check failed - Insufficient permissions', {
         userId: req.user.id,
         userRole: req.user.role,
         requiredRoles,
@@ -179,7 +184,7 @@ const requireMinimumRole = (minimumRole) => {
     const minimumRoleLevel = ROLE_HIERARCHY[minimumRole] || 0;
 
     if (userRoleLevel < minimumRoleLevel) {
-      logger.logSecurity('Minimum role check failed', {
+      logger.security('Minimum role check failed', {
         userId: req.user.id,
         userRole: req.user.role,
         userRoleLevel,
@@ -219,7 +224,7 @@ const requirePermission = (permissions) => {
       );
 
       if (!hasAllPermissions) {
-        logger.logSecurity('Permission check failed', {
+        logger.security('Permission check failed', {
           userId: req.user.id,
           userPermissions,
           requiredPermissions,
@@ -267,7 +272,7 @@ const requireBrandAccess = (req, res, next) => {
 
   // Check if user belongs to the brand
   if (req.user.brand_id !== req.brand.id) {
-    logger.logSecurity('Brand access denied', {
+    logger.security('Brand access denied', {
       userId: req.user.id,
       userBrandId: req.user.brand_id,
       requestedBrandId: req.brand.id,
@@ -306,7 +311,7 @@ const requireSelfOrAdmin = (userIdParam = 'userId') => {
 
     // User can only access their own data
     if (req.user.id !== targetUserId) {
-      logger.logSecurity('Self or admin access denied', {
+      logger.security('Self or admin access denied', {
         userId: req.user.id,
         targetUserId,
         userRole: req.user.role,
@@ -330,7 +335,7 @@ const requireSelfOrAdmin = (userIdParam = 'userId') => {
 const authRateLimit = (req, res, next) => {
   // This would typically use Redis or in-memory store
   // For now, we'll just log the attempt
-  logger.logSecurity('Authentication attempt', {
+  logger.security('Authentication attempt', {
     ip: req.ip,
     userAgent: req.get('User-Agent'),
     path: req.path,
@@ -357,7 +362,7 @@ const validateApiKey = async (req, res, next) => {
     // In a real implementation, you would validate the API key against a database
     // For now, we'll just check if it's a valid format
     if (apiKey.length < 32) {
-      logger.logSecurity('Invalid API key format', {
+      logger.security('Invalid API key format', {
         apiKey: apiKey.substring(0, 8) + '...',
         ip: req.ip,
         userAgent: req.get('User-Agent'),

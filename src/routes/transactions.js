@@ -205,19 +205,7 @@ router.put('/:id',
   TransactionController.updateTransaction
 );
 
-/**
- * @route   POST /api/brands/:brandId/transactions/:id/reverse
- * @desc    Reverse transaction
- * @access  Private (Brand Admin)
- */
-router.post('/:id/reverse',
-  auth.authenticate,
-  brandContext.validateBrandOwnership,
-  auth.requireRole(['super_admin', 'brand_admin']),
-  rateLimit.generalRateLimit,
-  validation.validate(transactionValidators.reverseTransactionSchema),
-  TransactionController.reverseTransaction
-);
+
 
 /**
  * @route   POST /api/brands/:brandId/transactions/:id/process

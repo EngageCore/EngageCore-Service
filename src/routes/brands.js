@@ -6,7 +6,7 @@
 const express = require('express');
 const multer = require('multer');
 const { BrandController } = require('../controllers');
-const { auth, validation, rateLimit, brandContext } = require('../middleware');
+const { auth, validation, rateLimit, brandContext, cache } = require('../middleware');
 const { brandValidators } = require('../validators');
 
 const router = express.Router();
@@ -35,6 +35,7 @@ router.post('/',
   auth.authenticate,
   auth.requireRole(['super_admin']),
   rateLimit.generalRateLimit,
+  cache.invalidateCache(cache.invalidationPatterns.brands),
   validation.validate(brandValidators.createBrandSchema),
   BrandController.createBrand
 );
@@ -47,6 +48,7 @@ router.post('/',
 router.get('/',
   auth.authenticate,
   rateLimit.generalRateLimit,
+  cache.cacheConfigs.brands,
   validation.validate(brandValidators.listBrandsSchema, 'query'),
   BrandController.listBrands
 );
@@ -58,6 +60,7 @@ router.get('/',
  */
 router.get('/slug/:slug',
   rateLimit.generalRateLimit,
+  cache.cacheConfigs.brands,
   validation.validate(brandValidators.getBrandBySlugSchema),
   BrandController.getBrandBySlug
 );
@@ -83,6 +86,7 @@ router.get('/:id',
   auth.authenticate,
   brandContext.validateBrandOwnership,
   rateLimit.generalRateLimit,
+  cache.cacheConfigs.brands,
   validation.validate(brandValidators.getBrandSchema),
   BrandController.getBrandById
 );
@@ -97,6 +101,7 @@ router.put('/:id',
   brandContext.validateBrandOwnership,
   auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
+  cache.invalidateCache(cache.invalidationPatterns.brands),
   validation.validate(brandValidators.updateBrandSchema),
   BrandController.updateBrand
 );
@@ -111,6 +116,7 @@ router.put('/:id/settings',
   brandContext.validateBrandOwnership,
   auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
+  cache.invalidateCache(cache.invalidationPatterns.brands),
   validation.validate(brandValidators.updateBrandSettingsSchema),
   BrandController.updateBrandSettings
 );

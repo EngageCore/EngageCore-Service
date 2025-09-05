@@ -88,27 +88,6 @@ router.post('/change-password',
   AuthController.changePassword
 );
 
-/**
- * @route   POST /api/auth/verify-email
- * @desc    Verify email address
- * @access  Public
- */
-router.post('/verify-email',
-  rateLimit.generalRateLimit,
-  validation.validate(authValidators.verifyEmailSchema),
-  AuthController.verifyEmail
-);
-
-/**
- * @route   POST /api/auth/resend-verification
- * @desc    Resend email verification
- * @access  Public
- */
-router.post('/resend-verification',
-  rateLimit.generalRateLimit,
-  validation.validate(authValidators.resendVerificationSchema),
-  AuthController.resendVerification
-);
 
 /**
  * @route   GET /api/auth/profile
@@ -132,29 +111,7 @@ router.put('/profile',
   AuthController.updateProfile
 );
 
-/**
- * @route   POST /api/auth/setup-2fa
- * @desc    Setup 2FA
- * @access  Private
- */
-router.post('/setup-2fa',
-  auth.authenticate,
-  rateLimit.generalRateLimit,
-  validation.validate(authValidators.setup2FASchema),
-  AuthController.setup2FA
-);
 
-/**
- * @route   POST /api/auth/verify-2fa
- * @desc    Verify 2FA
- * @access  Private
- */
-router.post('/verify-2fa',
-  auth.authenticate,
-  rateLimit.generalRateLimit,
-  validation.validate(authValidators.verify2FASchema),
-  AuthController.verify2FA
-);
 
 /**
  * @route   GET /api/auth/status

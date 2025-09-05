@@ -5,7 +5,7 @@
 
 const express = require('express');
 const { WheelController } = require('../controllers');
-const { auth, validation, rateLimit, brandContext } = require('../middleware');
+const { auth, validation, rateLimit, brandContext, cache } = require('../middleware');
 const { wheelValidators } = require('../validators');
 
 const router = express.Router({ mergeParams: true }); // mergeParams to access brandId from parent router
@@ -20,6 +20,7 @@ router.post('/',
   brandContext.validateBrandOwnership,
   auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
+  cache.invalidateCache(cache.invalidationPatterns.wheels),
   validation.validate(wheelValidators.createWheelSchema),
   WheelController.createWheel
 );
@@ -34,6 +35,7 @@ router.get('/',
   brandContext.validateBrandOwnership,
   auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
+  cache.cacheConfigs.wheels,
   validation.validate(wheelValidators.listWheelsSchema, 'query'),
   WheelController.listWheels
 );
@@ -62,6 +64,7 @@ router.get('/:id',
   brandContext.validateBrandOwnership,
   auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
+  cache.cacheConfigs.wheels,
   validation.validate(wheelValidators.getWheelSchema),
   WheelController.getWheelById
 );
@@ -76,6 +79,7 @@ router.put('/:id',
   brandContext.validateBrandOwnership,
   auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
+  cache.invalidateCache(cache.invalidationPatterns.wheels),
   validation.validate(wheelValidators.updateWheelSchema),
   WheelController.updateWheel
 );
@@ -90,6 +94,7 @@ router.put('/:id/items',
   brandContext.validateBrandOwnership,
   auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
+  cache.invalidateCache(cache.invalidationPatterns.wheels),
   validation.validate(wheelValidators.updateWheelItemsSchema),
   WheelController.updateWheelItems
 );
@@ -128,6 +133,7 @@ router.post('/:id/spin',
 router.get('/:id/eligibility/:memberId',
   brandContext.optionalBrandContext,
   rateLimit.generalRateLimit,
+  cache.cacheMiddleware({ ttl: 60 }), // Cache for 1 minute only
   validation.validate(wheelValidators.checkSpinEligibilitySchema),
   WheelController.checkSpinEligibility
 );
