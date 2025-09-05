@@ -17,8 +17,8 @@ const router = express.Router({ mergeParams: true }); // mergeParams to access b
  */
 router.post('/',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   validation.validate(transactionValidators.createTransactionSchema),
   TransactionController.createTransaction
@@ -31,8 +31,8 @@ router.post('/',
  */
 router.get('/',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   validation.validate(transactionValidators.listTransactionsSchema, 'query'),
   TransactionController.listTransactions
@@ -45,8 +45,8 @@ router.get('/',
  */
 router.post('/bulk',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   validation.validate(transactionValidators.bulkCreateTransactionsSchema),
   TransactionController.bulkCreateTransactions
@@ -59,8 +59,8 @@ router.post('/bulk',
  */
 router.get('/statistics',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   validation.validate(transactionValidators.getTransactionStatisticsSchema, 'query'),
   TransactionController.getTransactionStatistics
@@ -73,8 +73,8 @@ router.get('/statistics',
  */
 router.get('/trends',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   validation.validate(transactionValidators.getTransactionTrendsSchema, 'query'),
   TransactionController.getTransactionTrends
@@ -87,8 +87,8 @@ router.get('/trends',
  */
 router.get('/top-spenders',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   validation.validate(transactionValidators.getTopSpendingMembersSchema, 'query'),
   TransactionController.getTopSpendingMembers
@@ -101,8 +101,8 @@ router.get('/top-spenders',
  */
 router.get('/type-breakdown',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   validation.validate(transactionValidators.getTransactionTypeBreakdownSchema, 'query'),
   TransactionController.getTransactionTypeBreakdown
@@ -115,8 +115,8 @@ router.get('/type-breakdown',
  */
 router.get('/pending',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   validation.validate(transactionValidators.getPendingTransactionsSchema, 'query'),
   TransactionController.getPendingTransactions
@@ -129,8 +129,8 @@ router.get('/pending',
  */
 router.get('/summary',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   validation.validate(transactionValidators.getTransactionSummarySchema, 'query'),
   TransactionController.getTransactionSummary
@@ -143,8 +143,8 @@ router.get('/summary',
  */
 router.get('/dashboard',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   TransactionController.getTransactionDashboard
 );
@@ -156,8 +156,8 @@ router.get('/dashboard',
  */
 router.get('/analytics',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   validation.validate(transactionValidators.getTransactionAnalyticsSchema, 'query'),
   TransactionController.getTransactionAnalytics
@@ -170,8 +170,8 @@ router.get('/analytics',
  */
 router.get('/export',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   validation.validate(transactionValidators.exportTransactionsSchema, 'query'),
   TransactionController.exportTransactions
@@ -184,8 +184,8 @@ router.get('/export',
  */
 router.get('/:id',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   validation.validate(transactionValidators.getTransactionSchema),
   TransactionController.getTransactionById
@@ -198,8 +198,8 @@ router.get('/:id',
  */
 router.put('/:id',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   validation.validate(transactionValidators.updateTransactionSchema),
   TransactionController.updateTransaction
@@ -212,8 +212,8 @@ router.put('/:id',
  */
 router.post('/:id/reverse',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   validation.validate(transactionValidators.reverseTransactionSchema),
   TransactionController.reverseTransaction
@@ -226,8 +226,8 @@ router.post('/:id/reverse',
  */
 router.post('/:id/process',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   validation.validate(transactionValidators.processPendingTransactionSchema),
   TransactionController.processPendingTransaction
@@ -240,8 +240,8 @@ router.post('/:id/process',
  */
 router.get('/:id/audit-trail',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   TransactionController.getTransactionAuditTrail
 );
@@ -253,8 +253,8 @@ router.get('/:id/audit-trail',
  */
 router.post('/validate-amount',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   validation.validate(transactionValidators.validateTransactionAmountSchema),
   TransactionController.validateTransactionAmount
@@ -267,8 +267,8 @@ router.post('/validate-amount',
  */
 router.post('/adjustment',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   validation.validate(transactionValidators.createAdjustmentTransactionSchema),
   TransactionController.createAdjustmentTransaction

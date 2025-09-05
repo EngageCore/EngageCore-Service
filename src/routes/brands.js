@@ -33,7 +33,7 @@ const upload = multer({
  */
 router.post('/',
   auth.authenticate,
-  auth.authorize(['super_admin']),
+  auth.requireRole(['super_admin']),
   rateLimit.generalRateLimit,
   validation.validate(brandValidators.createBrandSchema),
   BrandController.createBrand
@@ -81,7 +81,7 @@ router.get('/check-slug/:slug',
  */
 router.get('/:id',
   auth.authenticate,
-  brandContext.validateBrandAccess,
+  brandContext.validateBrandOwnership,
   rateLimit.generalRateLimit,
   validation.validate(brandValidators.getBrandSchema),
   BrandController.getBrandById
@@ -94,8 +94,8 @@ router.get('/:id',
  */
 router.put('/:id',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   validation.validate(brandValidators.updateBrandSchema),
   BrandController.updateBrand
@@ -108,8 +108,8 @@ router.put('/:id',
  */
 router.put('/:id/settings',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   validation.validate(brandValidators.updateBrandSettingsSchema),
   BrandController.updateBrandSettings
@@ -122,8 +122,8 @@ router.put('/:id/settings',
  */
 router.delete('/:id',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin']),
   rateLimit.generalRateLimit,
   validation.validate(brandValidators.deleteBrandSchema),
   BrandController.deleteBrand
@@ -136,8 +136,8 @@ router.delete('/:id',
  */
 router.post('/:id/logo',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.uploadRateLimit,
   upload.single('logo'),
   validation.validate(brandValidators.uploadLogoSchema),
@@ -151,8 +151,8 @@ router.post('/:id/logo',
  */
 router.get('/:id/statistics',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   validation.validate(brandValidators.getBrandStatisticsSchema),
   BrandController.getBrandStatistics
@@ -165,8 +165,8 @@ router.get('/:id/statistics',
  */
 router.post('/:id/regenerate-api-key',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.sensitiveSlowDown,
   BrandController.regenerateApiKey
 );
@@ -178,8 +178,8 @@ router.post('/:id/regenerate-api-key',
  */
 router.get('/:id/dashboard',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   BrandController.getBrandDashboard
 );
@@ -191,8 +191,8 @@ router.get('/:id/dashboard',
  */
 router.get('/:id/members/summary',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   BrandController.getBrandMembersSummary
 );
@@ -204,8 +204,8 @@ router.get('/:id/members/summary',
  */
 router.get('/:id/activity',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   BrandController.getBrandActivity
 );
@@ -217,8 +217,8 @@ router.get('/:id/activity',
  */
 router.get('/:id/export',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   BrandController.exportBrandData
 );
@@ -230,8 +230,8 @@ router.get('/:id/export',
  */
 router.post('/:id/clone',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin']),
   rateLimit.generalRateLimit,
   BrandController.cloneBrand
 );

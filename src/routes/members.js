@@ -17,8 +17,8 @@ const router = express.Router({ mergeParams: true }); // mergeParams to access b
  */
 router.post('/',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   validation.validate(memberValidators.createMemberSchema),
   MemberController.createMember
@@ -31,8 +31,8 @@ router.post('/',
  */
 router.get('/',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   validation.validate(memberValidators.listMembersSchema, 'query'),
   MemberController.listMembers
@@ -45,8 +45,8 @@ router.get('/',
  */
 router.get('/statistics',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   validation.validate(memberValidators.getMemberStatisticsSchema, 'query'),
   MemberController.getMemberStatistics
@@ -59,8 +59,8 @@ router.get('/statistics',
  */
 router.get('/check-email/:email',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   validation.validate(memberValidators.checkEmailAvailabilitySchema),
   MemberController.checkEmailAvailability
@@ -73,8 +73,8 @@ router.get('/check-email/:email',
  */
 router.post('/import',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.uploadRateLimit,
   validation.validate(memberValidators.importMembersSchema),
   MemberController.importMembers
@@ -87,8 +87,8 @@ router.post('/import',
  */
 router.get('/export',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   validation.validate(memberValidators.exportMembersSchema, 'query'),
   MemberController.exportMembers
@@ -101,8 +101,8 @@ router.get('/export',
  */
 router.get('/leaderboard',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   validation.validate(memberValidators.getMemberLeaderboardSchema, 'query'),
   MemberController.getMemberLeaderboard
@@ -115,8 +115,8 @@ router.get('/leaderboard',
  */
 router.put('/bulk',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   MemberController.bulkUpdateMembers
 );
@@ -128,8 +128,8 @@ router.put('/bulk',
  */
 router.get('/:id',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   validation.validate(memberValidators.getMemberSchema),
   MemberController.getMemberById
@@ -142,8 +142,8 @@ router.get('/:id',
  */
 router.put('/:id',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   validation.validate(memberValidators.updateMemberSchema),
   MemberController.updateMember
@@ -156,8 +156,8 @@ router.put('/:id',
  */
 router.delete('/:id',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   validation.validate(memberValidators.deleteMemberSchema),
   MemberController.deleteMember
@@ -170,8 +170,8 @@ router.delete('/:id',
  */
 router.post('/:id/points',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   validation.validate(memberValidators.updateMemberPointsSchema),
   MemberController.updateMemberPoints
@@ -184,8 +184,8 @@ router.post('/:id/points',
  */
 router.get('/:id/transactions',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   validation.validate(memberValidators.getMemberTransactionsSchema, 'query'),
   MemberController.getMemberTransactions
@@ -198,8 +198,8 @@ router.get('/:id/transactions',
  */
 router.get('/:id/tier-progress',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   validation.validate(memberValidators.getMemberTierProgressSchema),
   MemberController.getMemberTierProgress
@@ -212,8 +212,8 @@ router.get('/:id/tier-progress',
  */
 router.post('/:id/tier-upgrade',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   validation.validate(memberValidators.manualTierUpgradeSchema),
   MemberController.manualTierUpgrade
@@ -226,8 +226,8 @@ router.post('/:id/tier-upgrade',
  */
 router.get('/:id/tier-history',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   validation.validate(memberValidators.getMemberTierHistorySchema),
   MemberController.getMemberTierHistory
@@ -251,8 +251,8 @@ router.get('/:id/profile',
  */
 router.get('/:id/dashboard',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   MemberController.getMemberDashboard
 );
@@ -264,8 +264,8 @@ router.get('/:id/dashboard',
  */
 router.post('/:id/activate',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   MemberController.activateMember
 );
@@ -277,8 +277,8 @@ router.post('/:id/activate',
  */
 router.post('/:id/deactivate',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   MemberController.deactivateMember
 );
@@ -290,8 +290,8 @@ router.post('/:id/deactivate',
  */
 router.get('/:id/activity',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   MemberController.getMemberActivity
 );

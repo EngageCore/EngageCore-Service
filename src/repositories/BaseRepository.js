@@ -29,9 +29,8 @@ class BaseRepository {
       const result = await dbClient.query(query, params);
       
       const duration = Date.now() - startTime;
-      logger.logPerformance(`Query executed in ${duration}ms`, {
+      logger.performance('Database Query', duration, {
         query: query.substring(0, 100),
-        duration,
         rowCount: result.rowCount
       });
       

@@ -17,7 +17,7 @@ const router = express.Router();
  */
 router.get('/dashboard',
   auth.authenticate,
-  auth.authorize(['super_admin']),
+  auth.requireRole(['super_admin']),
   rateLimit.generalRateLimit,
   AdminController.getSystemDashboard
 );
@@ -29,7 +29,7 @@ router.get('/dashboard',
  */
 router.get('/analytics',
   auth.authenticate,
-  auth.authorize(['super_admin']),
+  auth.requireRole(['super_admin']),
   rateLimit.generalRateLimit,
   validation.validate(adminValidators.getSystemAnalyticsSchema, 'query'),
   AdminController.getSystemAnalytics
@@ -42,7 +42,7 @@ router.get('/analytics',
  */
 router.get('/audit-logs',
   auth.authenticate,
-  auth.authorize(['super_admin']),
+  auth.requireRole(['super_admin']),
   rateLimit.generalRateLimit,
   validation.validate(adminValidators.getAuditLogsSchema, 'query'),
   AdminController.getAuditLogs
@@ -55,7 +55,7 @@ router.get('/audit-logs',
  */
 router.get('/health',
   auth.authenticate,
-  auth.authorize(['super_admin']),
+  auth.requireRole(['super_admin']),
   rateLimit.generalRateLimit,
   AdminController.getSystemHealth
 );
@@ -67,7 +67,7 @@ router.get('/health',
  */
 router.get('/reports',
   auth.authenticate,
-  auth.authorize(['super_admin']),
+  auth.requireRole(['super_admin']),
   rateLimit.generalRateLimit,
   validation.validate(adminValidators.getSystemReportsSchema, 'query'),
   AdminController.getSystemReports
@@ -80,7 +80,7 @@ router.get('/reports',
  */
 router.get('/settings',
   auth.authenticate,
-  auth.authorize(['super_admin']),
+  auth.requireRole(['super_admin']),
   rateLimit.generalRateLimit,
   AdminController.getSystemSettings
 );
@@ -92,7 +92,7 @@ router.get('/settings',
  */
 router.put('/settings',
   auth.authenticate,
-  auth.authorize(['super_admin']),
+  auth.requireRole(['super_admin']),
   rateLimit.generalRateLimit,
   validation.validate(adminValidators.updateSystemSettingsSchema),
   AdminController.updateSystemSettings
@@ -105,7 +105,7 @@ router.put('/settings',
  */
 router.get('/statistics',
   auth.authenticate,
-  auth.authorize(['super_admin']),
+  auth.requireRole(['super_admin']),
   rateLimit.generalRateLimit,
   validation.validate(adminValidators.getSystemStatisticsSchema, 'query'),
   AdminController.getSystemStatistics
@@ -118,7 +118,7 @@ router.get('/statistics',
  */
 router.get('/users/analytics',
   auth.authenticate,
-  auth.authorize(['super_admin']),
+  auth.requireRole(['super_admin']),
   rateLimit.generalRateLimit,
   validation.validate(adminValidators.getUserAnalyticsSchema, 'query'),
   AdminController.getUserAnalytics
@@ -131,7 +131,7 @@ router.get('/users/analytics',
  */
 router.get('/brands/analytics',
   auth.authenticate,
-  auth.authorize(['super_admin']),
+  auth.requireRole(['super_admin']),
   rateLimit.generalRateLimit,
   validation.validate(adminValidators.getBrandAnalyticsSchema, 'query'),
   AdminController.getBrandAnalytics
@@ -144,7 +144,7 @@ router.get('/brands/analytics',
  */
 router.get('/members/analytics',
   auth.authenticate,
-  auth.authorize(['super_admin']),
+  auth.requireRole(['super_admin']),
   rateLimit.generalRateLimit,
   validation.validate(adminValidators.getMemberAnalyticsSchema, 'query'),
   AdminController.getMemberAnalytics
@@ -157,7 +157,7 @@ router.get('/members/analytics',
  */
 router.get('/transactions/analytics',
   auth.authenticate,
-  auth.authorize(['super_admin']),
+  auth.requireRole(['super_admin']),
   rateLimit.generalRateLimit,
   validation.validate(adminValidators.getTransactionAnalyticsSchema, 'query'),
   AdminController.getTransactionAnalytics
@@ -170,7 +170,7 @@ router.get('/transactions/analytics',
  */
 router.get('/engagement/analytics',
   auth.authenticate,
-  auth.authorize(['super_admin']),
+  auth.requireRole(['super_admin']),
   rateLimit.generalRateLimit,
   validation.validate(adminValidators.getEngagementAnalyticsSchema, 'query'),
   AdminController.getEngagementAnalytics
@@ -183,7 +183,7 @@ router.get('/engagement/analytics',
  */
 router.get('/performance',
   auth.authenticate,
-  auth.authorize(['super_admin']),
+  auth.requireRole(['super_admin']),
   rateLimit.generalRateLimit,
   validation.validate(adminValidators.getSystemPerformanceSchema, 'query'),
   AdminController.getSystemPerformance
@@ -196,7 +196,7 @@ router.get('/performance',
  */
 router.get('/configuration',
   auth.authenticate,
-  auth.authorize(['super_admin']),
+  auth.requireRole(['super_admin']),
   rateLimit.generalRateLimit,
   AdminController.getSystemConfiguration
 );
@@ -208,7 +208,7 @@ router.get('/configuration',
  */
 router.put('/configuration',
   auth.authenticate,
-  auth.authorize(['super_admin']),
+  auth.requireRole(['super_admin']),
   rateLimit.generalRateLimit,
   validation.validate(adminValidators.updateSystemConfigurationSchema),
   AdminController.updateSystemConfiguration
@@ -221,7 +221,7 @@ router.put('/configuration',
  */
 router.get('/logs',
   auth.authenticate,
-  auth.authorize(['super_admin']),
+  auth.requireRole(['super_admin']),
   rateLimit.generalRateLimit,
   validation.validate(adminValidators.getSystemLogsSchema, 'query'),
   AdminController.getSystemLogs
@@ -234,7 +234,7 @@ router.get('/logs',
  */
 router.post('/cache/clear',
   auth.authenticate,
-  auth.authorize(['super_admin']),
+  auth.requireRole(['super_admin']),
   rateLimit.generalRateLimit,
   validation.validate(adminValidators.clearCacheSchema),
   AdminController.clearCache
@@ -247,7 +247,7 @@ router.post('/cache/clear',
  */
 router.post('/maintenance',
   auth.authenticate,
-  auth.authorize(['super_admin']),
+  auth.requireRole(['super_admin']),
   rateLimit.generalRateLimit,
   validation.validate(adminValidators.performMaintenanceSchema),
   AdminController.performMaintenance
@@ -260,7 +260,7 @@ router.post('/maintenance',
  */
 router.get('/backup/status',
   auth.authenticate,
-  auth.authorize(['super_admin']),
+  auth.requireRole(['super_admin']),
   rateLimit.generalRateLimit,
   AdminController.getBackupStatus
 );
@@ -272,7 +272,7 @@ router.get('/backup/status',
  */
 router.post('/backup/create',
   auth.authenticate,
-  auth.authorize(['super_admin']),
+  auth.requireRole(['super_admin']),
   rateLimit.generalRateLimit,
   validation.validate(adminValidators.createBackupSchema),
   AdminController.createBackup

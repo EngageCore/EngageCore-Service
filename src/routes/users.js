@@ -17,7 +17,7 @@ const router = express.Router();
  */
 router.post('/',
   auth.authenticate,
-  auth.authorize(['super_admin']),
+  auth.requireRole(['super_admin']),
   rateLimit.generalRateLimit,
   validation.validate(userValidators.createUserSchema),
   UserController.createUser
@@ -30,7 +30,7 @@ router.post('/',
  */
 router.get('/',
   auth.authenticate,
-  auth.authorize(['super_admin']),
+  auth.requireRole(['super_admin']),
   rateLimit.generalRateLimit,
   validation.validate(userValidators.listUsersSchema, 'query'),
   UserController.listUsers
@@ -43,7 +43,7 @@ router.get('/',
  */
 router.get('/statistics',
   auth.authenticate,
-  auth.authorize(['super_admin']),
+  auth.requireRole(['super_admin']),
   rateLimit.generalRateLimit,
   validation.validate(userValidators.getUserStatisticsSchema, 'query'),
   UserController.getUserStatistics
@@ -101,7 +101,7 @@ router.get('/current/sessions',
  */
 router.post('/bulk-update',
   auth.authenticate,
-  auth.authorize(['super_admin']),
+  auth.requireRole(['super_admin']),
   rateLimit.generalRateLimit,
   validation.validate(userValidators.bulkUpdateUsersSchema),
   UserController.bulkUpdateUsers
@@ -114,7 +114,7 @@ router.post('/bulk-update',
  */
 router.get('/export',
   auth.authenticate,
-  auth.authorize(['super_admin']),
+  auth.requireRole(['super_admin']),
   rateLimit.generalRateLimit,
   validation.validate(userValidators.exportUsersSchema, 'query'),
   UserController.exportUsers
@@ -127,7 +127,7 @@ router.get('/export',
  */
 router.get('/:id',
   auth.authenticate,
-  auth.authorize(['super_admin']),
+  auth.requireRole(['super_admin']),
   rateLimit.generalRateLimit,
   validation.validate(userValidators.getUserSchema),
   UserController.getUserById
@@ -140,7 +140,7 @@ router.get('/:id',
  */
 router.put('/:id',
   auth.authenticate,
-  auth.authorize(['super_admin']),
+  auth.requireRole(['super_admin']),
   rateLimit.generalRateLimit,
   validation.validate(userValidators.updateUserSchema),
   UserController.updateUser
@@ -153,7 +153,7 @@ router.put('/:id',
  */
 router.delete('/:id',
   auth.authenticate,
-  auth.authorize(['super_admin']),
+  auth.requireRole(['super_admin']),
   rateLimit.generalRateLimit,
   validation.validate(userValidators.deleteUserSchema),
   UserController.deleteUser
@@ -166,7 +166,7 @@ router.delete('/:id',
  */
 router.post('/:id/change-password',
   auth.authenticate,
-  auth.authorize(['super_admin']),
+  auth.requireRole(['super_admin']),
   rateLimit.generalRateLimit,
   validation.validate(userValidators.changeUserPasswordSchema),
   UserController.changeUserPassword
@@ -179,7 +179,7 @@ router.post('/:id/change-password',
  */
 router.get('/:id/activity-log',
   auth.authenticate,
-  auth.authorize(['super_admin']),
+  auth.requireRole(['super_admin']),
   rateLimit.generalRateLimit,
   validation.validate(userValidators.getUserActivityLogSchema, 'query'),
   UserController.getUserActivityLog
@@ -192,7 +192,7 @@ router.get('/:id/activity-log',
  */
 router.post('/:id/update-status',
   auth.authenticate,
-  auth.authorize(['super_admin']),
+  auth.requireRole(['super_admin']),
   rateLimit.generalRateLimit,
   validation.validate(userValidators.updateUserStatusSchema),
   UserController.updateUserStatus
@@ -205,7 +205,7 @@ router.post('/:id/update-status',
  */
 router.post('/:id/activate',
   auth.authenticate,
-  auth.authorize(['super_admin']),
+  auth.requireRole(['super_admin']),
   rateLimit.generalRateLimit,
   validation.validate(userValidators.activateUserSchema),
   UserController.activateUser
@@ -218,7 +218,7 @@ router.post('/:id/activate',
  */
 router.post('/:id/deactivate',
   auth.authenticate,
-  auth.authorize(['super_admin']),
+  auth.requireRole(['super_admin']),
   rateLimit.generalRateLimit,
   validation.validate(userValidators.deactivateUserSchema),
   UserController.deactivateUser
@@ -231,7 +231,7 @@ router.post('/:id/deactivate',
  */
 router.get('/:id/permissions',
   auth.authenticate,
-  auth.authorize(['super_admin']),
+  auth.requireRole(['super_admin']),
   rateLimit.generalRateLimit,
   validation.validate(userValidators.getUserPermissionsSchema),
   UserController.getUserPermissions
@@ -244,7 +244,7 @@ router.get('/:id/permissions',
  */
 router.get('/:id/roles',
   auth.authenticate,
-  auth.authorize(['super_admin']),
+  auth.requireRole(['super_admin']),
   rateLimit.generalRateLimit,
   validation.validate(userValidators.getUserRolesSchema),
   UserController.getUserRoles

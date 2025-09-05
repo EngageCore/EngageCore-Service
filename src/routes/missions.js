@@ -17,8 +17,8 @@ const router = express.Router({ mergeParams: true }); // mergeParams to access b
  */
 router.post('/',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   validation.validate(missionValidators.createMissionSchema),
   MissionController.createMission
@@ -31,8 +31,8 @@ router.post('/',
  */
 router.get('/',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   validation.validate(missionValidators.listMissionsSchema, 'query'),
   MissionController.listMissions
@@ -45,8 +45,8 @@ router.get('/',
  */
 router.post('/bulk',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   validation.validate(missionValidators.bulkCreateMissionsSchema),
   MissionController.bulkCreateMissions
@@ -59,8 +59,8 @@ router.post('/bulk',
  */
 router.get('/statistics',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   validation.validate(missionValidators.getMissionStatisticsSchema, 'query'),
   MissionController.getMissionStatistics
@@ -73,8 +73,8 @@ router.get('/statistics',
  */
 router.get('/brand-statistics',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   validation.validate(missionValidators.getBrandMissionStatisticsSchema, 'query'),
   MissionController.getBrandMissionStatistics
@@ -87,8 +87,8 @@ router.get('/brand-statistics',
  */
 router.get('/top-performing',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   validation.validate(missionValidators.getTopPerformingMissionsSchema, 'query'),
   MissionController.getTopPerformingMissions
@@ -101,8 +101,8 @@ router.get('/top-performing',
  */
 router.get('/dashboard',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   MissionController.getMissionDashboard
 );
@@ -114,8 +114,8 @@ router.get('/dashboard',
  */
 router.get('/:id',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   validation.validate(missionValidators.getMissionSchema),
   MissionController.getMissionById
@@ -128,8 +128,8 @@ router.get('/:id',
  */
 router.put('/:id',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   validation.validate(missionValidators.updateMissionSchema),
   MissionController.updateMission
@@ -142,8 +142,8 @@ router.put('/:id',
  */
 router.delete('/:id',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   validation.validate(missionValidators.deleteMissionSchema),
   MissionController.deleteMission
@@ -180,8 +180,8 @@ router.get('/:id/eligibility/:memberId',
  */
 router.get('/:id/completions',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   validation.validate(missionValidators.getMissionCompletionsSchema, 'query'),
   MissionController.getMissionCompletions
@@ -194,8 +194,8 @@ router.get('/:id/completions',
  */
 router.post('/:id/assign/:memberId',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   validation.validate(missionValidators.assignMissionToMemberSchema),
   MissionController.assignMissionToMember
@@ -208,8 +208,8 @@ router.post('/:id/assign/:memberId',
  */
 router.post('/:id/clone',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   MissionController.cloneMission
 );
@@ -221,8 +221,8 @@ router.post('/:id/clone',
  */
 router.post('/:id/activate',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   MissionController.activateMission
 );
@@ -234,8 +234,8 @@ router.post('/:id/activate',
  */
 router.post('/:id/deactivate',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   MissionController.deactivateMission
 );
@@ -247,8 +247,8 @@ router.post('/:id/deactivate',
  */
 router.get('/:id/export',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   MissionController.exportMissionData
 );

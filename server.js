@@ -21,7 +21,6 @@ const config = require('./config');
 const { logger, dbMonitor, maintenance } = require('./src/utils');
 const { errorHandler } = require('./src/middleware');
 const routes = require('./src/routes');
-const { createMigrationRunner } = require('./database/migrate');
 
 // Import database connection
 const db = require('./config/database');
@@ -41,11 +40,7 @@ class Server {
     try {
       // Test database connection
       await this.testDatabaseConnection();
-      
-      // Run database migrations if enabled
-      if (config.database.runMigrationsOnStart) {
-        await this.runMigrations();
-      }
+
       
       // Setup middleware
       this.setupMiddleware();
@@ -86,21 +81,6 @@ class Server {
     }
   }
 
-  /**
-   * Run database migrations
-   */
-  async runMigrations() {
-    try {
-      logger.info('Running database migrations...');
-      const migrationRunner = createMigrationRunner();
-      await migrationRunner.runMigrations();
-      await migrationRunner.close();
-      logger.info('Database migrations completed');
-    } catch (error) {
-      logger.error('Database migrations failed:', error);
-      throw error;
-    }
-  }
 
   /**
    * Setup middleware
@@ -192,15 +172,10 @@ class Server {
       next();
     });
 
-    // Maintenance mode middleware
+    // Maintenance mode middleware (simplified - can be enhanced later)
     this.app.use((req, res, next) => {
-      if (maintenance.isMaintenanceMode() && !req.url.startsWith('/api/health')) {
-        return res.status(503).json({
-          error: 'Service temporarily unavailable',
-          message: 'The service is currently under maintenance. Please try again later.',
-          maintenanceInfo: maintenance.getMaintenanceInfo()
-        });
-      }
+      // Skip maintenance mode check for now - can be implemented when needed
+      // Future enhancement: Add environment variable or config-based maintenance mode
       next();
     });
   }
@@ -330,7 +305,7 @@ class Server {
     });
 
     // Global error handler
-    this.app.use(errorHandler.handle);
+    this.app.use(errorHandler.errorHandler);
   }
 
   /**

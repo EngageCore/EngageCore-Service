@@ -8,6 +8,13 @@ const slowDown = require('express-slow-down');
 const { response, logger, constants } = require('../utils');
 const { RATE_LIMITS, ERROR_CODES } = constants;
 
+// Simple IP key generator function for IPv6 compatibility
+const ipKeyGenerator = (req) => {
+  // Handle IPv6 addresses properly
+  const ip = req.ip || req.connection.remoteAddress || req.socket.remoteAddress || '127.0.0.1';
+  return ip.replace(/^::ffff:/, ''); // Remove IPv4-mapped IPv6 prefix
+};
+
 /**
  * Create rate limiter with custom options
  * @param {object} options - Rate limiting options
@@ -44,8 +51,8 @@ const createRateLimit = (options = {}) => {
       return req.path === '/health' || req.path === '/ping';
     },
     keyGenerator: (req) => {
-      // Use IP address as default key
-      return req.ip;
+      // Use ipKeyGenerator helper for IPv6 compatibility
+      return ipKeyGenerator(req);
     },
     ...options
   };
@@ -80,7 +87,7 @@ const authRateLimit = createRateLimit({
   keyGenerator: (req) => {
     // Use combination of IP and email for more granular limiting
     const email = req.body?.email || '';
-    return `${req.ip}:${email}`;
+    return `${ipKeyGenerator(req)}:${email}`;
   },
   handler: (req, res) => {
     logger.logSecurity('Authentication rate limit exceeded', {
@@ -112,7 +119,7 @@ const passwordResetRateLimit = createRateLimit({
   keyGenerator: (req) => {
     // Use combination of IP and email
     const email = req.body?.email || '';
-    return `${req.ip}:${email}`;
+    return `${ipKeyGenerator(req)}:${email}`;
   }
 });
 
@@ -128,8 +135,8 @@ const wheelSpinRateLimit = createRateLimit({
     code: ERROR_CODES.TOO_MANY_REQUESTS
   },
   keyGenerator: (req) => {
-    // Use member ID if available, otherwise IP
-    return req.user?.id || req.ip;
+    // Use member ID if available, otherwise IP with IPv6 support
+    return req.user?.id || ipKeyGenerator(req);
   },
   handler: (req, res) => {
     logger.logSecurity('Wheel spin rate limit exceeded', {
@@ -156,8 +163,8 @@ const createUserRateLimit = (options = {}) => {
   return createRateLimit({
     ...options,
     keyGenerator: (req) => {
-      // Use user ID if authenticated, otherwise IP
-      return req.user?.id || req.ip;
+      // Use user ID if authenticated, otherwise IP with IPv6 support
+      return req.user?.id || ipKeyGenerator(req);
     }
   });
 };
@@ -171,9 +178,9 @@ const createBrandRateLimit = (options = {}) => {
   return createRateLimit({
     ...options,
     keyGenerator: (req) => {
-      // Use combination of brand and user/IP
+      // Use combination of brand and user/IP with IPv6 support
       const brandId = req.brand?.id || 'unknown';
-      const identifier = req.user?.id || req.ip;
+      const identifier = req.user?.id || ipKeyGenerator(req);
       return `${brandId}:${identifier}`;
     }
   });
@@ -188,20 +195,13 @@ const createSlowDown = (options = {}) => {
   const defaultOptions = {
     windowMs: 15 * 60 * 1000, // 15 minutes
     delayAfter: 50, // Allow 50 requests per windowMs without delay
-    delayMs: 500, // Add 500ms delay per request after delayAfter
+    delayMs: () => 500, // Function that returns 500ms delay per request after delayAfter
     maxDelayMs: 10000, // Maximum delay of 10 seconds
     skipFailedRequests: false,
     skipSuccessfulRequests: false,
-    keyGenerator: (req) => req.ip,
-    onLimitReached: (req, res, options) => {
-      logger.logSecurity('Slow down limit reached', {
-        ip: req.ip,
-        userAgent: req.get('User-Agent'),
-        path: req.path,
-        method: req.method,
-        delayAfter: options.delayAfter,
-        delayMs: options.delayMs
-      });
+    keyGenerator: (req) => ipKeyGenerator(req),
+    validate: {
+      delayMs: false // Disable delayMs validation warnings
     },
     ...options
   };
@@ -215,7 +215,7 @@ const createSlowDown = (options = {}) => {
 const generalSlowDown = createSlowDown({
   windowMs: 15 * 60 * 1000, // 15 minutes
   delayAfter: 100, // Allow 100 requests per 15 minutes without delay
-  delayMs: 100, // Add 100ms delay per request after delayAfter
+  delayMs: () => 100, // Function that returns 100ms delay per request after delayAfter
   maxDelayMs: 5000 // Maximum delay of 5 seconds
 });
 
@@ -225,7 +225,7 @@ const generalSlowDown = createSlowDown({
 const sensitiveSlowDown = createSlowDown({
   windowMs: 15 * 60 * 1000, // 15 minutes
   delayAfter: 10, // Allow only 10 requests per 15 minutes without delay
-  delayMs: 1000, // Add 1 second delay per request after delayAfter
+  delayMs: () => 1000, // Function that returns 1 second delay per request after delayAfter
   maxDelayMs: 30000 // Maximum delay of 30 seconds
 });
 
@@ -268,7 +268,7 @@ const dynamicRateLimit = (req, res, next) => {
     windowMs: 15 * 60 * 1000, // 15 minutes
     max: maxRequests,
     keyGenerator: (req) => {
-      return req.user?.id || req.ip;
+      return req.user?.id || ipKeyGenerator(req);
     },
     message: {
       error: 'Rate limit exceeded',
@@ -307,7 +307,7 @@ const uploadRateLimit = createRateLimit({
     code: ERROR_CODES.TOO_MANY_REQUESTS
   },
   keyGenerator: (req) => {
-    return req.user?.id || req.ip;
+    return req.user?.id || ipKeyGenerator(req);
   }
 });
 
@@ -323,7 +323,7 @@ const apiKeyRateLimit = createRateLimit({
     code: ERROR_CODES.TOO_MANY_REQUESTS
   },
   keyGenerator: (req) => {
-    return req.apiKey || req.ip;
+    return req.apiKey || ipKeyGenerator(req);
   }
 });
 

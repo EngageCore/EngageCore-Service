@@ -17,8 +17,8 @@ const router = express.Router({ mergeParams: true }); // mergeParams to access b
  */
 router.post('/',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   validation.validate(wheelValidators.createWheelSchema),
   WheelController.createWheel
@@ -31,8 +31,8 @@ router.post('/',
  */
 router.get('/',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   validation.validate(wheelValidators.listWheelsSchema, 'query'),
   WheelController.listWheels
@@ -45,8 +45,8 @@ router.get('/',
  */
 router.post('/validate-probabilities',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   validation.validate(wheelValidators.validateWheelProbabilitiesSchema),
   WheelController.validateWheelProbabilities
@@ -59,8 +59,8 @@ router.post('/validate-probabilities',
  */
 router.get('/:id',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   validation.validate(wheelValidators.getWheelSchema),
   WheelController.getWheelById
@@ -73,8 +73,8 @@ router.get('/:id',
  */
 router.put('/:id',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   validation.validate(wheelValidators.updateWheelSchema),
   WheelController.updateWheel
@@ -87,8 +87,8 @@ router.put('/:id',
  */
 router.put('/:id/items',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   validation.validate(wheelValidators.updateWheelItemsSchema),
   WheelController.updateWheelItems
@@ -101,8 +101,8 @@ router.put('/:id/items',
  */
 router.delete('/:id',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   validation.validate(wheelValidators.deleteWheelSchema),
   WheelController.deleteWheel
@@ -139,8 +139,8 @@ router.get('/:id/eligibility/:memberId',
  */
 router.get('/:id/spins',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   validation.validate(wheelValidators.getSpinHistorySchema, 'query'),
   WheelController.getSpinHistory
@@ -153,8 +153,8 @@ router.get('/:id/spins',
  */
 router.get('/:id/statistics',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   validation.validate(wheelValidators.getWheelStatisticsSchema, 'query'),
   WheelController.getWheelStatistics
@@ -167,8 +167,8 @@ router.get('/:id/statistics',
  */
 router.get('/:id/items/performance',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   validation.validate(wheelValidators.getItemPerformanceSchema, 'query'),
   WheelController.getItemPerformance
@@ -193,8 +193,8 @@ router.get('/:id/members/:memberId/daily-count',
  */
 router.get('/:id/dashboard',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   WheelController.getWheelDashboard
 );
@@ -206,8 +206,8 @@ router.get('/:id/dashboard',
  */
 router.post('/:id/clone',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   WheelController.cloneWheel
 );
@@ -219,8 +219,8 @@ router.post('/:id/clone',
  */
 router.post('/:id/activate',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   WheelController.activateWheel
 );
@@ -232,8 +232,8 @@ router.post('/:id/activate',
  */
 router.post('/:id/deactivate',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   WheelController.deactivateWheel
 );
@@ -245,8 +245,8 @@ router.post('/:id/deactivate',
  */
 router.get('/:id/leaderboard',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   WheelController.getWheelLeaderboard
 );
@@ -258,8 +258,8 @@ router.get('/:id/leaderboard',
  */
 router.get('/:id/export',
   auth.authenticate,
-  brandContext.validateBrandAccess,
-  auth.authorize(['super_admin', 'brand_admin']),
+  brandContext.validateBrandOwnership,
+  auth.requireRole(['super_admin', 'brand_admin']),
   rateLimit.generalRateLimit,
   WheelController.exportWheelData
 );

@@ -81,14 +81,14 @@ router.use('/brands/:brandId/transactions', transactionRoutes);
 
 // 404 handler for undefined routes
 router.use('*', (req, res) => {
-  response.error(res, 'Route not found', 404, {
+  response.error(res, 'Route not found', {
     path: req.originalUrl,
     method: req.method,
     timestamp: new Date().toISOString()
-  });
+  }, 404);
 });
 
 // Error handling middleware (should be last)
-router.use(errorHandler.handle);
+router.use(errorHandler.errorHandler);
 
 module.exports = router;
