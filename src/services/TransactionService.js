@@ -7,6 +7,7 @@ const { TransactionRepository, MemberRepository, AuditLogRepository } = require(
 const { logger, constants } = require('../utils');
 const { errorHandler } = require('../middleware');
 const { NotFoundError, ConflictError, ValidationError, AuthorizationError } = errorHandler;
+const { SERVICE_ERROR_CODES } = require('../enums');
 const { AUDIT_ACTIONS, TRANSACTION_TYPES, TRANSACTION_STATUS } = constants;
 
 class TransactionService {
@@ -34,12 +35,12 @@ class TransactionService {
       // Check if member exists
       const member = await this.memberRepository.findById(member_id);
       if (!member || member.brand_id !== brandId) {
-        throw new NotFoundError('Member not found');
+        throw new NotFoundError('Member not found', 404, SERVICE_ERROR_CODES.TRANSACTION_MEMBER_NOT_FOUND);
       }
 
       // Check if debit would result in negative balance
       if (type === TRANSACTION_TYPES.DEBIT && member.points_balance < amount) {
-        throw new ValidationError('Insufficient points balance');
+        throw new ValidationError('Insufficient points balance', 400, SERVICE_ERROR_CODES.TRANSACTION_INSUFFICIENT_POINTS);
       }
 
       // Create transaction
@@ -112,7 +113,7 @@ class TransactionService {
     try {
       const transaction = await this.transactionRepository.findWithMember(transactionId);
       if (!transaction || transaction.brand_id !== brandId) {
-        throw new NotFoundError('Transaction not found');
+        throw new NotFoundError('Transaction not found', 404, SERVICE_ERROR_CODES.TRANSACTION_NOT_FOUND);
       }
 
       return transaction;
@@ -140,13 +141,13 @@ class TransactionService {
       // Check if transaction exists
       const existingTransaction = await this.transactionRepository.findById(transactionId);
       if (!existingTransaction || existingTransaction.brand_id !== brandId) {
-        throw new NotFoundError('Transaction not found');
+        throw new NotFoundError('Transaction not found', 404, SERVICE_ERROR_CODES.TRANSACTION_NOT_FOUND);
       }
 
       // Prevent updating completed transactions that affect balance
       if (existingTransaction.status === TRANSACTION_STATUS.COMPLETED && 
           (updateData.amount || updateData.type)) {
-        throw new ValidationError('Cannot modify amount or type of completed transaction');
+        throw new ValidationError('Cannot modify amount or type of completed transaction', 400, SERVICE_ERROR_CODES.TRANSACTION_CANNOT_MODIFY_COMPLETED);
       }
 
       // Update transaction
@@ -249,7 +250,7 @@ class TransactionService {
       // Check if member exists
       const member = await this.memberRepository.findById(memberId);
       if (!member || member.brand_id !== brandId) {
-        throw new NotFoundError('Member not found');
+        throw new NotFoundError('Member not found', 404, SERVICE_ERROR_CODES.TRANSACTION_MEMBER_NOT_FOUND);
       }
 
       const {
@@ -440,21 +441,21 @@ class TransactionService {
       // Check if transaction exists and can be reversed
       const originalTransaction = await this.transactionRepository.findById(transactionId);
       if (!originalTransaction || originalTransaction.brand_id !== brandId) {
-        throw new NotFoundError('Transaction not found');
+        throw new NotFoundError('Transaction not found', 404, SERVICE_ERROR_CODES.TRANSACTION_NOT_FOUND);
       }
 
       if (originalTransaction.status !== TRANSACTION_STATUS.COMPLETED) {
-        throw new ValidationError('Only completed transactions can be reversed');
+        throw new ValidationError('Only completed transactions can be reversed', 400, SERVICE_ERROR_CODES.TRANSACTION_ONLY_COMPLETED_CAN_BE_REVERSED);
       }
 
       if (originalTransaction.reversed_at) {
-        throw new ValidationError('Transaction has already been reversed');
+        throw new ValidationError('Transaction has already been reversed', 400, SERVICE_ERROR_CODES.TRANSACTION_ALREADY_REVERSED);
       }
 
       // Get member
       const member = await this.memberRepository.findById(originalTransaction.member_id);
       if (!member) {
-        throw new NotFoundError('Member not found');
+        throw new NotFoundError('Member not found', 404, SERVICE_ERROR_CODES.TRANSACTION_MEMBER_NOT_FOUND);
       }
 
       // Check if reversal would result in negative balance
@@ -463,7 +464,7 @@ class TransactionService {
         : TRANSACTION_TYPES.CREDIT;
 
       if (reversalType === TRANSACTION_TYPES.DEBIT && member.points_balance < originalTransaction.amount) {
-        throw new ValidationError('Insufficient points balance for reversal');
+        throw new ValidationError('Insufficient points balance for reversal', 400, SERVICE_ERROR_CODES.TRANSACTION_INSUFFICIENT_POINTS_FOR_REVERSAL);
       }
 
       // Create reversal transaction
@@ -655,7 +656,7 @@ class TransactionService {
       // Check if member exists
       const member = await this.memberRepository.findById(memberId);
       if (!member || member.brand_id !== brandId) {
-        throw new NotFoundError('Member not found');
+        throw new NotFoundError('Member not found', 404, SERVICE_ERROR_CODES.TRANSACTION_MEMBER_NOT_FOUND);
       }
 
       return {
@@ -687,7 +688,7 @@ class TransactionService {
       // Check if member exists
       const member = await this.memberRepository.findById(memberId);
       if (!member || member.brand_id !== brandId) {
-        throw new NotFoundError('Member not found');
+        throw new NotFoundError('Member not found', 404, SERVICE_ERROR_CODES.TRANSACTION_MEMBER_NOT_FOUND);
       }
 
       const validation = {
@@ -770,11 +771,11 @@ class TransactionService {
       // Check if transaction exists and is pending
       const transaction = await this.transactionRepository.findById(transactionId);
       if (!transaction || transaction.brand_id !== brandId) {
-        throw new NotFoundError('Transaction not found');
+        throw new NotFoundError('Transaction not found', 404, SERVICE_ERROR_CODES.TRANSACTION_NOT_FOUND);
       }
 
       if (transaction.status !== TRANSACTION_STATUS.PENDING) {
-        throw new ValidationError('Transaction is not pending');
+        throw new ValidationError('Transaction is not pending', 400, SERVICE_ERROR_CODES.TRANSACTION_NOT_PENDING);
       }
 
       let updatedTransaction;
@@ -782,7 +783,7 @@ class TransactionService {
         // Get member and validate balance for debits
         const member = await this.memberRepository.findById(transaction.member_id);
         if (transaction.type === TRANSACTION_TYPES.DEBIT && member.points_balance < transaction.amount) {
-          throw new ValidationError('Insufficient points balance');
+          throw new ValidationError('Insufficient points balance', 400, SERVICE_ERROR_CODES.TRANSACTION_INSUFFICIENT_POINTS);
         }
 
         // Approve transaction
@@ -811,7 +812,7 @@ class TransactionService {
           processed_by: userId
         });
       } else {
-        throw new ValidationError('Invalid action. Must be approve or reject');
+        throw new ValidationError('Invalid action. Must be approve or reject', 400, SERVICE_ERROR_CODES.TRANSACTION_INVALID_ACTION);
       }
 
       // Log transaction processing
@@ -889,19 +890,19 @@ class TransactionService {
     const { member_id, type, amount, description } = transactionData;
 
     if (!member_id) {
-      throw new ValidationError('Member ID is required');
+      throw new ValidationError('Member ID is required', 400, SERVICE_ERROR_CODES.TRANSACTION_MEMBER_ID_REQUIRED);
     }
 
     if (!type || !Object.values(TRANSACTION_TYPES).includes(type)) {
-      throw new ValidationError('Valid transaction type is required');
+      throw new ValidationError('Valid transaction type is required', 400, SERVICE_ERROR_CODES.TRANSACTION_VALID_TYPE_REQUIRED);
     }
 
     if (!amount || amount <= 0) {
-      throw new ValidationError('Amount must be greater than 0');
+      throw new ValidationError('Amount must be greater than 0', 400, SERVICE_ERROR_CODES.TRANSACTION_AMOUNT_MUST_BE_POSITIVE);
     }
 
     if (!description || description.trim().length === 0) {
-      throw new ValidationError('Description is required');
+      throw new ValidationError('Description is required', 400, SERVICE_ERROR_CODES.TRANSACTION_DESCRIPTION_REQUIRED);
     }
   }
 }

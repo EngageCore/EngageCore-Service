@@ -6,6 +6,7 @@
 const { MemberRepository, BrandRepository, AuditLogRepository } = require('../repositories');
 const { logger, response } = require('../utils');
 const { NotFoundError, ValidationError, ConflictError } = require('../utils/errors');
+const { SERVICE_ERROR_CODES } = require('../enums');
 const { TIER_STATUS, AUDIT_ACTIONS } = require('../utils/constants');
 
 class TierService {
@@ -28,7 +29,7 @@ class TierService {
       // Verify brand exists and user has access
       const brand = await this.brandRepository.findById(brandId);
       if (!brand) {
-        throw new NotFoundError('Brand not found');
+        throw new NotFoundError('Brand not found', 404, SERVICE_ERROR_CODES.TIER_BRAND_NOT_FOUND);
       }
 
       // Check if tier name or slug already exists for this brand
@@ -38,14 +39,14 @@ class TierService {
         tier.name.toLowerCase() === tierData.name.toLowerCase()
       );
       if (nameExists) {
-        throw new ConflictError('Tier name already exists for this brand');
+        throw new ConflictError('Tier name already exists for this brand', 409, SERVICE_ERROR_CODES.TIER_NAME_ALREADY_EXISTS);
       }
 
       const slugExists = existingTiers.some(tier => 
         tier.slug.toLowerCase() === tierData.slug.toLowerCase()
       );
       if (slugExists) {
-        throw new ConflictError('Tier slug already exists for this brand');
+        throw new ConflictError('Tier slug already exists for this brand', 409, SERVICE_ERROR_CODES.TIER_SLUG_ALREADY_EXISTS);
       }
 
       // Validate point ranges don't overlap with existing tiers
@@ -111,7 +112,7 @@ class TierService {
       const tier = await this.memberRepository.getMembershipTierById(tierId);
       
       if (!tier || tier.brand_id !== brandId) {
-        throw new NotFoundError('Tier not found');
+        throw new NotFoundError('Tier not found', 404, SERVICE_ERROR_CODES.TIER_NOT_FOUND);
       }
 
       return tier;
@@ -136,7 +137,7 @@ class TierService {
       // Verify brand exists
       const brand = await this.brandRepository.findById(brandId);
       if (!brand) {
-        throw new NotFoundError('Brand not found');
+        throw new NotFoundError('Brand not found', 404, SERVICE_ERROR_CODES.TIER_BRAND_NOT_FOUND);
       }
 
       const tiers = await this.memberRepository.getMembershipTiers(brandId, options);
@@ -186,7 +187,7 @@ class TierService {
             tier.id !== tierId && tier.name.toLowerCase() === updateData.name.toLowerCase()
           );
           if (nameExists) {
-            throw new ConflictError('Tier name already exists for this brand');
+            throw new ConflictError('Tier name already exists for this brand', 409, SERVICE_ERROR_CODES.TIER_NAME_ALREADY_EXISTS);
           }
         }
 
@@ -195,7 +196,7 @@ class TierService {
             tier.id !== tierId && tier.slug.toLowerCase() === updateData.slug.toLowerCase()
           );
           if (slugExists) {
-            throw new ConflictError('Tier slug already exists for this brand');
+            throw new ConflictError('Tier slug already exists for this brand', 409, SERVICE_ERROR_CODES.TIER_SLUG_ALREADY_EXISTS);
           }
         }
       }
@@ -269,7 +270,7 @@ class TierService {
       // Check if tier has members
       const memberCount = await this.memberRepository.countMembersByTier(tierId);
       if (memberCount > 0) {
-        throw new ConflictError(`Cannot delete tier with ${memberCount} members. Please reassign members first.`);
+        throw new ConflictError(`Cannot delete tier with ${memberCount} members. Please reassign members first.`, 409, SERVICE_ERROR_CODES.TIER_CANNOT_DELETE_WITH_MEMBERS);
       }
 
       // Soft delete the tier
@@ -362,7 +363,7 @@ class TierService {
       // Check if tiers already exist
       const existingTiers = await this.memberRepository.getMembershipTiers(brandId);
       if (existingTiers.length > 0) {
-        throw new ConflictError('Tiers already exist for this brand');
+        throw new ConflictError('Tiers already exist for this brand', 409, SERVICE_ERROR_CODES.TIER_ALREADY_EXISTS);
       }
 
       // Execute the database function to create default tiers
@@ -430,7 +431,9 @@ class TierService {
       
       if (hasOverlap) {
         throw new ValidationError(
-          `Point range overlaps with existing tier "${existingTier.name}" (${existingMin}-${existingMax || '∞'})`
+          `Point range overlaps with existing tier "${existingTier.name}" (${existingMin}-${existingMax || '∞'})`,
+          400,
+          SERVICE_ERROR_CODES.TIER_POINT_RANGE_OVERLAP
         );
       }
     }
@@ -447,7 +450,7 @@ class TierService {
       // Verify brand exists
       const brand = await this.brandRepository.findById(brandId);
       if (!brand) {
-        throw new NotFoundError('Brand not found');
+        throw new NotFoundError('Brand not found', 404, SERVICE_ERROR_CODES.TIER_BRAND_NOT_FOUND);
       }
 
       const tiers = await this.memberRepository.getMembershipTiers(brandId);
@@ -500,7 +503,7 @@ class TierService {
       // Verify brand exists
       const brand = await this.brandRepository.findById(brandId);
       if (!brand) {
-        throw new NotFoundError('Brand not found');
+        throw new NotFoundError('Brand not found', 404, SERVICE_ERROR_CODES.TIER_BRAND_NOT_FOUND);
       }
 
       const results = {
@@ -518,7 +521,7 @@ class TierService {
           // Verify member exists and belongs to brand
           const member = await this.memberRepository.findById(member_id);
           if (!member || member.brand_id !== brandId) {
-            throw new NotFoundError(`Member ${member_id} not found`);
+            throw new NotFoundError(`Member ${member_id} not found`, 404, SERVICE_ERROR_CODES.TIER_MEMBER_NOT_FOUND);
           }
 
           // Update member's tier

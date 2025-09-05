@@ -7,6 +7,7 @@ const { MissionRepository, MissionCompletionRepository, MemberRepository, Transa
 const { logger, constants } = require('../utils');
 const { errorHandler } = require('../middleware');
 const { NotFoundError, ConflictError, ValidationError, AuthorizationError } = errorHandler;
+const { SERVICE_ERROR_CODES } = require('../enums');
 const { AUDIT_ACTIONS, TRANSACTION_TYPES, MISSION_TYPES, MISSION_STATUS, COMPLETION_STATUS } = constants;
 
 class MissionService {
@@ -89,7 +90,7 @@ class MissionService {
     try {
       const mission = await this.missionRepository.findById(missionId);
       if (!mission || mission.brand_id !== brandId) {
-        throw new NotFoundError('Mission not found');
+        throw new NotFoundError('Mission not found', 404, SERVICE_ERROR_CODES.MISSION_NOT_FOUND);
       }
 
       return mission;
@@ -117,7 +118,7 @@ class MissionService {
       // Check if mission exists
       const existingMission = await this.missionRepository.findById(missionId);
       if (!existingMission || existingMission.brand_id !== brandId) {
-        throw new NotFoundError('Mission not found');
+        throw new NotFoundError('Mission not found', 404, SERVICE_ERROR_CODES.MISSION_NOT_FOUND);
       }
 
       // Validate update data
@@ -220,13 +221,13 @@ class MissionService {
       // Check if mission exists
       const existingMission = await this.missionRepository.findById(missionId);
       if (!existingMission || existingMission.brand_id !== brandId) {
-        throw new NotFoundError('Mission not found');
+        throw new NotFoundError('Mission not found', 404, SERVICE_ERROR_CODES.MISSION_NOT_FOUND);
       }
 
       // Check if mission has completions
       const hasCompletions = await this.missionCompletionRepository.missionHasCompletions(missionId);
       if (hasCompletions) {
-        throw new ValidationError('Cannot delete mission with completion history. Please deactivate instead.');
+        throw new ValidationError('Cannot delete mission with completion history. Please deactivate instead.', 400, SERVICE_ERROR_CODES.MISSION_CANNOT_DELETE_WITH_HISTORY);
       }
 
       // Delete mission
@@ -276,38 +277,38 @@ class MissionService {
       // Check if mission exists and is active
       const mission = await this.missionRepository.findById(missionId);
       if (!mission || mission.brand_id !== brandId) {
-        throw new NotFoundError('Mission not found');
+        throw new NotFoundError('Mission not found', 404, SERVICE_ERROR_CODES.MISSION_NOT_FOUND);
       }
 
       if (mission.status !== MISSION_STATUS.ACTIVE) {
-        throw new ValidationError('Mission is not active');
+        throw new ValidationError('Mission is not active', 400, SERVICE_ERROR_CODES.MISSION_NOT_ACTIVE);
       }
 
       // Check if mission is within active dates
       const now = new Date();
       if (mission.start_date && now < new Date(mission.start_date)) {
-        throw new ValidationError('Mission is not yet available');
+        throw new ValidationError('Mission is not yet available', 400, SERVICE_ERROR_CODES.MISSION_NOT_YET_AVAILABLE);
       }
       if (mission.end_date && now > new Date(mission.end_date)) {
-        throw new ValidationError('Mission is no longer available');
+        throw new ValidationError('Mission is no longer available', 400, SERVICE_ERROR_CODES.MISSION_NO_LONGER_AVAILABLE);
       }
 
       // Check if member exists
       const member = await this.memberRepository.findById(memberId);
       if (!member || member.brand_id !== brandId) {
-        throw new NotFoundError('Member not found');
+        throw new NotFoundError('Member not found', 404, SERVICE_ERROR_CODES.MISSION_MEMBER_NOT_FOUND);
       }
 
       // Check if member has already completed this mission
       const existingCompletion = await this.missionCompletionRepository.findByMissionAndMember(missionId, memberId);
       if (existingCompletion && !mission.repeatable) {
-        throw new ValidationError('Mission has already been completed');
+        throw new ValidationError('Mission has already been completed', 400, SERVICE_ERROR_CODES.MISSION_ALREADY_COMPLETED);
       }
 
       // Check mission eligibility
       const eligibility = await this.checkMissionEligibility(missionId, memberId, brandId);
       if (!eligibility.eligible) {
-        throw new ValidationError(eligibility.reason);
+        throw new ValidationError(eligibility.reason, 400, SERVICE_ERROR_CODES.MISSION_MEMBER_NOT_ELIGIBLE);
       }
 
       // Validate completion data based on mission type
@@ -403,7 +404,7 @@ class MissionService {
       // Check if member exists
       const member = await this.memberRepository.findById(memberId);
       if (!member || member.brand_id !== brandId) {
-        throw new NotFoundError('Member not found');
+        throw new NotFoundError('Member not found', 404, SERVICE_ERROR_CODES.MISSION_MEMBER_NOT_FOUND);
       }
 
       const {
@@ -451,7 +452,7 @@ class MissionService {
       // Check if mission exists
       const mission = await this.missionRepository.findById(missionId);
       if (!mission || mission.brand_id !== brandId) {
-        throw new NotFoundError('Mission not found');
+        throw new NotFoundError('Mission not found', 404, SERVICE_ERROR_CODES.MISSION_NOT_FOUND);
       }
 
       const {
@@ -502,7 +503,7 @@ class MissionService {
       // Check if member exists
       const member = await this.memberRepository.findById(memberId);
       if (!member || member.brand_id !== brandId) {
-        throw new NotFoundError('Member not found');
+        throw new NotFoundError('Member not found', 404, SERVICE_ERROR_CODES.MISSION_MEMBER_NOT_FOUND);
       }
 
       const {
@@ -555,7 +556,7 @@ class MissionService {
       // Check if mission exists
       const mission = await this.missionRepository.findById(missionId);
       if (!mission || mission.brand_id !== brandId) {
-        throw new NotFoundError('Mission not found');
+        throw new NotFoundError('Mission not found', 404, SERVICE_ERROR_CODES.MISSION_NOT_FOUND);
       }
 
       const {
@@ -736,16 +737,16 @@ class MissionService {
       const member = await this.memberRepository.findById(memberId);
 
       if (!mission || mission.brand_id !== brandId) {
-        throw new NotFoundError('Mission not found');
+        throw new NotFoundError('Mission not found', 404, SERVICE_ERROR_CODES.MISSION_NOT_FOUND);
       }
       if (!member || member.brand_id !== brandId) {
-        throw new NotFoundError('Member not found');
+        throw new NotFoundError('Member not found', 404, SERVICE_ERROR_CODES.MISSION_MEMBER_NOT_FOUND);
       }
 
       // Check eligibility
       const eligibility = await this.checkMissionEligibility(missionId, memberId, brandId);
       if (!eligibility.eligible) {
-        throw new ValidationError(eligibility.reason);
+        throw new ValidationError(eligibility.reason, 400, SERVICE_ERROR_CODES.MISSION_MEMBER_NOT_ELIGIBLE);
       }
 
       // Create assignment record (this would be in a separate assignments table in a real app)
@@ -827,24 +828,24 @@ class MissionService {
    */
   validateMissionData(missionData) {
     if (!missionData.name || missionData.name.trim().length === 0) {
-      throw new ValidationError('Mission name is required');
+      throw new ValidationError('Mission name is required', 400, SERVICE_ERROR_CODES.MISSION_NAME_REQUIRED);
     }
 
     if (!missionData.type || !Object.values(MISSION_TYPES).includes(missionData.type)) {
-      throw new ValidationError('Valid mission type is required');
+      throw new ValidationError('Valid mission type is required', 400, SERVICE_ERROR_CODES.MISSION_VALID_TYPE_REQUIRED);
     }
 
     if (missionData.target_value && missionData.target_value <= 0) {
-      throw new ValidationError('Target value must be greater than 0');
+      throw new ValidationError('Target value must be greater than 0', 400, SERVICE_ERROR_CODES.MISSION_TARGET_VALUE_MUST_BE_POSITIVE);
     }
 
     if (missionData.reward_points && missionData.reward_points < 0) {
-      throw new ValidationError('Reward points cannot be negative');
+      throw new ValidationError('Reward points cannot be negative', 400, SERVICE_ERROR_CODES.MISSION_REWARD_POINTS_CANNOT_BE_NEGATIVE);
     }
 
     if (missionData.start_date && missionData.end_date) {
       if (new Date(missionData.start_date) >= new Date(missionData.end_date)) {
-        throw new ValidationError('End date must be after start date');
+        throw new ValidationError('End date must be after start date', 400, SERVICE_ERROR_CODES.MISSION_END_DATE_MUST_BE_AFTER_START);
       }
     }
   }
@@ -858,18 +859,18 @@ class MissionService {
     switch (mission.type) {
       case MISSION_TYPES.POINTS_EARNED:
         if (!completionData.progress || completionData.progress < mission.target_value) {
-          throw new ValidationError(`Minimum ${mission.target_value} points required`);
+          throw new ValidationError(`Minimum ${mission.target_value} points required`, 400, SERVICE_ERROR_CODES.MISSION_TARGET_VALUE_MUST_BE_POSITIVE);
         }
         break;
       case MISSION_TYPES.SPINS_COMPLETED:
         if (!completionData.progress || completionData.progress < mission.target_value) {
-          throw new ValidationError(`Minimum ${mission.target_value} spins required`);
+          throw new ValidationError(`Minimum ${mission.target_value} spins required`, 400, SERVICE_ERROR_CODES.MISSION_TARGET_VALUE_MUST_BE_POSITIVE);
         }
         break;
       case MISSION_TYPES.PROFILE_COMPLETION:
         // Validate profile completion percentage
         if (!completionData.data || !completionData.data.profile_completion) {
-          throw new ValidationError('Profile completion data required');
+          throw new ValidationError('Profile completion data required', 400, SERVICE_ERROR_CODES.MISSION_PROFILE_COMPLETION_DATA_REQUIRED);
         }
         break;
       default:

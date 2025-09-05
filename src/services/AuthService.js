@@ -7,6 +7,7 @@ const { UserRepository, AuditLogRepository } = require('../repositories');
 const { encryption, jwt, logger, constants } = require('../utils');
 const { errorHandler } = require('../middleware');
 const { AuthenticationError, ValidationError, NotFoundError, ConflictError } = errorHandler;
+const { SERVICE_ERROR_CODES } = require('../enums');
 const { USER_ROLES, AUDIT_ACTIONS } = constants;
 
 class AuthService {
@@ -26,7 +27,7 @@ class AuthService {
       // Check if email is already taken
       const existingUser = await this.userRepository.findByEmail(userData.email);
       if (existingUser) {
-        throw new ConflictError('Email address is already registered');
+        throw new ConflictError('Email address is already registered', SERVICE_ERROR_CODES.AUTH_EMAIL_ALREADY_REGISTERED);
       }
 
       // Hash password
@@ -115,7 +116,7 @@ class AuthService {
           status: 'error',
           metadata: { email }
         });
-        throw new AuthenticationError('Invalid email or password');
+        throw new AuthenticationError('Invalid email or password', SERVICE_ERROR_CODES.AUTH_INVALID_CREDENTIALS);
       }
 
       // Check password
@@ -131,7 +132,7 @@ class AuthService {
           status: 'error',
           metadata: { email }
         });
-        throw new AuthenticationError('Invalid email or password');
+        throw new AuthenticationError('Invalid email or password', SERVICE_ERROR_CODES.AUTH_INVALID_CREDENTIALS);
       }
 
       // Check if user is active
@@ -146,7 +147,7 @@ class AuthService {
           status: 'error',
           metadata: { email, status: user.status }
         });
-        throw new AuthenticationError('Account is not active');
+        throw new AuthenticationError('Account is not active', SERVICE_ERROR_CODES.AUTH_ACCOUNT_NOT_ACTIVE);
       }
 
       // Update last login
@@ -210,13 +211,13 @@ class AuthService {
       // Verify refresh token
       const decoded = jwt.verifyRefreshToken(refreshToken);
       if (!decoded) {
-        throw new AuthenticationError('Invalid refresh token');
+        throw new AuthenticationError('Invalid refresh token', SERVICE_ERROR_CODES.AUTH_INVALID_REFRESH_TOKEN);
       }
 
       // Get user
       const user = await this.userRepository.findById(decoded.userId);
       if (!user || user.status !== 'active') {
-        throw new AuthenticationError('User not found or inactive');
+        throw new AuthenticationError('User not found or inactive', SERVICE_ERROR_CODES.AUTH_USER_NOT_FOUND_OR_INACTIVE);
       }
 
       // Generate new tokens
@@ -341,7 +342,7 @@ class AuthService {
       // Find user by reset token
       const user = await this.userRepository.findByResetToken(token);
       if (!user) {
-        throw new AuthenticationError('Invalid or expired reset token');
+        throw new AuthenticationError('Invalid or expired reset token', SERVICE_ERROR_CODES.AUTH_INVALID_RESET_TOKEN);
       }
 
       // Hash new password
@@ -387,13 +388,13 @@ class AuthService {
       // Get user
       const user = await this.userRepository.findById(userId);
       if (!user) {
-        throw new NotFoundError('User not found');
+        throw new NotFoundError('User not found', SERVICE_ERROR_CODES.AUTH_USER_NOT_FOUND);
       }
 
       // Verify current password
       const isCurrentPasswordValid = await encryption.comparePassword(currentPassword, user.password_hash);
       if (!isCurrentPasswordValid) {
-        throw new AuthenticationError('Current password is incorrect');
+        throw new AuthenticationError('Current password is incorrect', SERVICE_ERROR_CODES.AUTH_CURRENT_PASSWORD_INCORRECT);
       }
 
       // Hash new password
@@ -437,7 +438,7 @@ class AuthService {
       // Find user by verification token
       const user = await this.userRepository.findByVerificationToken(token);
       if (!user) {
-        throw new AuthenticationError('Invalid or expired verification token');
+        throw new AuthenticationError('Invalid or expired verification token', SERVICE_ERROR_CODES.AUTH_INVALID_VERIFICATION_TOKEN);
       }
 
       // Verify email
@@ -476,11 +477,11 @@ class AuthService {
     try {
       const user = await this.userRepository.findByEmail(email);
       if (!user) {
-        throw new NotFoundError('User not found');
+        throw new NotFoundError('User not found', SERVICE_ERROR_CODES.AUTH_USER_NOT_FOUND);
       }
 
       if (user.email_verified_at) {
-        throw new ValidationError('Email is already verified');
+        throw new ValidationError('Email is already verified', SERVICE_ERROR_CODES.AUTH_EMAIL_ALREADY_VERIFIED);
       }
 
       // Generate new verification token
@@ -529,7 +530,7 @@ class AuthService {
       if (updateData.email && updateData.email !== currentUser.email) {
         const isEmailAvailable = await this.userRepository.isEmailAvailable(updateData.email, userId);
         if (!isEmailAvailable) {
-          throw new ConflictError('Email address is already in use');
+          throw new ConflictError('Email address is already in use', SERVICE_ERROR_CODES.AUTH_EMAIL_ALREADY_IN_USE);
         }
       }
 
@@ -576,7 +577,7 @@ class AuthService {
     try {
       const user = await this.userRepository.findWithBrand(userId);
       if (!user) {
-        throw new NotFoundError('User not found');
+        throw new NotFoundError('User not found', SERVICE_ERROR_CODES.AUTH_USER_NOT_FOUND);
       }
 
       // Remove sensitive data from response

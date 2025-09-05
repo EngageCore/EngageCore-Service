@@ -7,6 +7,7 @@ const { WheelRepository, MemberRepository, TransactionRepository, AuditLogReposi
 const { logger, constants, probability } = require('../utils');
 const { errorHandler } = require('../middleware');
 const { NotFoundError, ConflictError, ValidationError, AuthorizationError } = errorHandler;
+const { SERVICE_ERROR_CODES } = require('../enums');
 const { AUDIT_ACTIONS, TRANSACTION_TYPES, WHEEL_ITEM_TYPES, SPIN_STATUS } = constants;
 
 class WheelService {
@@ -98,7 +99,7 @@ class WheelService {
     try {
       const wheel = await this.wheelRepository.findWithItems(wheelId);
       if (!wheel || wheel.brand_id !== brandId) {
-        throw new NotFoundError('Wheel not found');
+        throw new NotFoundError('Wheel not found', 404, SERVICE_ERROR_CODES.WHEEL_NOT_FOUND);
       }
 
       return wheel;
@@ -126,7 +127,7 @@ class WheelService {
       // Check if wheel exists
       const existingWheel = await this.wheelRepository.findById(wheelId);
       if (!existingWheel || existingWheel.brand_id !== brandId) {
-        throw new NotFoundError('Wheel not found');
+        throw new NotFoundError('Wheel not found', 404, SERVICE_ERROR_CODES.WHEEL_NOT_FOUND);
       }
 
       // Update wheel
@@ -181,7 +182,7 @@ class WheelService {
       // Check if wheel exists
       const existingWheel = await this.wheelRepository.findById(wheelId);
       if (!existingWheel || existingWheel.brand_id !== brandId) {
-        throw new NotFoundError('Wheel not found');
+        throw new NotFoundError('Wheel not found', 404, SERVICE_ERROR_CODES.WHEEL_NOT_FOUND);
       }
 
       // Validate wheel items probabilities
@@ -321,13 +322,13 @@ class WheelService {
       // Check if wheel exists
       const existingWheel = await this.wheelRepository.findById(wheelId);
       if (!existingWheel || existingWheel.brand_id !== brandId) {
-        throw new NotFoundError('Wheel not found');
+        throw new NotFoundError('Wheel not found', 404, SERVICE_ERROR_CODES.WHEEL_NOT_FOUND);
       }
 
       // Check if wheel has spins
       const hasSpins = await this.spinRepository.wheelHasSpins(wheelId);
       if (hasSpins) {
-        throw new ValidationError('Cannot delete wheel with spin history. Please deactivate instead.');
+        throw new ValidationError('Cannot delete wheel with spin history. Please deactivate instead.', 400, SERVICE_ERROR_CODES.WHEEL_CANNOT_DELETE_WITH_HISTORY);
       }
 
       // Delete wheel and its items
@@ -376,26 +377,26 @@ class WheelService {
       // Check if wheel exists and is active
       const wheel = await this.wheelRepository.findWithItems(wheelId);
       if (!wheel || wheel.brand_id !== brandId) {
-        throw new NotFoundError('Wheel not found');
+        throw new NotFoundError('Wheel not found', 404, SERVICE_ERROR_CODES.WHEEL_NOT_FOUND);
       }
 
       if (!wheel.active) {
-        throw new ValidationError('Wheel is not active');
+        throw new ValidationError('Wheel is not active', 400, SERVICE_ERROR_CODES.WHEEL_NOT_ACTIVE);
       }
 
       // Check if wheel is within active dates
       const now = new Date();
       if (wheel.start_date && now < new Date(wheel.start_date)) {
-        throw new ValidationError('Wheel is not yet available');
+        throw new ValidationError('Wheel is not yet available', 400, SERVICE_ERROR_CODES.WHEEL_NOT_AVAILABLE);
       }
       if (wheel.end_date && now > new Date(wheel.end_date)) {
-        throw new ValidationError('Wheel is no longer available');
+        throw new ValidationError('Wheel is no longer available', 400, SERVICE_ERROR_CODES.WHEEL_NOT_AVAILABLE);
       }
 
       // Check if member exists
       const member = await this.memberRepository.findById(memberId);
       if (!member || member.brand_id !== brandId) {
-        throw new NotFoundError('Member not found');
+        throw new NotFoundError('Member not found', 404, SERVICE_ERROR_CODES.WHEEL_MEMBER_NOT_FOUND);
       }
 
       // Check spin eligibility
@@ -552,7 +553,7 @@ class WheelService {
       // Check if wheel exists
       const wheel = await this.wheelRepository.findById(wheelId);
       if (!wheel || wheel.brand_id !== brandId) {
-        throw new NotFoundError('Wheel not found');
+        throw new NotFoundError('Wheel not found', 404, SERVICE_ERROR_CODES.WHEEL_NOT_FOUND);
       }
 
       const {
@@ -603,7 +604,7 @@ class WheelService {
       // Check if member exists
       const member = await this.memberRepository.findById(memberId);
       if (!member || member.brand_id !== brandId) {
-        throw new NotFoundError('Member not found');
+        throw new NotFoundError('Member not found', 404, SERVICE_ERROR_CODES.WHEEL_MEMBER_NOT_FOUND);
       }
 
       const {
@@ -656,7 +657,7 @@ class WheelService {
       // Check if wheel exists
       const wheel = await this.wheelRepository.findById(wheelId);
       if (!wheel || wheel.brand_id !== brandId) {
-        throw new NotFoundError('Wheel not found');
+        throw new NotFoundError('Wheel not found', 404, SERVICE_ERROR_CODES.WHEEL_NOT_FOUND);
       }
 
       const {
@@ -695,7 +696,7 @@ class WheelService {
       // Check if wheel exists
       const wheel = await this.wheelRepository.findById(wheelId);
       if (!wheel || wheel.brand_id !== brandId) {
-        throw new NotFoundError('Wheel not found');
+        throw new NotFoundError('Wheel not found', 404, SERVICE_ERROR_CODES.WHEEL_NOT_FOUND);
       }
 
       const {
@@ -732,7 +733,7 @@ class WheelService {
       // Check if member exists
       const member = await this.memberRepository.findById(memberId);
       if (!member || member.brand_id !== brandId) {
-        throw new NotFoundError('Member not found');
+        throw new NotFoundError('Member not found', 404, SERVICE_ERROR_CODES.WHEEL_MEMBER_NOT_FOUND);
       }
 
       const count = await this.spinRepository.getMemberDailySpinCount(memberId, wheelId);
@@ -755,20 +756,20 @@ class WheelService {
    */
   validateWheelProbabilities(items) {
     if (!items || items.length === 0) {
-      throw new ValidationError('Wheel must have at least one item');
+      throw new ValidationError('Wheel must have at least one item', 400, SERVICE_ERROR_CODES.WHEEL_ITEMS_REQUIRED);
     }
 
     const totalProbability = items.reduce((sum, item) => sum + (item.probability || 0), 0);
     const tolerance = 0.001; // Allow small floating point differences
 
     if (Math.abs(totalProbability - 1.0) > tolerance) {
-      throw new ValidationError(`Wheel item probabilities must sum to 1.0 (current sum: ${totalProbability})`);
+      throw new ValidationError(`Wheel item probabilities must sum to 1.0 (current sum: ${totalProbability})`, 400, SERVICE_ERROR_CODES.WHEEL_INVALID_PROBABILITIES);
     }
 
     // Check individual probabilities
     for (const item of items) {
       if (!item.probability || item.probability <= 0 || item.probability > 1) {
-        throw new ValidationError(`Invalid probability for item "${item.name}": ${item.probability}`);
+        throw new ValidationError(`Invalid probability for item "${item.name}": ${item.probability}`, 400, SERVICE_ERROR_CODES.WHEEL_INVALID_PROBABILITIES);
       }
     }
   }

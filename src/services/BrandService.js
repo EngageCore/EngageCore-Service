@@ -7,6 +7,7 @@ const { BrandRepository, UserRepository, AuditLogRepository } = require('../repo
 const { logger, constants, encryption } = require('../utils');
 const { errorHandler } = require('../middleware');
 const { NotFoundError, ConflictError, ValidationError, AuthorizationError } = errorHandler;
+const { SERVICE_ERROR_CODES } = require('../enums');
 const { AUDIT_ACTIONS, BRAND_STATUS } = constants;
 
 class BrandService {
@@ -28,7 +29,7 @@ class BrandService {
       // Check if slug is available
       const isSlugAvailable = await this.brandRepository.isSlugAvailable(brandData.slug);
       if (!isSlugAvailable) {
-        throw new ConflictError('Brand slug is already taken');
+        throw new ConflictError('Brand slug is already taken', 409, SERVICE_ERROR_CODES.BRAND_SLUG_ALREADY_TAKEN);
       }
 
       // Generate API key for the brand
@@ -135,13 +136,13 @@ class BrandService {
     try {
       const brand = await this.brandRepository.findById(brandId);
       if (!brand) {
-        throw new NotFoundError('Brand not found');
+        throw new NotFoundError('Brand not found', 404, SERVICE_ERROR_CODES.BRAND_NOT_FOUND);
       }
 
       // Check if user has access to this brand
       const hasAccess = await this.userRepository.hasAccessToBrand(userId, brandId);
       if (!hasAccess) {
-        throw new AuthorizationError('Access denied to this brand');
+        throw new AuthorizationError('Access denied to this brand', 403, SERVICE_ERROR_CODES.BRAND_ACCESS_DENIED);
       }
 
       // Remove sensitive data
@@ -166,11 +167,11 @@ class BrandService {
     try {
       const brand = await this.brandRepository.findBySlug(slug);
       if (!brand) {
-        throw new NotFoundError('Brand not found');
+        throw new NotFoundError('Brand not found', 404, SERVICE_ERROR_CODES.BRAND_NOT_FOUND);
       }
 
       if (brand.status !== BRAND_STATUS.ACTIVE) {
-        throw new NotFoundError('Brand is not available');
+        throw new NotFoundError('Brand is not available', 404, SERVICE_ERROR_CODES.BRAND_NOT_AVAILABLE);
       }
 
       // Return only public brand data
@@ -212,19 +213,19 @@ class BrandService {
       // Check if brand exists and user has access
       const existingBrand = await this.brandRepository.findById(brandId);
       if (!existingBrand) {
-        throw new NotFoundError('Brand not found');
+        throw new NotFoundError('Brand not found', 404, SERVICE_ERROR_CODES.BRAND_NOT_FOUND);
       }
 
       const hasAccess = await this.userRepository.hasAccessToBrand(userId, brandId);
       if (!hasAccess) {
-        throw new AuthorizationError('Access denied to this brand');
+        throw new AuthorizationError('Access denied to this brand', 403, SERVICE_ERROR_CODES.BRAND_ACCESS_DENIED);
       }
 
       // Check slug availability if slug is being updated
       if (updateData.slug && updateData.slug !== existingBrand.slug) {
         const isSlugAvailable = await this.brandRepository.isSlugAvailable(updateData.slug, brandId);
         if (!isSlugAvailable) {
-          throw new ConflictError('Brand slug is already taken');
+          throw new ConflictError('Brand slug is already taken', 409, SERVICE_ERROR_CODES.BRAND_SLUG_ALREADY_TAKEN);
         }
       }
 
@@ -279,12 +280,12 @@ class BrandService {
       // Check if brand exists and user has access
       const existingBrand = await this.brandRepository.findById(brandId);
       if (!existingBrand) {
-        throw new NotFoundError('Brand not found');
+        throw new NotFoundError('Brand not found', 404, SERVICE_ERROR_CODES.BRAND_NOT_FOUND);
       }
 
       const hasAccess = await this.userRepository.hasAccessToBrand(userId, brandId);
       if (!hasAccess) {
-        throw new AuthorizationError('Access denied to this brand');
+        throw new AuthorizationError('Access denied to this brand', 403, SERVICE_ERROR_CODES.BRAND_ACCESS_DENIED);
       }
 
       // Merge with existing settings
@@ -404,18 +405,18 @@ class BrandService {
       // Check if brand exists and user has access
       const existingBrand = await this.brandRepository.findById(brandId);
       if (!existingBrand) {
-        throw new NotFoundError('Brand not found');
+        throw new NotFoundError('Brand not found', 404, SERVICE_ERROR_CODES.BRAND_NOT_FOUND);
       }
 
       const hasAccess = await this.userRepository.hasAccessToBrand(userId, brandId);
       if (!hasAccess) {
-        throw new AuthorizationError('Access denied to this brand');
+        throw new AuthorizationError('Access denied to this brand', 403, SERVICE_ERROR_CODES.BRAND_ACCESS_DENIED);
       }
 
       // Check if brand has active data (members, wheels, etc.)
       const hasActiveData = await this.brandRepository.hasActiveData(brandId);
       if (hasActiveData) {
-        throw new ValidationError('Cannot delete brand with active data. Please archive instead.');
+        throw new ValidationError('Cannot delete brand with active data. Please archive instead.', 400, SERVICE_ERROR_CODES.BRAND_CANNOT_DELETE_WITH_ACTIVE_DATA);
       }
 
       // Soft delete the brand
@@ -483,12 +484,12 @@ class BrandService {
       // Check if brand exists and user has access
       const existingBrand = await this.brandRepository.findById(brandId);
       if (!existingBrand) {
-        throw new NotFoundError('Brand not found');
+        throw new NotFoundError('Brand not found', 404, SERVICE_ERROR_CODES.BRAND_NOT_FOUND);
       }
 
       const hasAccess = await this.userRepository.hasAccessToBrand(userId, brandId);
       if (!hasAccess) {
-        throw new AuthorizationError('Access denied to this brand');
+        throw new AuthorizationError('Access denied to this brand', 403, SERVICE_ERROR_CODES.BRAND_ACCESS_DENIED);
       }
 
       // Generate unique filename
@@ -549,12 +550,12 @@ class BrandService {
       // Check if brand exists and user has access
       const existingBrand = await this.brandRepository.findById(brandId);
       if (!existingBrand) {
-        throw new NotFoundError('Brand not found');
+        throw new NotFoundError('Brand not found', 404, SERVICE_ERROR_CODES.BRAND_NOT_FOUND);
       }
 
       const hasAccess = await this.userRepository.hasAccessToBrand(userId, brandId);
       if (!hasAccess) {
-        throw new AuthorizationError('Access denied to this brand');
+        throw new AuthorizationError('Access denied to this brand', 403, SERVICE_ERROR_CODES.BRAND_ACCESS_DENIED);
       }
 
       const {
@@ -593,12 +594,12 @@ class BrandService {
       // Check if brand exists and user has access
       const existingBrand = await this.brandRepository.findById(brandId);
       if (!existingBrand) {
-        throw new NotFoundError('Brand not found');
+        throw new NotFoundError('Brand not found', 404, SERVICE_ERROR_CODES.BRAND_NOT_FOUND);
       }
 
       const hasAccess = await this.userRepository.hasAccessToBrand(userId, brandId);
       if (!hasAccess) {
-        throw new AuthorizationError('Access denied to this brand');
+        throw new AuthorizationError('Access denied to this brand', 403, SERVICE_ERROR_CODES.BRAND_ACCESS_DENIED);
       }
 
       // Generate new API key

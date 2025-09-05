@@ -7,6 +7,7 @@ const { MemberRepository, TransactionRepository, AuditLogRepository } = require(
 const { logger, constants, encryption } = require('../utils');
 const { errorHandler } = require('../middleware');
 const { NotFoundError, ConflictError, ValidationError, AuthorizationError } = errorHandler;
+const { SERVICE_ERROR_CODES } = require('../enums');
 const { AUDIT_ACTIONS, TRANSACTION_TYPES, MEMBER_STATUS } = constants;
 
 class MemberService {
@@ -29,7 +30,7 @@ class MemberService {
       // Check if email is already taken in this brand
       const existingMember = await this.memberRepository.findByEmail(memberData.email, brandId);
       if (existingMember) {
-        throw new ConflictError('Email address is already registered for this brand');
+        throw new ConflictError('Email address is already registered for this brand', SERVICE_ERROR_CODES.MEMBER_EMAIL_ALREADY_REGISTERED);
       }
 
       // Generate member ID if not provided
@@ -38,7 +39,7 @@ class MemberService {
       // Check if member ID is unique in this brand
       const existingMemberId = await this.memberRepository.findByMemberId(memberId, brandId);
       if (existingMemberId) {
-        throw new ConflictError('Member ID is already taken');
+        throw new ConflictError('Member ID is already taken', SERVICE_ERROR_CODES.MEMBER_ID_ALREADY_TAKEN);
       }
 
       // Get default tier (Bronze) for the brand
@@ -120,7 +121,7 @@ class MemberService {
     try {
       const member = await this.memberRepository.findById(memberId);
       if (!member || member.brand_id !== brandId) {
-        throw new NotFoundError('Member not found');
+        throw new NotFoundError('Member not found', SERVICE_ERROR_CODES.MEMBER_NOT_FOUND);
       }
 
       return member;

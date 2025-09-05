@@ -15,6 +15,7 @@ const {
 const { logger, constants } = require('../utils');
 const { errorHandler } = require('../middleware');
 const { NotFoundError, AuthorizationError, ValidationError } = errorHandler;
+const { SERVICE_ERROR_CODES } = require('../enums');
 const { AUDIT_ACTIONS, USER_ROLES } = constants;
 
 class AdminService {
@@ -306,7 +307,7 @@ class AdminService {
           report = await this.generateEngagementReport({ start_date, end_date, include_details });
           break;
         default:
-          throw new ValidationError('Invalid report type');
+          throw new ValidationError('Invalid report type', 400, SERVICE_ERROR_CODES.ADMIN_INVALID_REPORT_TYPE);
       }
 
       // Log report generation
@@ -743,11 +744,11 @@ class AdminService {
   async verifyAdminAccess(userId) {
     const user = await this.userRepository.findById(userId);
     if (!user) {
-      throw new NotFoundError('User not found');
+      throw new NotFoundError('User not found', 404, SERVICE_ERROR_CODES.ADMIN_USER_NOT_FOUND);
     }
 
     if (![USER_ROLES.SUPER_ADMIN, USER_ROLES.BRAND_ADMIN].includes(user.role)) {
-      throw new AuthorizationError('Admin access required');
+      throw new AuthorizationError('Admin access required', 403, SERVICE_ERROR_CODES.ADMIN_INSUFFICIENT_PERMISSIONS);
     }
   }
 
@@ -758,11 +759,11 @@ class AdminService {
   async verifySuperAdminAccess(userId) {
     const user = await this.userRepository.findById(userId);
     if (!user) {
-      throw new NotFoundError('User not found');
+      throw new NotFoundError('User not found', 404, SERVICE_ERROR_CODES.ADMIN_USER_NOT_FOUND);
     }
 
     if (user.role !== USER_ROLES.SUPER_ADMIN) {
-      throw new AuthorizationError('Super admin access required');
+      throw new AuthorizationError('Super admin access required', 403, SERVICE_ERROR_CODES.ADMIN_INSUFFICIENT_PERMISSIONS);
     }
   }
 
@@ -784,7 +785,7 @@ class AdminService {
 
     for (const key of Object.keys(settings)) {
       if (!allowedSettings.includes(key)) {
-        throw new ValidationError(`Invalid setting: ${key}`);
+        throw new ValidationError(`Invalid setting: ${key}`, 400, SERVICE_ERROR_CODES.ADMIN_INVALID_SETTING);
       }
     }
   }

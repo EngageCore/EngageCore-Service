@@ -7,6 +7,7 @@ const { UserRepository, BrandRepository, AuditLogRepository } = require('../repo
 const { logger, constants, encryption } = require('../utils');
 const { errorHandler } = require('../middleware');
 const { NotFoundError, ConflictError, ValidationError, AuthorizationError } = errorHandler;
+const { SERVICE_ERROR_CODES } = require('../enums');
 const { AUDIT_ACTIONS, USER_ROLES, USER_STATUS } = constants;
 
 class UserService {
@@ -28,20 +29,20 @@ class UserService {
       // Check if email is already taken
       const existingUser = await this.userRepository.findByEmail(userData.email);
       if (existingUser) {
-        throw new ConflictError('Email address is already registered');
+        throw new ConflictError('Email address is already registered', 409, SERVICE_ERROR_CODES.USER_EMAIL_ALREADY_REGISTERED);
       }
 
       // Validate brand access if brand_id is provided
       if (userData.brand_id) {
         const brand = await this.brandRepository.findById(userData.brand_id);
         if (!brand) {
-          throw new NotFoundError('Brand not found');
+          throw new NotFoundError('Brand not found', 404, SERVICE_ERROR_CODES.USER_BRAND_NOT_FOUND);
         }
 
         // Check if creator has access to this brand
         const creatorHasAccess = await this.userRepository.hasAccessToBrand(creatorId, userData.brand_id);
         if (!creatorHasAccess) {
-          throw new AuthorizationError('Access denied to this brand');
+          throw new AuthorizationError('Access denied to this brand', 403, SERVICE_ERROR_CODES.USER_BRAND_ACCESS_DENIED);
         }
       }
 
@@ -112,13 +113,13 @@ class UserService {
     try {
       const user = await this.userRepository.findWithBrand(userId);
       if (!user) {
-        throw new NotFoundError('User not found');
+        throw new NotFoundError('User not found', 404, SERVICE_ERROR_CODES.USER_NOT_FOUND);
       }
 
       // Check if requester has permission to view this user
       const canView = await this.canViewUser(requesterId, userId);
       if (!canView) {
-        throw new AuthorizationError('Access denied to view this user');
+        throw new AuthorizationError('Access denied to view this user', 403, SERVICE_ERROR_CODES.USER_ACCESS_DENIED_TO_VIEW);
       }
 
       // Remove sensitive data from response
@@ -147,20 +148,20 @@ class UserService {
       // Check if user exists
       const existingUser = await this.userRepository.findById(userId);
       if (!existingUser) {
-        throw new NotFoundError('User not found');
+        throw new NotFoundError('User not found', 404, SERVICE_ERROR_CODES.USER_NOT_FOUND);
       }
 
       // Check if updater has permission to update this user
       const canUpdate = await this.canUpdateUser(updaterId, userId);
       if (!canUpdate) {
-        throw new AuthorizationError('Access denied to update this user');
+        throw new AuthorizationError('Access denied to update this user', 403, SERVICE_ERROR_CODES.USER_ACCESS_DENIED_TO_UPDATE);
       }
 
       // Check email availability if email is being updated
       if (updateData.email && updateData.email !== existingUser.email) {
         const isEmailAvailable = await this.userRepository.isEmailAvailable(updateData.email, userId);
         if (!isEmailAvailable) {
-          throw new ConflictError('Email address is already in use');
+          throw new ConflictError('Email address is already in use', 409, SERVICE_ERROR_CODES.USER_EMAIL_ALREADY_IN_USE);
         }
       }
 
@@ -168,12 +169,12 @@ class UserService {
       if (updateData.brand_id && updateData.brand_id !== existingUser.brand_id) {
         const brand = await this.brandRepository.findById(updateData.brand_id);
         if (!brand) {
-          throw new NotFoundError('Brand not found');
+          throw new NotFoundError('Brand not found', 404, SERVICE_ERROR_CODES.USER_BRAND_NOT_FOUND);
         }
 
         const updaterHasAccess = await this.userRepository.hasAccessToBrand(updaterId, updateData.brand_id);
         if (!updaterHasAccess) {
-          throw new AuthorizationError('Access denied to this brand');
+          throw new AuthorizationError('Access denied to this brand', 403, SERVICE_ERROR_CODES.USER_BRAND_ACCESS_DENIED);
         }
       }
 
@@ -181,7 +182,7 @@ class UserService {
       if (updateData.role && updateData.role !== existingUser.role) {
         const canChangeRole = await this.canChangeUserRole(updaterId, existingUser.role, updateData.role);
         if (!canChangeRole) {
-          throw new AuthorizationError('Access denied to change user role');
+          throw new AuthorizationError('Access denied to change user role', 403, SERVICE_ERROR_CODES.USER_ACCESS_DENIED_TO_CHANGE_ROLE);
         }
       }
 
@@ -247,7 +248,7 @@ class UserService {
       // Get requester's accessible brands
       const requester = await this.userRepository.findById(requesterId);
       if (!requester) {
-        throw new NotFoundError('Requester not found');
+        throw new NotFoundError('Requester not found', 404, SERVICE_ERROR_CODES.USER_REQUESTER_NOT_FOUND);
       }
 
       let accessibleBrandIds = [];
@@ -318,18 +319,18 @@ class UserService {
       // Check if user exists
       const existingUser = await this.userRepository.findById(userId);
       if (!existingUser) {
-        throw new NotFoundError('User not found');
+        throw new NotFoundError('User not found', 404, SERVICE_ERROR_CODES.USER_NOT_FOUND);
       }
 
       // Check if deleter has permission to delete this user
       const canDelete = await this.canDeleteUser(deleterId, userId);
       if (!canDelete) {
-        throw new AuthorizationError('Access denied to delete this user');
+        throw new AuthorizationError('Access denied to delete this user', 403, SERVICE_ERROR_CODES.USER_ACCESS_DENIED_TO_DELETE);
       }
 
       // Prevent self-deletion
       if (userId === deleterId) {
-        throw new ValidationError('Cannot delete your own account');
+        throw new ValidationError('Cannot delete your own account', 400, SERVICE_ERROR_CODES.USER_CANNOT_DELETE_OWN_ACCOUNT);
       }
 
       // Soft delete the user
@@ -380,20 +381,20 @@ class UserService {
       // Check if user exists
       const user = await this.userRepository.findById(userId);
       if (!user) {
-        throw new NotFoundError('User not found');
+        throw new NotFoundError('User not found', 404, SERVICE_ERROR_CODES.USER_NOT_FOUND);
       }
 
       // Check if requester has permission to change this user's password
       const canChangePassword = await this.canChangeUserPassword(requesterId, userId);
       if (!canChangePassword) {
-        throw new AuthorizationError('Access denied to change user password');
+        throw new AuthorizationError('Access denied to change user password', 403, SERVICE_ERROR_CODES.USER_ACCESS_DENIED_TO_CHANGE_PASSWORD);
       }
 
       // If changing own password, verify current password
       if (userId === requesterId) {
         const isCurrentPasswordValid = await encryption.comparePassword(currentPassword, user.password_hash);
         if (!isCurrentPasswordValid) {
-          throw new ValidationError('Current password is incorrect');
+          throw new ValidationError('Current password is incorrect', 400, SERVICE_ERROR_CODES.USER_CURRENT_PASSWORD_INCORRECT);
         }
       }
 
@@ -446,7 +447,7 @@ class UserService {
       if (brandId) {
         const hasAccess = await this.userRepository.hasAccessToBrand(requesterId, brandId);
         if (!hasAccess) {
-          throw new AuthorizationError('Access denied to this brand');
+          throw new AuthorizationError('Access denied to this brand', 403, SERVICE_ERROR_CODES.USER_BRAND_ACCESS_DENIED);
         }
       }
 
@@ -486,7 +487,7 @@ class UserService {
       // Check if requester has permission to view this user's activity
       const canView = await this.canViewUser(requesterId, userId);
       if (!canView) {
-        throw new AuthorizationError('Access denied to view user activity');
+        throw new AuthorizationError('Access denied to view user activity', 403, SERVICE_ERROR_CODES.USER_ACCESS_DENIED_TO_VIEW_ACTIVITY);
       }
 
       const {
@@ -540,23 +541,23 @@ class UserService {
       // Check if user exists
       const existingUser = await this.userRepository.findById(userId);
       if (!existingUser) {
-        throw new NotFoundError('User not found');
+        throw new NotFoundError('User not found', 404, SERVICE_ERROR_CODES.USER_NOT_FOUND);
       }
 
       // Check if updater has permission to update this user's status
       const canUpdate = await this.canUpdateUser(updaterId, userId);
       if (!canUpdate) {
-        throw new AuthorizationError('Access denied to update user status');
+        throw new AuthorizationError('Access denied to update user status', 403, SERVICE_ERROR_CODES.USER_ACCESS_DENIED_TO_UPDATE_STATUS);
       }
 
       // Validate status
       if (!Object.values(USER_STATUS).includes(status)) {
-        throw new ValidationError('Invalid user status');
+        throw new ValidationError('Invalid user status', 400, SERVICE_ERROR_CODES.USER_INVALID_STATUS);
       }
 
       // Prevent self-deactivation
       if (userId === updaterId && status === USER_STATUS.INACTIVE) {
-        throw new ValidationError('Cannot deactivate your own account');
+        throw new ValidationError('Cannot deactivate your own account', 400, SERVICE_ERROR_CODES.USER_CANNOT_DEACTIVATE_OWN_ACCOUNT);
       }
 
       // Update user status
