@@ -1,0 +1,70 @@
+{
+  "name": "engage-service",
+  "version": "1.0.0",
+  "description": "Lucky Wheel Engagement Service Backend",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "setup": "node database/setup.js setup",
+    "setup:tables": "node database/setup.js tables",
+    "setup:indexes": "node database/setup.js indexes",
+    "setup:seeds": "node database/setup.js seeds",
+    "setup:status": "node database/setup.js status",
+    "generate-docs": "node generate-swagger.js",
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "compression": "^1.7.4",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-rate-limit": "^7.1.5",
+    "express-slow-down": "^3.0.0",
+    "helmet": "^7.1.0",
+    "http-proxy-middleware": "^2.0.6",
+    "joi": "^17.11.0",
+    "js-yaml": "^4.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "lodash": "^4.17.21",
+    "moment": "^2.29.4",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.2",
+    "node-cron": "^3.0.3",
+    "pg": "^8.16.3",
+    "swagger-ui-express": "^5.0.1",
+    "uuid": "^9.0.1",
+    "winston": "^3.11.0",
+    "winston-daily-rotate-file": "^4.7.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.22.0",
+    "@babel/preset-env": "^7.22.0",
+    "artillery": "^2.0.0",
+    "babel-jest": "^29.6.2",
+    "cross-env": "^10.0.0",
+    "eslint": "^8.46.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.28.0",
+    "jest": "^29.6.2",
+    "nodemon": "^3.0.1",
+    "supertest": "^6.3.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "nodejs",
+    "express",
+    "postgresql",
+    "engagement",
+    "lucky-wheel",
+    "gamification",
+    "cron"
+  ],
+  "author": "Engage Service Team",
+  "license": "MIT"
+}

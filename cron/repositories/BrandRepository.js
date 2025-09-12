@@ -53,28 +53,6 @@ class BrandRepository extends BaseRepository {
     }
   }
 
-    /**
-   * Find brand with settings
-   * @param {string} id - Brand ID
-   * @returns {object|null} - Brand with settings or null
-   */
-  async findWithBrandID(id) {
-    try {
-      const query = `
-        SELECT 
-          b.*
-        FROM brands b
-        WHERE b.id = $1 AND b.status = 'active'
-      `;
-      
-      const result = await this.query(query, [id]);
-      return result.rows.length > 0 ? result.rows[0] : null;
-    } catch (error) {
-      logger.error('Error finding brand with settings', { id, error: error.message });
-      throw error;
-    }
-  }
-
   /**
    * Create brand with default settings
    * @param {object} brandData - Brand data

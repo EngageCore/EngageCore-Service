@@ -12,6 +12,7 @@ const TierService = require('./TierService');
 const TransactionService = require('./TransactionService');
 const UserService = require('./UserService');
 const WheelService = require('./WheelService');
+const ExternalApiService = require('./ExternalApiService');
 
 module.exports = {
   AdminService,
@@ -22,5 +23,6 @@ module.exports = {
   TierService,
   TransactionService,
   UserService,
-  WheelService
+  WheelService,
+  ExternalApiService
 };
