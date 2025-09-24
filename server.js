@@ -396,6 +396,17 @@ class Server {
   }
 
   /**
+   * Get the initialized Express app (for Vercel compatibility)
+   */
+  async getApp() {
+    if (!this.app._initialized) {
+      await this.initialize();
+      this.app._initialized = true;
+    }
+    return this.app;
+  }
+
+  /**
    * Start the server
    */
   async start() {
