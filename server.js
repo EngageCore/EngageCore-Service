@@ -34,6 +34,17 @@ class Server {
   }
 
   /**
+   * Get the Express app instance (for serverless deployment)
+   */
+  async getApp() {
+    if (!this.app._initialized) {
+      await this.initialize();
+      this.app._initialized = true;
+    }
+    return this.app;
+  }
+
+  /**
    * Initialize server with all middleware and routes
    */
   async initialize() {
@@ -393,17 +404,6 @@ class Server {
       logger.error('Unhandled Rejection at:', promise, 'reason:', reason);
       gracefulShutdown('unhandledRejection');
     });
-  }
-
-  /**
-   * Get the initialized Express app (for Vercel compatibility)
-   */
-  async getApp() {
-    if (!this.app._initialized) {
-      await this.initialize();
-      this.app._initialized = true;
-    }
-    return this.app;
   }
 
   /**
