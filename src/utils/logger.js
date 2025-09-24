@@ -3,10 +3,16 @@ const DailyRotateFile = require('winston-daily-rotate-file');
 const path = require('path');
 const fs = require('fs');
 
-// Ensure logs directory exists
-const logsDir = path.join(process.cwd(), 'logs');
-if (!fs.existsSync(logsDir)) {
-  fs.mkdirSync(logsDir, { recursive: true });
+// Detect if we're running in a serverless environment
+const isServerless = process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME || process.env.NETLIFY || process.env.FUNCTION_NAME;
+
+// Only create logs directory if not in serverless environment
+let logsDir;
+if (!isServerless) {
+  logsDir = path.join(process.cwd(), 'logs');
+  if (!fs.existsSync(logsDir)) {
+    fs.mkdirSync(logsDir, { recursive: true });
+  }
 }
 
 // Custom format for console output
@@ -38,70 +44,91 @@ const fileFormat = winston.format.combine(
   winston.format.json()
 );
 
-// Create daily rotate file transport for general logs
-const dailyRotateFileTransport = new DailyRotateFile({
-  filename: path.join(logsDir, 'app-%DATE%.log'),
-  datePattern: 'YYYY-MM-DD',
-  zippedArchive: true,
-  maxSize: '20m',
-  maxFiles: '14d',
-  format: fileFormat,
-  level: process.env.LOG_LEVEL || 'info'
-});
+// Create file transports only if not in serverless environment
+let dailyRotateFileTransport, errorRotateFileTransport, auditRotateFileTransport;
 
-// Create daily rotate file transport for error logs
-const errorRotateFileTransport = new DailyRotateFile({
-  filename: path.join(logsDir, 'error-%DATE%.log'),
-  datePattern: 'YYYY-MM-DD',
-  zippedArchive: true,
-  maxSize: '20m',
-  maxFiles: '30d',
-  format: fileFormat,
-  level: 'error'
-});
+if (!isServerless) {
+  // Create daily rotate file transport for general logs
+  dailyRotateFileTransport = new DailyRotateFile({
+    filename: path.join(logsDir, 'app-%DATE%.log'),
+    datePattern: 'YYYY-MM-DD',
+    zippedArchive: true,
+    maxSize: '20m',
+    maxFiles: '14d',
+    format: fileFormat,
+    level: process.env.LOG_LEVEL || 'info'
+  });
 
-// Create daily rotate file transport for audit logs
-const auditRotateFileTransport = new DailyRotateFile({
-  filename: path.join(logsDir, 'audit-%DATE%.log'),
-  datePattern: 'YYYY-MM-DD',
-  zippedArchive: true,
-  maxSize: '20m',
-  maxFiles: '90d',
-  format: fileFormat
-});
+  // Create daily rotate file transport for error logs
+  errorRotateFileTransport = new DailyRotateFile({
+    filename: path.join(logsDir, 'error-%DATE%.log'),
+    datePattern: 'YYYY-MM-DD',
+    zippedArchive: true,
+    maxSize: '20m',
+    maxFiles: '30d',
+    format: fileFormat,
+    level: 'error'
+  });
+
+  // Create daily rotate file transport for audit logs
+  auditRotateFileTransport = new DailyRotateFile({
+    filename: path.join(logsDir, 'audit-%DATE%.log'),
+    datePattern: 'YYYY-MM-DD',
+    zippedArchive: true,
+    maxSize: '20m',
+    maxFiles: '90d',
+    format: fileFormat
+  });
+}
 
 // Create the main logger
-const logger = winston.createLogger({
+const loggerConfig = {
   level: process.env.LOG_LEVEL || 'info',
   format: fileFormat,
   defaultMeta: { service: 'engage-service' },
-  transports: [
-    dailyRotateFileTransport,
-    errorRotateFileTransport
-  ],
-  exceptionHandlers: [
-    new winston.transports.File({ filename: path.join(logsDir, 'exceptions.log') })
-  ],
-  rejectionHandlers: [
-    new winston.transports.File({ filename: path.join(logsDir, 'rejections.log') })
-  ]
-});
+  transports: []
+};
 
-// Add console transport for development
-if (process.env.NODE_ENV !== 'production') {
+// Add file transports only if not in serverless environment
+if (!isServerless && dailyRotateFileTransport && errorRotateFileTransport) {
+  loggerConfig.transports.push(dailyRotateFileTransport, errorRotateFileTransport);
+  loggerConfig.exceptionHandlers = [
+    new winston.transports.File({ filename: path.join(logsDir, 'exceptions.log') })
+  ];
+  loggerConfig.rejectionHandlers = [
+    new winston.transports.File({ filename: path.join(logsDir, 'rejections.log') })
+  ];
+}
+
+const logger = winston.createLogger(loggerConfig);
+
+// Add console transport for development or serverless environments
+if (process.env.NODE_ENV !== 'production' || isServerless) {
   logger.add(new winston.transports.Console({
     format: consoleFormat,
-    level: 'debug'
+    level: isServerless ? (process.env.LOG_LEVEL || 'info') : 'debug'
   }));
 }
 
 // Create audit logger
-const auditLogger = winston.createLogger({
+const auditLoggerConfig = {
   level: 'info',
   format: fileFormat,
   defaultMeta: { service: 'engage-service-audit' },
-  transports: [auditRotateFileTransport]
-});
+  transports: []
+};
+
+// Add appropriate transport based on environment
+if (!isServerless && auditRotateFileTransport) {
+  auditLoggerConfig.transports.push(auditRotateFileTransport);
+} else {
+  // In serverless environments, use console for audit logs
+  auditLoggerConfig.transports.push(new winston.transports.Console({
+    format: consoleFormat
+  }));
+}
+
+const auditLogger = winston.createLogger(auditLoggerConfig);
 
 // Helper methods
 logger.audit = (message, meta = {}) => {
