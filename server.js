@@ -82,12 +82,38 @@ class Server {
    */
   async testDatabaseConnection() {
     try {
-      const client = await db.connect();
-      await client.query('SELECT NOW()');
-      client.release();
-      logger.info('Database connection established successfully');
+      // Use the enhanced health check method if available
+      if (typeof db.healthCheck === 'function') {
+        const health = await db.healthCheck();
+        if (health.status === 'healthy') {
+          logger.info('Database connection established successfully', {
+            timestamp: health.timestamp,
+            poolStats: health.poolStats
+          });
+        } else {
+          throw new Error(`Database health check failed: ${health.error}`);
+        }
+      } else {
+        // Fallback to simple connection test
+        const client = await db.connect();
+        await client.query('SELECT NOW()');
+        client.release();
+        logger.info('Database connection established successfully');
+      }
     } catch (error) {
-      logger.error('Database connection failed:', error);
+      logger.error('Database connection failed:', {
+        error: error.message,
+        host: config.database.host,
+        database: config.database.database,
+        isServerless: !!(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME)
+      });
+      
+      // In serverless environments, don't throw - let it fail gracefully on first request
+      if (process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME) {
+        logger.warn('Serverless environment detected - database connection will be retried on first request');
+        return;
+      }
+      
       throw new Error('Database connection failed');
     }
   }

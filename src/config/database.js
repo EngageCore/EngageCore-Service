@@ -40,11 +40,27 @@ pool.on('error', (err, client) => {
   process.exit(-1);
 });
 
-// Test database connection only in non-test environments
-if (process.env.NODE_ENV !== 'test') {
+// Test database connection only in non-test environments and when not in serverless
+// Skip immediate connection test for Vercel/serverless environments
+const shouldTestConnection = process.env.NODE_ENV !== 'test' && 
+                            !process.env.VERCEL && 
+                            !process.env.AWS_LAMBDA_FUNCTION_NAME &&
+                            process.env.DB_TEST_ON_STARTUP !== 'false';
+
+if (shouldTestConnection) {
+  // Use a timeout to prevent hanging in serverless environments
+  const connectionTimeout = setTimeout(() => {
+    logger.warn('Database connection test timed out - continuing without immediate verification');
+  }, 5000);
+
   pool.connect((err, client, release) => {
+    clearTimeout(connectionTimeout);
     if (err) {
-      logger.error('Error acquiring client', err.stack);
+      logger.warn('Database connection test failed - will retry on first query', {
+        error: err.message,
+        host: dbConfig.host,
+        database: dbConfig.database
+      });
       return;
     }
     logger.info('Database connected successfully');
@@ -69,14 +85,87 @@ process.on('SIGTERM', () => {
   });
 });
 
+// Connection retry helper
+const connectWithRetry = async (maxRetries = 3, delay = 1000) => {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      const client = await pool.connect();
+      return client;
+    } catch (error) {
+      logger.warn(`Database connection attempt ${attempt}/${maxRetries} failed`, {
+        error: error.message,
+        attempt,
+        maxRetries
+      });
+      
+      if (attempt === maxRetries) {
+        throw error;
+      }
+      
+      // Wait before retrying
+      await new Promise(resolve => setTimeout(resolve, delay * attempt));
+    }
+  }
+};
+
+// Enhanced query method with retry logic
+const queryWithRetry = async (text, params = [], maxRetries = 2) => {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      return await pool.query(text, params);
+    } catch (error) {
+      logger.warn(`Query attempt ${attempt}/${maxRetries} failed`, {
+        error: error.message,
+        query: text.substring(0, 100) + '...',
+        attempt
+      });
+      
+      if (attempt === maxRetries) {
+        throw error;
+      }
+      
+      // Wait before retrying
+      await new Promise(resolve => setTimeout(resolve, 500 * attempt));
+    }
+  }
+};
+
 module.exports = {
   pool,
-  query: (text, params) => pool.query(text, params),
-  getClient: () => pool.connect(),
+  query: queryWithRetry,
+  getClient: connectWithRetry,
+  
+  // Legacy method for backward compatibility
+  connect: () => pool.connect(),
+  
+  // Health check method
+  healthCheck: async () => {
+    try {
+      const client = await connectWithRetry(1, 0); // Single attempt for health check
+      const result = await client.query('SELECT NOW() as current_time, version() as db_version');
+      client.release();
+      return {
+        status: 'healthy',
+        timestamp: result.rows[0].current_time,
+        version: result.rows[0].db_version,
+        poolStats: {
+          total: pool.totalCount,
+          idle: pool.idleCount,
+          waiting: pool.waitingCount
+        }
+      };
+    } catch (error) {
+      return {
+        status: 'unhealthy',
+        error: error.message,
+        timestamp: new Date().toISOString()
+      };
+    }
+  },
   
   // Transaction helper
   transaction: async (callback) => {
-    const client = await pool.connect();
+    const client = await connectWithRetry();
     try {
       await client.query('BEGIN');
       const result = await callback(client);
