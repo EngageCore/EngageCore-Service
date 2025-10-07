@@ -25,54 +25,59 @@ class TransactionService {
    * @param {object} context - Request context
    * @returns {object} - Created transaction
    */
-  async createTransaction(transactionData, brandId, userId, context = {}) {
+  async createTransaction(transactionData, brandId,userId,context = {},member) {
     try {
       const { member_id, type, amount, description, reference_type, reference_id } = transactionData;
 
-      // Validate transaction data
-      this.validateTransactionData(transactionData);
-
-      // Check if member exists
-      const member = await this.memberRepository.findById(member_id);
-      if (!member || member.brand_id !== brandId) {
-        throw new NotFoundError('Member not found', 404, SERVICE_ERROR_CODES.TRANSACTION_MEMBER_NOT_FOUND);
-      }
-
-      // Check if debit would result in negative balance
-      if (type === TRANSACTION_TYPES.DEBIT && member.points_balance < amount) {
-        throw new ValidationError('Insufficient points balance', 400, SERVICE_ERROR_CODES.TRANSACTION_INSUFFICIENT_POINTS);
-      }
-
-      // Create transaction
-      const transaction = await this.transactionRepository.create({
-        ...transactionData,
+      const cleanedTransactionData = {
+        member_id: transactionData.member_id,
+        type: transactionData.type,
+        amount: transactionData.amount,
+        description: transactionData.description,
+        reference_type: transactionData.reference_type,
+        reference_id: transactionData.reference_id,
         brand_id: brandId,
-        status: TRANSACTION_STATUS.COMPLETED,
+        status: transactionData.status,
         created_by: userId
-      });
+      };
+
+      // If you have a raw_data JSONB column, store extra fields there
+      if (transactionData.raw_data || transactionData.merchant_id || transactionData.admin_id) {
+        cleanedTransactionData.raw_data = transactionData.raw_data || {
+          merchant_id: transactionData.merchant_id,
+          admin_id: transactionData.admin_id,
+          processed_date_time: transactionData.processed_date_time,
+          end_date_time: transactionData.end_date_time,
+          bank_id: transactionData.bank_id,
+          bank_data: transactionData.bank_data,
+          user_data: transactionData.user_data,
+          external_data: transactionData.external_data
+        };
+      }
+
+      // Create transaction with cleaned data
+      const transaction = await this.transactionRepository.create(cleanedTransactionData);
+
 
       // Update member points balance
-      const newBalance = type === TRANSACTION_TYPES.CREDIT 
-        ? member.points_balance + amount
-        : member.points_balance - amount;
+      const newBalance =  member.points_balance + cleanedTransactionData.amount;
 
       await this.memberRepository.updatePoints(member_id, {
         points_balance: newBalance,
-        total_points_earned: type === TRANSACTION_TYPES.CREDIT 
-          ? member.total_points_earned + amount
-          : member.total_points_earned
+        total_points_earned:  member.total_points_earned + cleanedTransactionData.amount
+
       });
 
       // Log transaction creation
       await this.auditLogRepository.logUserAction({
-        user_id: userId,
+        user_id: transactionData.member_id,
         brand_id: brandId,
         action: AUDIT_ACTIONS.TRANSACTION_CREATE,
         description: 'Transaction created successfully',
         ip_address: context.ip,
         user_agent: context.userAgent,
         metadata: {
-          memberId: member.member_id,
+          memberId: transactionData.member_id,
           transactionType: type,
           amount,
           newBalance,
@@ -82,8 +87,8 @@ class TransactionService {
 
       logger.logBusiness('Transaction created', {
         transactionId: transaction.id,
-        memberId: member_id,
-        memberIdString: member.member_id,
+        memberId: transactionData.member_id,
+        memberIdString: transactionData.member_id,
         type,
         amount,
         newBalance,
@@ -111,10 +116,7 @@ class TransactionService {
    */
   async getTransactionById(transactionId, brandId) {
     try {
-      const transaction = await this.transactionRepository.findWithMember(transactionId);
-      if (!transaction || transaction.brand_id !== brandId) {
-        throw new NotFoundError('Transaction not found', 404, SERVICE_ERROR_CODES.TRANSACTION_NOT_FOUND);
-      }
+      const transaction = await this.transactionRepository.findByExternalIdAndBrand(transactionId,brandId);
 
       return transaction;
     } catch (error) {
@@ -138,19 +140,7 @@ class TransactionService {
    */
   async updateTransaction(transactionId, updateData, brandId, userId, context = {}) {
     try {
-      // Check if transaction exists
-      const existingTransaction = await this.transactionRepository.findById(transactionId);
-      if (!existingTransaction || existingTransaction.brand_id !== brandId) {
-        throw new NotFoundError('Transaction not found', 404, SERVICE_ERROR_CODES.TRANSACTION_NOT_FOUND);
-      }
 
-      // Prevent updating completed transactions that affect balance
-      if (existingTransaction.status === TRANSACTION_STATUS.COMPLETED && 
-          (updateData.amount || updateData.type)) {
-        throw new ValidationError('Cannot modify amount or type of completed transaction', 400, SERVICE_ERROR_CODES.TRANSACTION_CANNOT_MODIFY_COMPLETED);
-      }
-
-      // Update transaction
       const updatedTransaction = await this.transactionRepository.update(transactionId, updateData);
 
       // Log transaction update
@@ -907,4 +897,4 @@ class TransactionService {
   }
 }
 
-module.exports = TransactionService;
+module.exports = new TransactionService();

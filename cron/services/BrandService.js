@@ -13,8 +13,6 @@ const { AUDIT_ACTIONS, BRAND_STATUS } = constants;
 class BrandService {
   constructor() {
     this.brandRepository = new BrandRepository();
-    this.userRepository = new UserRepository();
-    this.auditLogRepository = new AuditLogRepository();
   }
 
 
@@ -29,12 +27,6 @@ class BrandService {
       const brand = await this.brandRepository.findById(brandId);
       if (!brand) {
         throw new NotFoundError('Brand not found', 404, SERVICE_ERROR_CODES.BRAND_NOT_FOUND);
-      }
-
-      // Check if user has access to this brand
-      const hasAccess = await this.userRepository.hasAccessToBrand(userId, brandId);
-      if (!hasAccess) {
-        throw new AuthorizationError('Access denied to this brand', 403, SERVICE_ERROR_CODES.BRAND_ACCESS_DENIED);
       }
 
       // Remove sensitive data
@@ -60,23 +52,20 @@ class BrandService {
    */
   async updateBrandSettings(brandId, settings, userId, context = {}) {
     try {
+      // No need to fetch - just update directly
+      const updatedBrand = await this.brandRepository.updateSettings(brandId, settings);
+      
+      if (!updatedBrand) {
+        throw new Error(`Failed to update settings for brand: ${brandId}`);
+      }
 
-      // Merge with existing settings
-      const updatedSettings = {
-        ...existingBrand.settings,
-        ...settings
-      };
-
-      // Update brand settings
-      const updatedBrand = await this.brandRepository.updateSettings(brandId, updatedSettings);
-
-      logger.logBusiness('Brand settings updated', {
+      logger.business('Brand settings updated', {
         brandId,
         settingsUpdated: Object.keys(settings),
         updatedBy: userId
       });
 
-      return updatedBrand.settings;
+      return updatedBrand;
     } catch (error) {
       logger.error('Brand settings update failed', {
         error: error.message,
@@ -87,7 +76,6 @@ class BrandService {
       throw error;
     }
   }
-
   /**
    * List brands with pagination and filtering
    * @param {object} options - Query options
@@ -113,21 +101,19 @@ class BrandService {
         search,
         status,
         sort_by,
-        sort_order,
-        brand_ids: brandIds
+        sort_order
       };
 
       const result = await this.brandRepository.findWithSearch(queryOptions);
 
       // Remove sensitive data from each brand
-      const brands = result.brands.map(brand => {
+      const brands = result.data.map(brand => {
         const { api_key_hash, ...brandResponse } = brand;
         return brandResponse;
       });
 
       return {
-        brands,
-        pagination: result.pagination
+        brands
       };
     } catch (error) {
       logger.error('List brands failed', {
@@ -140,4 +126,4 @@ class BrandService {
   }
 }
 
-module.exports = BrandService;
+module.exports = new BrandService();

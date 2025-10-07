@@ -105,9 +105,7 @@ class MemberService {
   async getMemberByUserId(userId, brandId) {
     try {
       const member = await this.memberRepository.findByUserId(userId, brandId);
-      if (!member) {
-        throw new NotFoundError('Member not found', SERVICE_ERROR_CODES.MEMBER_NOT_FOUND);
-      }
+
 
       return member;
     } catch (error) {
@@ -947,4 +945,4 @@ class MemberService {
   }
 }
 
-module.exports = MemberService;
+module.exports = new MemberService();

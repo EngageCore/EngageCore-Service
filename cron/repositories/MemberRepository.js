@@ -607,7 +607,7 @@ async findByUserId(userId, brandId) {
     try {
       const { includeInactive = false } = options;
 
-      let whereClause = 'WHERE brand_id = $1';
+      let whereClause = 'WHERE mt.brand_id = $1';
       const params = [brandId];
 
       if (!includeInactive) {

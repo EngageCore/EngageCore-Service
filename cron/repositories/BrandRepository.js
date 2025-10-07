@@ -153,36 +153,35 @@ class BrandRepository extends BaseRepository {
    * @param {object} settingsData - Settings data to update
    * @returns {object|null} - Updated settings or null
    */
-  async updateSettings(brandId, settingsData) {
+ async updateSettings(brandId, settingsData) {
     try {
-      const updateFields = [];
-      const params = [];
-      let paramIndex = 1;
-
-      // Build dynamic update query
-      for (const [key, value] of Object.entries(settingsData)) {
-        if (['wheel_config', 'mission_config', 'point_config', 'notification_config', 'theme_config'].includes(key)) {
-          updateFields.push(`${key} = $${paramIndex++}`);
-          params.push(JSON.stringify(value));
-        }
+      // Get current brand to merge settings
+      const currentBrand = await this.findById(brandId);
+      
+      if (!currentBrand) {
+        throw new Error(`Brand not found: ${brandId}`);
       }
 
-      if (updateFields.length === 0) {
-        throw new Error('No valid settings fields to update');
-      }
+      // Merge new settings with existing settings
+      const mergedSettings = {
+        ...currentBrand.settings,
+        ...settingsData
+      };
 
-      updateFields.push(`updated_at = $${paramIndex++}`);
-      params.push(new Date());
-      params.push(brandId);
-
+      // Update the settings JSON column
       const query = `
-        UPDATE brand_settings 
-        SET ${updateFields.join(', ')}
-        WHERE brand_id = $${paramIndex}
+        UPDATE brands 
+        SET settings = $1, updated_at = $2
+        WHERE id = $3
         RETURNING *
       `;
 
-      const result = await this.query(query, params);
+      const result = await this.query(query, [
+        JSON.stringify(mergedSettings),
+        new Date(),
+        brandId
+      ]);
+
       return result.rows.length > 0 ? result.rows[0] : null;
     } catch (error) {
       logger.error('Error updating brand settings', { brandId, error: error.message });
@@ -282,7 +281,7 @@ class BrandRepository extends BaseRepository {
       // Get records
       const dataQuery = `
         SELECT 
-          id, name, slug, description, logo_url, website_url, 
+          id, name, slug, description, logo_url, website_url, settings,
           status, created_at, updated_at
         FROM brands 
         ${whereClause}

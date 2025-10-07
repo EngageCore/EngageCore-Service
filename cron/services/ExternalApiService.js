@@ -1,5 +1,6 @@
 const axios = require('axios');
-const config = require('../../config'); 
+const { SocksProxyAgent } = require('socks-proxy-agent');
+const config = require('../config'); 
 
 class ExternalApiService {
   constructor() {
@@ -20,22 +21,32 @@ class ExternalApiService {
         formData.append('accessToken', brandApiConfig.accessToken);
         
         if (brandApiConfig.queryStartDate) {
-          formData.append('fromDate', brandApiConfig.queryStartDate);
+          formData.append('sDate', brandApiConfig.queryStartDate);
         }
         if (brandApiConfig.queryEndDate) {
-          formData.append('toDate', brandApiConfig.queryEndDate);
+          formData.append('eDate', brandApiConfig.queryEndDate);
         }
         
         console.log('📡 API Request params:', Object.fromEntries(formData));
         
-        const response = await axios.post(brandApiConfig.baseUrl, formData, {
+        // Configure SOCKS5 proxy if needed
+        const axiosConfig = {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
             'Accept': 'application/json',
             'User-Agent': 'EngageCore-Cron/1.0'
           },
           timeout: brandApiConfig.timeout || 30000
-        });
+        };
+
+        // Add SOCKS5 proxy for local development
+        if (config.externalApi.useSocksProxy) {
+          console.log('🔒 Using SOCKS5 proxy:', config.externalApi.socksProxyUrl);
+          axiosConfig.httpsAgent = new SocksProxyAgent(config.externalApi.socksProxyUrl);
+          axiosConfig.httpAgent = new SocksProxyAgent(config.externalApi.socksProxyUrl);
+        }
+        
+        const response = await axios.post(brandApiConfig.baseUrl, formData, axiosConfig);
 
         console.log('📊 API Response status:', response.status);
         console.log('📊 API Response data status:', response.data?.status);
@@ -70,7 +81,6 @@ class ExternalApiService {
           };
         }
         
-
         const retryDelay = brandApiConfig.retryDelay || 1000;
         console.log(`⏳ Waiting ${retryDelay}ms before retry...`);
         await new Promise(resolve => setTimeout(resolve, retryDelay));
@@ -81,8 +91,8 @@ class ExternalApiService {
   transformTransaction(externalTransaction) {
     try {
       return {
-        external_id: externalTransaction.id,
-        merchant_id: externalTransaction.merchantId,
+        reference_id: externalTransaction.id,
+        member_id: externalTransaction.merchantId,
         admin_id: externalTransaction.adminId,
         type: externalTransaction.type,
         details: typeof externalTransaction.details === 'string' 

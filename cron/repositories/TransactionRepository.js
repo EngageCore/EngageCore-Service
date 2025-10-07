@@ -20,9 +20,7 @@ class TransactionRepository extends BaseRepository {
   async create(transactionData, client = null) {
     try {
       const normalizedData = {
-        ...transactionData,
-        status: transactionData.status || 'completed',
-        metadata: transactionData.metadata || {}
+        ...transactionData
       };
 
       return await super.create(normalizedData, client);
@@ -605,6 +603,33 @@ class TransactionRepository extends BaseRepository {
       }
     } catch (error) {
       logger.error('Error reversing transaction', { transactionId, reason, error: error.message });
+      throw error;
+    }
+  }
+
+
+    /**
+   * Find transaction by external ID and brand ID
+   * @param {string} externalId - External transaction ID
+   * @param {string} brandId - Brand ID
+   * @returns {object|null} - Transaction or null
+   */
+  async findByExternalIdAndBrand(externalId, brandId) {
+    try {
+      const query = `
+        SELECT * FROM transactions
+        WHERE reference_id = $1 AND brand_id = $2
+        LIMIT 1
+      `;
+      
+      const result = await this.query(query, [externalId, brandId]);
+      return result.rows.length > 0 ? result.rows[0] : null;
+    } catch (error) {
+      logger.error('Error finding transaction by external ID and brand', { 
+        externalId,
+        brandId,
+        error: error.message 
+      });
       throw error;
     }
   }

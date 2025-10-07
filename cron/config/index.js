@@ -7,16 +7,16 @@ let sharedConfig = null;
 const standaloneConfig = {
   // Database configuration
   database: {
-    host: process.env.DB_HOST || '54.250.29.129',
+    host: process.env.DB_HOST || 'localhost',
     port: parseInt(process.env.DB_PORT) || 5433,
     database: process.env.DB_NAME || 'EngageCore',
     user: process.env.DB_USER || 'postgres',
-    password: process.env.DB_PASSWORD || '123456',
+    password: process.env.DB_PASSWORD || 'mJa18snwbaxluw@nzmejk',
     ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false,
     max: parseInt(process.env.DB_POOL_MAX) || 10,
     min: parseInt(process.env.DB_POOL_MIN) || 2,
     idleTimeoutMillis: parseInt(process.env.DB_IDLE_TIMEOUT) || 30000,
-    connectionTimeoutMillis: parseInt(process.env.DB_CONNECTION_TIMEOUT) || 10000
+    connectionTimeoutMillis: parseInt(process.env.DB_CONNECTION_TIMEOUT) || 10000,
   },
 
 
@@ -42,12 +42,14 @@ const standaloneConfig = {
 
  
   externalApi: {
-    baseUrl: process.env.EXTERNAL_API_URL || 'https://ez4playsg.net/api/v1/index.php',
-    accessId: process.env.EXTERNAL_ACCESS_ID || '333178324',
-    accessToken: process.env.EXTERNAL_ACCESS_TOKEN || 'c881af557f19eb837741d6963720d099afa909899b740b83f8676c279ce03f34',
+    baseUrl: process.env.EXTERNAL_API_URL || 'https://crn7sg.com/api/v1/index.php',
+    accessId: process.env.EXTERNAL_ACCESS_ID || '352439878',
+    accessToken: process.env.EXTERNAL_ACCESS_TOKEN || 'f1804f905ee1084d8e9f99cb933e65a7e93ab3488e4b133abbc4a2b95bbd78c0',
     timeout: parseInt(process.env.EXTERNAL_API_TIMEOUT) || 30000,
     retries: parseInt(process.env.EXTERNAL_API_RETRIES) || 3,
-    retryDelay: parseInt(process.env.EXTERNAL_API_RETRY_DELAY) || 1000
+    retryDelay: parseInt(process.env.EXTERNAL_API_RETRY_DELAY) || 1000,
+    useSocksProxy: process.env.USE_SOCKS_PROXY || 'true',
+    socksProxyUrl: process.env.SOCKS_PROXY_URL || 'socks5://127.0.0.1:8080'
   },
 
 

@@ -2,10 +2,10 @@
   "name": "engage-service",
   "version": "1.0.0",
   "description": "Lucky Wheel Engagement Service Backend",
-  "main": "server.js",
+  "main": "index.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js",
+    "start": "node index.js",
+    "dev": "nodemon index.js",
     "setup": "node database/setup.js setup",
     "setup:tables": "node database/setup.js tables",
     "setup:indexes": "node database/setup.js indexes",
@@ -16,6 +16,7 @@
     "lint:fix": "eslint src/ --fix"
   },
   "dependencies": {
+    "axios": "^1.6.0",
     "bcryptjs": "^2.4.3",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.6",
@@ -35,6 +36,7 @@
     "multer": "^1.4.5-lts.2",
     "node-cron": "^3.0.3",
     "pg": "^8.16.3",
+    "socks-proxy-agent": "^8.0.5",
     "swagger-ui-express": "^5.0.1",
     "uuid": "^9.0.1",
     "winston": "^3.11.0",

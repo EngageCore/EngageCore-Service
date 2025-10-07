@@ -1,13 +1,20 @@
 const cron = require('node-cron');
-const externalApiService = require('../../services/externalApiService');
-const transactionService = require('../../services/transactionService');
-const memberService = require('../../services/transactionService');
-const brandService = require('../../services/brandService');
+const { brandService, memberService, transactionService, externalApiService } =  require('../services');
 const { Pool } = require('pg');
-const config = require('../../config');
+const config = require('../config');
+
+
 
 // Create pool for job logging
 const pool = new Pool(config.database);
+
+const getSystemContext = () => {
+  return {
+    ip: 'cron-job',
+    userAgent: 'Transaction Sync Cron Job'
+  };
+};
+
 
 class TransactionSyncJob {
   constructor() {
@@ -44,8 +51,10 @@ class TransactionSyncJob {
       console.log('🚀 Starting multi-brand transaction sync job...');
       
       // Get all brands that need syncing
-      const brandsToSync = await brandService.listBrands();
-      
+      const result = await brandService.listBrands();
+      const brandsToSync = result.brands;
+
+
       if (!brandsToSync || brandsToSync.length === 0) {
         console.log('ℹ️  No brands need syncing at this time');
         await this.logJobComplete(runId, 0, 0, null, Date.now() - startTime, 0);
@@ -77,20 +86,27 @@ class TransactionSyncJob {
             continue;
           }
 
+          const currentTime = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kuala_Lumpur' }));
+          const queryEndDate = new Date(apiConfig.queryEndDate);
+
+          if (currentTime < queryEndDate) {
+            console.log(`⏰ Skipping brand ${brand.name}: Current time (${currentTime.toISOString()}) is before queryEndDate (${apiConfig.queryEndDate})`);
+            continue;
+          }
+
           const brandApiConfig = {
             baseUrl: apiConfig.url,
             accessId: apiConfig.accessId,
             accessToken: apiConfig.accessToken,
+            queryStartDate : apiConfig.queryStartDate ,
+            queryEndDate : apiConfig.queryEndDate ,
             timeout: apiConfig.timeout || config.externalApi.timeout,
             retries: apiConfig.retries || config.externalApi.retries,
-            retryDelay: apiConfig.retryDelay || config.externalApi.retryDelay
+            retryDelay: apiConfig.retryDelay || config.externalApi.retryDelay,
           };
 
           // Get transactions for this brand
           const apiResult = await externalApiService.fetchTransactions(brandApiConfig);
-          
-          // Restore original config
-          externalApiService.apiConfig = originalConfig;
 
           if (!apiResult.success) {
             throw new Error(`API fetch failed for brand ${brand.name}: ${apiResult.error}`);
@@ -111,14 +127,14 @@ class TransactionSyncJob {
                 transformedTransaction.brand_id = brand.id; 
                 
                 // Check if transaction exists
-                const existingTransaction = await transactionService.getTransactionById(transformedTransaction,brand.id);
+                const existingTransaction = await transactionService.getTransactionById(transformedTransaction.reference_id,brand.id);
                 
                 // Check if member exists
-                const existingMember = await memberService.getMemberByUserId(transformedTransaction.user_data.member_id,brand.id);
+                const existingMember = await memberService.getMemberByUserId(transformedTransaction.user_data.id,brand.id);
 
                 if(!existingMember){
                   const memberData = {
-                        user_id: transformedTransaction.user_data.member_id,
+                        user_id: transformedTransaction.user_data.id,
                         total_points_earned: 0,
                         achievements: [],
                     };
@@ -131,47 +147,44 @@ class TransactionSyncJob {
                   );
                 }
 
+                transformedTransaction.member_id = existingMember.id;
+
                 if (existingTransaction) {
                   const hasChanges = 
-                    existingTransaction.status !== transformedTransaction.status ||
-                    existingTransaction.processed_date_time !== transformedTransaction.processed_date_time ||
-                    existingTransaction.end_date_time !== transformedTransaction.end_date_time ||
-                    existingTransaction.merchant_id !== transformedTransaction.merchant_id ||
-                    existingTransaction.admin_id !== transformedTransaction.admin_id;
+                    existingTransaction.status !== transformedTransaction.status 
                     
                   if (hasChanges) {
        
                     const updateData = {
-                      merchant_id: transformedTransaction.merchant_id,
-                      admin_id: transformedTransaction.admin_id,
-                      details: transformedTransaction.details,
-                      created_date_time: transformedTransaction.created_date_time,
-                      processed_date_time: transformedTransaction.processed_date_time,
-                      end_date_time: transformedTransaction.end_date_time,
-                      bank_id: transformedTransaction.bank_id,
-                      bank_data: transformedTransaction.bank_data,
-                      user_data: transformedTransaction.user_data,
-                      raw_data: transformedTransaction.raw_data
+                      status: transformedTransaction.status,
+                      description: transformedTransaction.description,
+                      
+
+                      raw_data: {
+                        merchant_id: transformedTransaction.merchant_id,
+                        admin_id: transformedTransaction.admin_id,
+                        details: transformedTransaction.details,
+                        created_date_time: transformedTransaction.created_date_time,
+                        processed_date_time: transformedTransaction.processed_date_time,
+                        end_date_time: transformedTransaction.end_date_time,
+                        bank_id: transformedTransaction.bank_id,
+                        bank_data: transformedTransaction.bank_data,
+                        user_data: transformedTransaction.user_data,
+                        ...transformedTransaction.raw_data 
+                      }
                     };
-
-  
-                    if (existingTransaction.status !== 'COMPLETED') {
-                      updateData.status = transformedTransaction.status;
-                    }
-
-        
-                    if (existingTransaction.status !== 'COMPLETED') {
-                      updateData.type = transformedTransaction.type;
-                      updateData.amount = transformedTransaction.amount;
-                    }
 
           
                     await transactionService.updateTransaction(
                       existingTransaction.id,
                       updateData,
                       brand.id,
-                      'system', 
-                      { source: 'external_api_sync' } 
+                      'system',
+                      {
+                        ip: 'cron-job',
+                        userAgent: 'Transaction Sync Cron Job',
+                        source: 'external_api_sync'
+                      }
                     );
                     console.log(`  ✅ Updated existing transaction: ${transformedTransaction.external_id}`);
                   } else {
@@ -179,7 +192,13 @@ class TransactionSyncJob {
                   }
                 } else {
                   // Create new transaction
-                  await transactionService.createTransaction(transformedTransaction);
+                  await transactionService.createTransaction(
+                    transformedTransaction,
+                    brand.id,
+                    'system',
+                    getSystemContext(),
+                    existingMember
+                  );
                   console.log(`  ✅ Created new transaction: ${transformedTransaction.external_id}`);
                 }
                  
@@ -199,17 +218,28 @@ class TransactionSyncJob {
             }
           }
 
-          try {
+        try {
             const currentStartDate = new Date(brand.settings.external_api.queryStartDate);
             const currentEndDate = new Date(brand.settings.external_api.queryEndDate);
+            const syncInterval = brand.settings.external_api.sync_interval || 5; // Default 5 minutes
             
-            // Add 10 minutes (10 * 60 * 1000 milliseconds)
-            const newStartDate = new Date(currentStartDate.getTime() + (10 * 60 * 1000));
-            const newEndDate = new Date(currentEndDate.getTime() + (10 * 60 * 1000));
+            // New start time = old end time
+            const newStartDate = new Date(currentEndDate);
             
-            // Format back to the required format: YYYY-MM-DD HH:MM:SS
+            // New end time = old end time + interval (in minutes)
+            const newEndDate = new Date(currentEndDate.getTime() + (syncInterval * 60 * 1000));
+            
+            // Format to Malaysia time: YYYY-MM-DD HH:MM:SS
             const formatDateTime = (date) => {
-              return date.toISOString().slice(0, 19).replace('T', ' ');
+              const malaysiaDate = new Date(date.toLocaleString('en-US', { timeZone: 'Asia/Kuala_Lumpur' }));
+              const year = malaysiaDate.getFullYear();
+              const month = String(malaysiaDate.getMonth() + 1).padStart(2, '0');
+              const day = String(malaysiaDate.getDate()).padStart(2, '0');
+              const hours = String(malaysiaDate.getHours()).padStart(2, '0');
+              const minutes = String(malaysiaDate.getMinutes()).padStart(2, '0');
+              const seconds = String(malaysiaDate.getSeconds()).padStart(2, '0');
+              
+              return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
             };
             
             const updatedSettings = {
@@ -222,12 +252,15 @@ class TransactionSyncJob {
             };
             
             await brandService.updateBrandSettings(brand.id, updatedSettings, 'system');
-            
+          
+
+            console.log(`📅 Updated time window for brand ${brand.name}:`);
             console.log(`   Start: ${brand.settings.external_api.queryStartDate} → ${updatedSettings.external_api.queryStartDate}`);
             console.log(`   End: ${brand.settings.external_api.queryEndDate} → ${updatedSettings.external_api.queryEndDate}`);
+            console.log(`   Interval: ${syncInterval} minutes`);
             
           } catch (error) {
-            console.error(`Failed to update date range for brand ${brand.name}:`, error.message);
+            console.error(`❌ Failed to update date range for brand ${brand.name}:`, error.message);
           }
                   
           const brandDuration = Date.now() - brandStartTime;
@@ -356,39 +389,39 @@ class TransactionSyncJob {
   }
 
   async logJobStart() {
-    try {
-      const result = await db.query(`
-        INSERT INTO cron_job_logs (job_name, status, started_at)
-        VALUES ($1, $2, NOW())
-        RETURNING id
-      `, ['transaction_sync', 'started']);
+    // try {
+    //   const result = await db.query(`
+    //     INSERT INTO cron_job_logs (job_name, status, started_at)
+    //     VALUES ($1, $2, NOW())
+    //     RETURNING id
+    //   `, ['transaction_sync', 'started']);
       
-      return result.rows[0].id;
-    } catch (error) {
-      console.error('❌ Error logging job start:', error.message);
-      return null;
-    }
+    //   return result.rows[0].id;
+    // } catch (error) {
+    //   console.error('❌ Error logging job start:', error.message);
+    //   return null;
+    // }
   }
 
   async logJobComplete(logId, processed, errors, errorMessage, executionTime) {
-    if (!logId) return;
+    // if (!logId) return;
     
-    try {
-      await db.query(`
-        UPDATE cron_job_logs 
-        SET status = $1, records_processed = $2, error_message = $3, 
-            execution_time_ms = $4, finished_at = NOW()
-        WHERE id = $5
-      `, [
-        errors > 0 ? 'failed' : 'success',
-        processed,
-        errorMessage,
-        executionTime,
-        logId
-      ]);
-    } catch (error) {
-      console.error('❌ Error logging job completion:', error.message);
-    }
+    // try {
+    //   await db.query(`
+    //     UPDATE cron_job_logs 
+    //     SET status = $1, records_processed = $2, error_message = $3, 
+    //         execution_time_ms = $4, finished_at = NOW()
+    //     WHERE id = $5
+    //   `, [
+    //     errors > 0 ? 'failed' : 'success',
+    //     processed,
+    //     errorMessage,
+    //     executionTime,
+    //     logId
+    //   ]);
+    // } catch (error) {
+    //   console.error('❌ Error logging job completion:', error.message);
+    // }
   }
 
   getStats() {

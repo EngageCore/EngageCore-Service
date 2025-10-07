@@ -25,4 +25,4 @@ pool.on('remove', (client) => {
   console.log('Client removed from pool');
 });
 
-module.exports = pool;
+module.exports = { pool };
